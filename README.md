@@ -7,7 +7,7 @@ Projeto desenvolvido para a diciplina de Algoritimos e Programação II, com o i
 * Git/GitHub
 * Trabalho em Equipe
 
-## Objetivo do Projeto
+### Objetivo do Projeto
 
 Explorar as particularidades da Região Cariri, propondo uma solução inovadora e prática que contribua para o desenvolvimento do Cariri Cearense.
 
@@ -56,7 +56,7 @@ projeto/
 
 ## Dependências/Ferramentas
 
-- [UV](https://github.com/astral-sh/uv): Gerenciador de ambiente de desenvolvimento de dependências do projeto
+- [UV](https://github.com/astral-sh/uv): Gerenciador de ambiente de desenvolvimento e dependências do projeto
 - [PyGame](https://www.pygame.org): Biblioteca para criação de jogos com python
 
 ## Instalação
