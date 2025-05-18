@@ -76,8 +76,8 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 Copie o projeto no seu computador e vá para o diretório do projeto:
 
 ```bash
-git clone ~~
-cd ~~
+git clone https://github.com/w4ll-y/projeto-APII.git
+cd projeto-APII
 ```
 
 Sincronize as dependências:
