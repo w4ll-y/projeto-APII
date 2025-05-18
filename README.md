@@ -98,7 +98,7 @@ uv run main.py
 ## Autores
 
 - Heitor Gomes: 
-- Erik Pinheiro: 
+- Erik Pinheiro: [@0Erik1](https://github.com/0Erik1)
 - Laura Galvão: 
 - José Wallacy: [@W4ll-y](https://github.com/w4ll-y)
 - Matheus da Silva: 
