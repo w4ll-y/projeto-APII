@@ -101,4 +101,4 @@ uv run main.py
 - Erik Pinheiro: [@0Erik1](https://github.com/0Erik1)
 - Laura Galvão: 
 - José Wallacy: [@W4ll-y](https://github.com/w4ll-y)
-- Matheus da Silva: 
+- Matheus da Silva: [@mate00ss](https://github.com/mate00ss)
