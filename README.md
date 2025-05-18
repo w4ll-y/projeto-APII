@@ -1,6 +1,6 @@
 # Projeto APII
 
-Projeto desenvolvido para a diciplina de Algoritimos e Programação II, com o intuito de desenvolver habilidades como:
+Projeto desenvolvido para a disciplina de Algoritimos e Programação II, com o intuito de desenvolver habilidades como:
 * Organização de Projeto (Modularização)
 * Paradigmas de Programação
 * Persistência de Dados (Em arquivo ou Banco de Dados)
