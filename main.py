@@ -1,5 +1,8 @@
+from core.game import Game
+
 def main():
-    print("Hello from projeto-apii!")
+    game = Game()
+    game.run()
 
 
 if __name__ == "__main__":
