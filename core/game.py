@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from core.entity import Entity
+from core.events import Events
 
 class Game:
     def __init__(self):
@@ -8,7 +8,7 @@ class Game:
         
         self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
         self.clock = pygame.time.Clock()
-        self.event = Entity()
+        self.event = Events()
 
     def run(self):
         while True:

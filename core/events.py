@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-class Entity:
+class Events:
     def __init__(self):
         pass
 
