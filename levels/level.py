@@ -37,12 +37,15 @@ class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
 
+        self.save_window_size()
+
+        self.offset = pygame.math.Vector2()
+
+    def save_window_size(self):
         self.display_surface = pygame.display.get_surface()
 
         self.half_width = self.display_surface.get_size()[0] // 2
         self.half_heigth = self.display_surface.get_size()[1] // 2
-
-        self.offset = pygame.math.Vector2()
 
     def custom_draw(self, player):
 
