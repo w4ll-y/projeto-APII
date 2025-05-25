@@ -20,7 +20,7 @@ class Level:
                 if col == 'x':
                     Tile((x, y), [self.visible_sprites, self.obstacles_sprites], OpenMapTileType.ROCK)
                 if col == 'p':
-                    Player((x, y), [self.visible_sprites], self.obstacles_sprites)
+                    self.player = Player((x, y), [self.visible_sprites], self.obstacles_sprites)
 
     def level_map(self, level_type):
         match level_type:
@@ -30,7 +30,7 @@ class Level:
                 self.create_map(WORLD_MAP)
 
     def run(self):
-        self.visible_sprites.custom_draw()
+        self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
 
 class YSortCameraGroup(pygame.sprite.Group):
@@ -39,7 +39,17 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         self.display_surface = pygame.display.get_surface()
 
-    def custom_draw(self):
+        self.half_width = self.display_surface.get_size()[0] // 2
+        self.half_heigth = self.display_surface.get_size()[1] // 2
+
+        self.offset = pygame.math.Vector2()
+
+    def custom_draw(self, player):
+
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_heigth
+
         for sprite in self.sprites():
-            self.display_surface.blit(sprite.image, sprite.rect)
+            offset_pos = sprite.rect.topleft - self.offset
+            self.display_surface.blit(sprite.image, offset_pos)
         
