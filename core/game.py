@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from core.events import Events
+from core.event import Event
 from levels.level import Level
 from utils.enums import LevelType
 
@@ -10,7 +10,7 @@ class Game:
         
         self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
         self.clock = pygame.time.Clock()
-        self.event = Events(self)
+        self.event = Event(self)
         
         self.level = Level()
 
