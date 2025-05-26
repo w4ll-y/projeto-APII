@@ -9,6 +9,7 @@ class Tile(pygame.sprite.Sprite):
 
         self.set_image()
         self.rect = self.image.get_rect(topleft = pos)
+        self.hitbox = self.rect.inflate(0, -10)
 
     def set_image(self):
         match self.tile_type:
