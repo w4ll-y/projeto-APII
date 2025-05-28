@@ -2,7 +2,7 @@ import pygame
 from utils.enums import OpenMapTileType
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, tile_type):
+    def __init__(self, pos: tuple, groups: list, tile_type: str):
         super().__init__(groups)
 
         self.tile_type = tile_type
