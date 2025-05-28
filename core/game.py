@@ -2,7 +2,6 @@ import pygame
 from settings import *
 from core.event import Event
 from levels.level import Level
-from utils.enums import LevelType
 
 class Game:
     def __init__(self):

@@ -1,11 +1,9 @@
 import pygame
 import sys
 from settings import WIDTH, HEIGTH
-from levels.level import Level
-from core.game import Game
 
 class Event:
-    def __init__(self, game: Game):
+    def __init__(self, game):
         self.game = game
 
         self.full_screen = False
