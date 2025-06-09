@@ -1,6 +1,7 @@
 import pygame
 from settings import WORLD_MAP, TILESIZE
-from utils.enums import LevelType, OpenMapTileType
+from utils.enums import LevelType, OpenMapTileType, BoundaryTyleTipe
+from utils.suport import import_csv_layout
 from levels.tile import Tile
 from entities.player import Player
 
@@ -12,15 +13,22 @@ class Level:
         self.level_map(LevelType.OPENMAP)
 
     def create_map(self, level_map: list):
-        for row_index, row in enumerate(level_map):
-            for col_index, col in enumerate(row):
-                x = col_index * TILESIZE
-                y = row_index * TILESIZE
+        layouts = {
+            #style: layout
+            'boundary': import_csv_layout('./assets/map/map_FloorBlocks.csv')
+        }
 
-                if col == 'x':
-                    Tile((x, y), [self.visible_sprites, self.obstacles_sprites], OpenMapTileType.ROCK)
-                if col == 'p':
-                    self.player = Player((x, y), [self.visible_sprites], self.obstacles_sprites)
+        for style, layout in layouts.items():
+            for row_index, row in enumerate(layout):
+                for col_index, col in enumerate(row):
+                    if BoundaryTyleTipe(int(col)) == BoundaryTyleTipe.WATER:
+                        x = col_index * TILESIZE
+                        y = row_index * TILESIZE    
+
+                        if style == 'boundary':
+                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'invisible')
+        
+        self.player = Player((600, 600), [self.visible_sprites], self.obstacles_sprites)
 
     def level_map(self, level_type: str):
         match level_type:
@@ -41,6 +49,9 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         self.offset = pygame.math.Vector2()
 
+        self.floor_surface = pygame.image.load('./assets/graphics/tilesmap/ground.png').convert()
+        self.floor_rect = self.floor_surface.get_rect(topleft = (0, 0))
+
     def save_window_size(self):
         self.display_surface = pygame.display.get_surface()
 
@@ -49,8 +60,13 @@ class YSortCameraGroup(pygame.sprite.Group):
 
     def custom_draw(self, player: Player):
 
+        #player offset
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_heigth
+
+        #floor offset
+        floor_offset_pos = self.floor_rect.topleft - self.offset
+        self.display_surface.blit(self.floor_surface, floor_offset_pos)
 
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
             offset_pos = sprite.rect.topleft - self.offset

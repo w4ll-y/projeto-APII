@@ -6,3 +6,8 @@ class LevelType(Enum):
 
 class OpenMapTileType(Enum):
     ROCK = 1
+
+class BoundaryTyleTipe(Enum):
+    SAND = 0
+    GRASS = 1
+    WATER = 2
