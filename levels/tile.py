@@ -9,8 +9,5 @@ class Tile(pygame.sprite.Sprite):
         self.sprite_type = sprite_type
         self.image = surface
 
-        if self.sprite_type == 'invisible':
-            self.image.set_alpha(0)
-
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(0, -10)
+        self.hitbox = self.rect.inflate(0, -5)

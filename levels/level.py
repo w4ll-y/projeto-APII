@@ -1,7 +1,7 @@
 import pygame
 from settings import WORLD_MAP, TILESIZE
 from utils.enums import LevelType, OpenMapTileType, BoundaryTyleTipe
-from utils.suport import import_csv_layout
+from utils.suport import import_csv_layout, import_folder
 from levels.tile import Tile
 from entities.player import Player
 
@@ -15,18 +15,31 @@ class Level:
     def create_map(self, level_map: list):
         layouts = {
             #style: layout
-            'boundary': import_csv_layout('./assets/map/map_FloorBlocks.csv')
+            'boundary': import_csv_layout('./assets/map/map_Boundary.csv'),
+            'objects': import_csv_layout('./assets/map/map_Objects.csv'),
+            'monuments': import_csv_layout('./assets/map/map_Monuments.csv')
+        }
+
+        graphics = {
+            'objects': import_folder('./assets/graphics/objects'),
+            'monuments': import_folder('./assets/graphics/monuments')
         }
 
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
-                    if BoundaryTyleTipe(int(col)) == BoundaryTyleTipe.WATER:
+                    if col != '-1':
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE    
 
                         if style == 'boundary':
-                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'invisible')
+                            Tile((x, y), [self.obstacles_sprites], 'invisible')
+                        if style == 'objects':
+                            surface = graphics['objects'][int(col)]
+                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'object', surface)
+                        if style == 'monuments':
+                            surface = graphics['monuments'][int(col)]
+                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
         
         self.player = Player((600, 600), [self.visible_sprites], self.obstacles_sprites)
 
