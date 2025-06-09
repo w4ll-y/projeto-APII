@@ -11,7 +11,7 @@ class Level:
 
         self.level_map(LevelType.OPENMAP)
 
-    def create_map(self, level_map):
+    def create_map(self, level_map: list):
         for row_index, row in enumerate(level_map):
             for col_index, col in enumerate(row):
                 x = col_index * TILESIZE
@@ -22,7 +22,7 @@ class Level:
                 if col == 'p':
                     self.player = Player((x, y), [self.visible_sprites], self.obstacles_sprites)
 
-    def level_map(self, level_type):
+    def level_map(self, level_type: str):
         match level_type:
             case LevelType.OPENMAP:
                 self.create_map(WORLD_MAP)
@@ -47,7 +47,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_width = self.display_surface.get_size()[0] // 2
         self.half_heigth = self.display_surface.get_size()[1] // 2
 
-    def custom_draw(self, player):
+    def custom_draw(self, player: Player):
 
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_heigth
