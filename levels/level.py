@@ -1,5 +1,5 @@
 import pygame
-from settings import WORLD_MAP, TILESIZE
+from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType, OpenMapTileType, BoundaryTyleTipe
 from utils.suport import import_csv_layout, import_folder
 from levels.tile import Tile
@@ -29,19 +29,21 @@ class Level:
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
                     if col != '-1':
-                        x = col_index * TILESIZE
-                        y = row_index * TILESIZE    
+                        x = col_index * TILESIZE * ZOOM
+                        y = row_index * TILESIZE * ZOOM
 
                         if style == 'boundary':
                             Tile((x, y), [self.obstacles_sprites], 'invisible')
                         if style == 'objects':
                             surface = graphics['objects'][int(col)]
+
                             Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'object', surface)
                         if style == 'monuments':
                             surface = graphics['monuments'][int(col)]
+                            
                             Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
         
-        self.player = Player((600, 600), [self.visible_sprites], self.obstacles_sprites)
+        self.player = Player((1200, 1200), [self.visible_sprites], self.obstacles_sprites)
 
     def level_map(self, level_type: str):
         match level_type:
@@ -62,7 +64,9 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         self.offset = pygame.math.Vector2()
 
-        self.floor_surface = pygame.image.load('./assets/graphics/tilesmap/ground.png').convert()
+        self.floor_surface = pygame.image.load('./assets/graphics/tilesmap/ground.png').convert_alpha()
+        self.floor_surface = pygame.transform.scale(self.floor_surface, (self.floor_surface.get_width() * ZOOM, self.floor_surface.get_height() * ZOOM))
+
         self.floor_rect = self.floor_surface.get_rect(topleft = (0, 0))
 
     def save_window_size(self):
