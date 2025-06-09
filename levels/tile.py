@@ -14,4 +14,4 @@ class Tile(pygame.sprite.Sprite):
     def set_image(self):
         match self.tile_type:
             case OpenMapTileType.ROCK:
-                self.image = pygame.image.load('assets/images/openmap/rock.png').convert_alpha()
+                self.image = pygame.image.load('assets/sprites/openmap/rock.png').convert_alpha()

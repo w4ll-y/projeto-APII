@@ -1,7 +1,6 @@
 import pygame
 import sys
 from settings import WIDTH, HEIGTH
-from levels.level import Level
 
 class Event:
     def __init__(self, game):
