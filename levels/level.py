@@ -16,19 +16,21 @@ class Level:
         self.level_map(LevelType.OPENMAP)
 
     def create_map(self, level_map: list):
-        layouts = {
+        self.layouts = {
             #style: layout
             'boundary': import_csv_layout('./storage/map/map_Boundary.csv'),
             'objects': import_csv_layout('./storage/map/map_Objects.csv'),
-            'monuments': import_csv_layout('./storage/map/map_Monuments.csv')
+            'monuments': import_csv_layout('./storage/map/map_Monuments.csv'),
+            'interactives': import_csv_layout('./storage/map/map_Interactives.csv'),
         }
 
-        graphics = {
+        self.graphics = {
             'objects': import_folder('./assets/graphics/objects'),
-            'monuments': import_folder('./assets/graphics/monuments')
+            'monuments': import_folder('./assets/graphics/monuments'),
+            'interactives': import_folder('./assets/graphics/interactives')
         }
 
-        for style, layout in layouts.items():
+        for style, layout in self.layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
                     if col != '-1':
@@ -36,15 +38,19 @@ class Level:
                         y = row_index * TILESIZE * ZOOM
 
                         if style == 'boundary':
-                            Tile((x, y), (row_index, col_index), [self.obstacles_sprites], 'invisible')
+                            Tile((x, y), (row_index, col_index), int(col), [self.obstacles_sprites], 'invisible')
                         if style == 'objects':
-                            surface = graphics['objects'][int(col)]
+                            surface = self.graphics['objects'][int(col)]
 
-                            Tile((x, y), (row_index, col_index), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface)
+                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface)
                         if style == 'monuments':
-                            surface = graphics['monuments'][int(col)]
+                            surface = self.graphics['monuments'][int(col)]
                             
-                            Tile((x, y), (row_index, col_index), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
+                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
+                        if style == 'interactives':
+                            surface = self.graphics['interactives'][int(col)]
+
+                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface)
         
         self.player = Player((1200, 1200), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites)
 
@@ -65,6 +71,9 @@ class Level:
                         if target_sprite.sprite_type == 'object':
                             target_sprite.kill()
                             change_value_in_csv('./storage/map/map_Objects.csv', target_sprite.original_pos, -1) #-1 = empty space in map
+                        if target_sprite.sprite_type == 'interactive':
+                            target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1] 
+                            change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
 
     def run(self):
         self.visible_sprites.custom_draw(self.player)
