@@ -1,7 +1,7 @@
 import pygame
 from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType
-from utils.suport import import_csv_layout, import_folder, resize_image
+from utils.suport import import_csv_layout, import_folder, resize_image, change_value_in_csv
 from levels.tile import Tile
 from entities.player import Player
 
@@ -10,14 +10,17 @@ class Level:
         self.visible_sprites = YSortCameraGroup()
         self.obstacles_sprites = pygame.sprite.Group()
 
+        self.attack_sprites = pygame.sprite.Group()
+        self.attackable_sprites = pygame.sprite.Group()
+
         self.level_map(LevelType.OPENMAP)
 
     def create_map(self, level_map: list):
         layouts = {
             #style: layout
-            'boundary': import_csv_layout('./assets/map/map_Boundary.csv'),
-            'objects': import_csv_layout('./assets/map/map_Objects.csv'),
-            'monuments': import_csv_layout('./assets/map/map_Monuments.csv')
+            'boundary': import_csv_layout('./storage/map/map_Boundary.csv'),
+            'objects': import_csv_layout('./storage/map/map_Objects.csv'),
+            'monuments': import_csv_layout('./storage/map/map_Monuments.csv')
         }
 
         graphics = {
@@ -33,17 +36,17 @@ class Level:
                         y = row_index * TILESIZE * ZOOM
 
                         if style == 'boundary':
-                            Tile((x, y), [self.obstacles_sprites], 'invisible')
+                            Tile((x, y), (row_index, col_index), [self.obstacles_sprites], 'invisible')
                         if style == 'objects':
                             surface = graphics['objects'][int(col)]
 
-                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'object', surface)
+                            Tile((x, y), (row_index, col_index), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface)
                         if style == 'monuments':
                             surface = graphics['monuments'][int(col)]
                             
-                            Tile((x, y), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
+                            Tile((x, y), (row_index, col_index), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
         
-        self.player = Player((1200, 1200), [self.visible_sprites], self.obstacles_sprites)
+        self.player = Player((1200, 1200), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites)
 
     def level_map(self, level_type: str):
         match level_type:
@@ -52,8 +55,20 @@ class Level:
             case LevelType.DUNGEON:
                 self.create_map(WORLD_MAP)
 
+    def player_attack_logic(self, player: Player):
+        if player.attacking:
+            for attack_sprite in self.attack_sprites:
+                collision_sprites = pygame.sprite.spritecollide(attack_sprite, self.attackable_sprites, False)
+
+                if collision_sprites:
+                    for target_sprite in collision_sprites:
+                        if target_sprite.sprite_type == 'object':
+                            target_sprite.kill()
+                            change_value_in_csv('./storage/map/map_Objects.csv', target_sprite.original_pos, -1) #-1 = empty space in map
+
     def run(self):
         self.visible_sprites.custom_draw(self.player)
+        self.player_attack_logic(self.player)
         self.visible_sprites.update()
 
 class YSortCameraGroup(pygame.sprite.Group):
