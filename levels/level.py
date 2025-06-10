@@ -1,7 +1,7 @@
 import pygame
 from settings import WORLD_MAP, TILESIZE, ZOOM
-from utils.enums import LevelType, OpenMapTileType, BoundaryTyleTipe
-from utils.suport import import_csv_layout, import_folder
+from utils.enums import LevelType
+from utils.suport import import_csv_layout, import_folder, resize_image
 from levels.tile import Tile
 from entities.player import Player
 
@@ -64,8 +64,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         self.offset = pygame.math.Vector2()
 
-        self.floor_surface = pygame.image.load('./assets/graphics/tilesmap/ground.png').convert_alpha()
-        self.floor_surface = pygame.transform.scale(self.floor_surface, (self.floor_surface.get_width() * ZOOM, self.floor_surface.get_height() * ZOOM))
+        self.floor_surface = resize_image('./assets/graphics/tilesmap/ground.png')
 
         self.floor_rect = self.floor_surface.get_rect(topleft = (0, 0))
 

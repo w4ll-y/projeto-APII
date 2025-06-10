@@ -22,3 +22,9 @@ def import_folder(path):
             surface_list.append(image_surf)
 
         return surface_list
+    
+def resize_image(image_path):
+    image = pygame.image.load(image_path).convert_alpha()
+    image = pygame.transform.scale(image, (image.get_width() * ZOOM, image.get_height() * ZOOM))
+
+    return image
