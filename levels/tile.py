@@ -1,17 +1,13 @@
 import pygame
 from utils.enums import OpenMapTileType
+from settings import TILESIZE, ZOOM
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos: tuple, groups: list, tile_type: str):
+    def __init__(self, pos: tuple, groups: list, sprite_type: str, surface = pygame.Surface((TILESIZE * ZOOM, TILESIZE * ZOOM))):
         super().__init__(groups)
 
-        self.tile_type = tile_type
+        self.sprite_type = sprite_type
+        self.image = surface
 
-        self.set_image()
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(0, -10)
-
-    def set_image(self):
-        match self.tile_type:
-            case OpenMapTileType.ROCK:
-                self.image = pygame.image.load('assets/sprites/openmap/rock.png').convert_alpha()
+        self.hitbox = self.rect.inflate(0, -5)

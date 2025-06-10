@@ -1,13 +1,17 @@
 import pygame
 from utils.enums import OpenMapTileType
+from settings import ZOOM
+from utils.suport import resize_image
 from os import walk
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load('assets/sprites/player/down_idle/player.png').convert_alpha()
+
+        self.image = resize_image('assets/sprites/player/down_idle/player.png')
+
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(0, -10)
+        self.hitbox = self.rect.inflate(-10, -5)
 
         self.import_player_asset()
         self.status = 'down'
@@ -31,14 +35,13 @@ class Player(pygame.sprite.Sprite):
         for animation in self.animations.keys():
             full_path = character_path + animation
             self.animations[animation] = self.import_folder(full_path)
-        print(self.animations)
 
     def import_folder(self, path):
         surface_list = []
         for _,__,img_files in walk(path):
             for image in img_files:
                 full_path = path+'/'+image
-                image_surf = pygame.image.load(full_path).convert_alpha()
+                image_surf = resize_image(full_path)
                 surface_list.append(image_surf)
         return surface_list
     
@@ -67,15 +70,12 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_n]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
-                print("ataque")
 
             if keys[pygame.K_m]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
-                print("tiro")
 
     def get_status(self):
-
         if self.direction.x == 0 and self.direction.y == 0:
             if not 'idle' in self.status and not 'attack' in self.status:
                 self.status = self.status + "_idle"
@@ -91,7 +91,6 @@ class Player(pygame.sprite.Sprite):
             else:
                 if 'attack' in self.status:
                     self.status = self.status.replace('_attack','')
-        print(self.status)
 
     def move(self, speed):
         if self.direction.magnitude() != 0:
