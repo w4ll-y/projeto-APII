@@ -4,6 +4,7 @@ from utils.enums import LevelType
 from utils.suport import import_csv_layout, import_folder, resize_image, change_value_in_csv
 from levels.tile import Tile
 from entities.player import Player
+from entities.weapons import Weapon
 
 class Level:
     def __init__(self):
@@ -12,6 +13,7 @@ class Level:
 
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
+        self.current_attack = None
 
         self.level_map(LevelType.OPENMAP)
 
@@ -52,7 +54,16 @@ class Level:
 
                             Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface)
         
-        self.player = Player((1200, 1200), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites)
+        self.player = Player((1200, 1200), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack)
+
+    def create_attack(self):
+        self.current_attack = Weapon(self.player,[self.visible_sprites])
+        
+        
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        self.current_attack = None
 
     def level_map(self, level_type: str):
         match level_type:
