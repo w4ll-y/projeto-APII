@@ -26,3 +26,8 @@ WORLD_MAP = [
     [''] + [''] * 28 + [''],
     [''] * 30,
 ]
+
+WEAPON_DATA = {
+    'facao': {'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png'},
+    'espingarda': {'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png'}
+}
