@@ -4,6 +4,10 @@ FPS = 60
 TILESIZE = 32
 ZOOM = 1.5
 
+HEALTH_HEIGHT = 32
+HEALTH_WIDTH = 32
+ITEM_BOX_SIZE = 80
+
 WORLD_MAP = [
     [''] * 30,
     [''] + [''] * 28 + [''],
