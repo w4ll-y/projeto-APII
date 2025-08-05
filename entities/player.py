@@ -31,6 +31,8 @@ class Player(pygame.sprite.Sprite):
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
+        
+        self.attack_button_pressed = False
 
         self.obstacle_sprites = obstacle_sprites
 
@@ -75,10 +77,13 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.direction.x = 0
 
-            if keys[pygame.K_n]:
+            if keys[pygame.K_n] and not self.attack_button_pressed:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
+                self.attack_button_pressed = True
                 self.create_attack()
+            elif not keys[pygame.K_n] and self.attack_button_pressed:
+                self.attack_button_pressed = False
 
             if keys[pygame.K_m]:
                 self.attacking = True
@@ -112,6 +117,9 @@ class Player(pygame.sprite.Sprite):
                     self.status = self.status.replace('_attack','')
 
     def move(self, speed):
+        if self.attacking:
+            return None
+        
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 

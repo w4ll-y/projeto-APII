@@ -60,7 +60,6 @@ class Level:
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites])
         
-        
     def destroy_attack(self):
         if self.current_attack:
             self.current_attack.kill()
