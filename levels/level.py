@@ -51,8 +51,9 @@ class Level:
                             Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
                         if style == 'interactives':
                             surface = self.graphics['interactives'][int(col)]
+                            activated = bool(int(col))
 
-                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface)
+                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface, activated)
         
         self.player = Player((1200, 1200), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack)
 
@@ -83,8 +84,11 @@ class Level:
                             target_sprite.kill()
                             change_value_in_csv('./storage/map/map_Objects.csv', target_sprite.original_pos, -1) #-1 = empty space in map
                         if target_sprite.sprite_type == 'interactive':
-                            target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1] 
-                            change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
+                            if target_sprite.activated == False:
+                                target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1]
+                                target_sprite.activated = True
+
+                                change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
 
     def run(self):
         self.visible_sprites.custom_draw(self.player)
