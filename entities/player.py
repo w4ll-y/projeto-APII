@@ -1,6 +1,6 @@
 import pygame
 from utils.enums import OpenMapTileType
-from settings import ZOOM,WEAPON_DATA, DEFAULT_HEALTH_VALUE, DEFAULT_ACTUAL_HEALTH_VALUE
+from settings import ZOOM,WEAPON_DATA, DEFAULT_STATS_VALUE, DEFAULT_ACTUAL_STATS_VALUE
 from utils.suport import resize_image
 from os import walk
 
@@ -36,18 +36,18 @@ class Player(pygame.sprite.Sprite):
         self.obstacle_sprites = obstacle_sprites
 
         self.stats = {
-            'health': DEFAULT_HEALTH_VALUE * 3,
-            'energy': 50,
-            'attack': 8,
-            'magic':  4,
+            'health': DEFAULT_STATS_VALUE * 3,
+            'energy': DEFAULT_STATS_VALUE,
+            'attack': DEFAULT_ACTUAL_STATS_VALUE,
+            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5
         }
 
         self.actual_stats = {
-            'health': DEFAULT_ACTUAL_HEALTH_VALUE * 6,
-            'energy': 50,
-            'attack': 8,
-            'magic':  4,
+            'health': DEFAULT_ACTUAL_STATS_VALUE * 6,
+            'energy': DEFAULT_ACTUAL_STATS_VALUE * 2,
+            'attack': DEFAULT_ACTUAL_STATS_VALUE,
+            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5
         }
 

@@ -28,5 +28,24 @@ class Hud:
 
             self.display_surface.blit(heart, heart_rect)
 
+    def show_frt_hand_weapons(self, weapon_index: int):
+        bg_rect = pygame.Rect(50, self.display_surface.get_height() - 200, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
+
+        weapon_name = list(WEAPON_DATA.keys())[weapon_index]
+        weapon_graphic = resize_image(WEAPON_DATA[weapon_name]["graphic"], 1.5)
+        weapon_rect = weapon_graphic.get_rect(center= bg_rect.center)
+
+        pygame.draw.rect(self.display_surface, UI_BOX_BG_COLOR, bg_rect)
+        pygame.draw.rect(self.display_surface, UI_BOX_BORDER_COLOR, bg_rect, 3)
+        self.display_surface.blit(weapon_graphic, weapon_rect)
+    
+    def show_scd_hand_weapons(self):
+        bg_rect = pygame.Rect(60 + ITEM_BOX_SIZE, self.display_surface.get_height() - 180, ITEM_BOX_SIZE - 20, ITEM_BOX_SIZE - 20)
+
+        pygame.draw.rect(self.display_surface, UI_BOX_BG_COLOR, bg_rect)
+        pygame.draw.rect(self.display_surface, UI_BOX_BORDER_COLOR, bg_rect, 3)
+
     def display(self, player: Player):
         self.show_health(player.actual_stats["health"], player.stats["health"])
+        self.show_frt_hand_weapons(player.weapon_index)
+        self.show_scd_hand_weapons()

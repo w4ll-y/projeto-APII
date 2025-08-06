@@ -4,12 +4,15 @@ FPS = 60
 TILESIZE = 32
 ZOOM = 1.5
 
-DEFAULT_HEALTH_VALUE = 50 #The player's default health must be a multiple of 50
-DEFAULT_ACTUAL_HEALTH_VALUE = 25 #The actual player health must be a multiple of 25
+DEFAULT_STATS_VALUE = 50 #The player's default stats must be a multiple of 50
+DEFAULT_ACTUAL_STATS_VALUE = 25 #The actual player stats must be a multiple of 25
 
 HEALTH_HEIGHT = 64
 HEALTH_WIDTH = 64
-ITEM_BOX_SIZE = 80
+
+ITEM_BOX_SIZE = 120
+UI_BOX_BG_COLOR = '#1D1D1D'
+UI_BOX_BORDER_COLOR = '#0A0A0A'
 
 WORLD_MAP = [
     [''] * 30,
