@@ -1,6 +1,6 @@
 import pygame
 from utils.enums import OpenMapTileType
-from settings import ZOOM,WEAPON_DATA, DEFAULT_HEALTH_VALUE, DEFAULT_ACTUAL_HEALTH_VALUE
+from settings import ZOOM,WEAPON_DATA, DEFAULT_STATS_VALUE, DEFAULT_ACTUAL_STATS_VALUE
 from utils.suport import resize_image
 from os import walk
 
@@ -20,13 +20,14 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2()
         self.attacking = False
+        self.scd_attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
         
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
         self.weapon_index = 0
-        self.weapon = list(WEAPON_DATA.keys())[self.weapon_index]
+        self.weapon = self.get_weapon(self.weapon_index)
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.switch_duration_cooldown = 200
@@ -36,20 +37,24 @@ class Player(pygame.sprite.Sprite):
         self.obstacle_sprites = obstacle_sprites
 
         self.stats = {
-            'health': DEFAULT_HEALTH_VALUE * 3,
-            'energy': 50,
-            'attack': 8,
-            'magic':  4,
+            'health': DEFAULT_STATS_VALUE * 3,
+            'energy': DEFAULT_STATS_VALUE,
+            'attack': DEFAULT_ACTUAL_STATS_VALUE,
+            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5
         }
 
         self.actual_stats = {
-            'health': DEFAULT_ACTUAL_HEALTH_VALUE * 6,
-            'energy': 50,
-            'attack': 8,
-            'magic':  4,
+            'health': DEFAULT_ACTUAL_STATS_VALUE * 6,
+            'energy': DEFAULT_STATS_VALUE,
+            'attack': DEFAULT_ACTUAL_STATS_VALUE,
+            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5
         }
+
+    def get_weapon(self, weapon_index: int):
+        weapon_name = list(WEAPON_DATA.keys())[weapon_index]
+        return WEAPON_DATA[weapon_name]
 
     def import_player_asset(self):
         character_path = 'assets/sprites/player/'
@@ -92,16 +97,18 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.direction.x = 0
 
-            if keys[pygame.K_n] and not self.attack_button_pressed:
+            if keys[pygame.K_n] and not self.attack_button_pressed and self.weapon["energy_spent"] <= self.actual_stats["energy"]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.attack_button_pressed = True
+
+                self.actual_stats["energy"] -= self.weapon["energy_spent"]
                 self.create_attack()
             elif not keys[pygame.K_n] and self.attack_button_pressed:
                 self.attack_button_pressed = False
 
             if keys[pygame.K_m]:
-                self.attacking = True
+                self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
             
             if keys[pygame.K_q] and self.can_switch_weapon:
@@ -112,7 +119,7 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.weapon_index = 0
 
-                self.weapon = list(WEAPON_DATA.keys())[self.weapon_index]
+                self.weapon = self.get_weapon(self.weapon_index)
 
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
