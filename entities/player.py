@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = self.rect.inflate(-10, -5)
 
         self.import_player_asset()
-        self.status = 'down'
+        self.move_status = 'down'
         self.frame_index = 0
         self.animation_speed = 0.15
 
@@ -76,19 +76,19 @@ class Player(pygame.sprite.Sprite):
 
             if keys[pygame.K_w]:
                 self.direction.y = -1
-                self.status = 'up'
+                self.move_status = 'up'
             elif keys[pygame.K_s]:
                 self.direction.y = 1
-                self.status = 'down'
+                self.move_status = 'down'
             else:
                 self.direction.y = 0
 
             if keys[pygame.K_a]:
                 self.direction.x = -1
-                self.status = 'left'
+                self.move_status = 'left'
             elif keys[pygame.K_d]:
                 self.direction.x = 1
-                self.status = 'right'
+                self.move_status = 'right'
             else:
                 self.direction.x = 0
 
@@ -116,20 +116,20 @@ class Player(pygame.sprite.Sprite):
 
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
-            if not 'idle' in self.status and not 'attack' in self.status:
-                self.status = self.status + "_idle"
+            if not 'idle' in self.move_status and not 'attack' in self.move_status:
+                self.move_status = self.move_status + "_idle"
 
             if self.attacking:
                 self.direction.x = 0
                 self.direction.y = 0
-                if not 'attack' in self.status:
-                    if 'idle' in self.status:
-                        self.status = self.status.replace('_idle','_attack')
+                if not 'attack' in self.move_status:
+                    if 'idle' in self.move_status:
+                        self.move_status = self.move_status.replace('_idle','_attack')
                     else:
-                        self.status = self.status + '_attack'
+                        self.move_status = self.move_status + '_attack'
             else:
-                if 'attack' in self.status:
-                    self.status = self.status.replace('_attack','')
+                if 'attack' in self.move_status:
+                    self.move_status = self.move_status.replace('_attack','')
 
     def move(self, speed):
         if self.attacking:
@@ -166,7 +166,7 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox.top = sprite.hitbox.bottom
 
     def animate(self):
-        animation = self.animations[self.status]
+        animation = self.animations[self.move_status]
         self.frame_index += self.animation_speed
         if self.frame_index >= len(animation):
             self.frame_index = 0
