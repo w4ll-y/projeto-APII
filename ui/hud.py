@@ -19,7 +19,7 @@ class Hud:
 
     def show_health(self, player_health, player_max_health):
         for index, health in enumerate(range(DEFAULT_HEALTH_VALUE, player_max_health + 1, DEFAULT_HEALTH_VALUE)):
-            heart = resize_image(self.health_state_path(index, health, player_health), 1.5)
+            heart = resize_image(self.health_state_path(index, health, player_health), 1.7)
             heart_rect = heart.get_rect()
 
             heart_rect.topleft = (index * HEALTH_WIDTH + 10, 10)
