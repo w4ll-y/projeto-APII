@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2()
         self.attacking = False
+        self.scd_attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
         
@@ -107,7 +108,7 @@ class Player(pygame.sprite.Sprite):
                 self.attack_button_pressed = False
 
             if keys[pygame.K_m]:
-                self.attacking = True
+                self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
             
             if keys[pygame.K_q] and self.can_switch_weapon:
