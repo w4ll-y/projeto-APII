@@ -3,10 +3,13 @@ from utils.enums import OpenMapTileType
 from settings import ZOOM,WEAPON_DATA, DEFAULT_STATS_VALUE, DEFAULT_ACTUAL_STATS_VALUE
 from utils.suport import resize_image
 from os import walk
+from inputs.input_manager import InputManager
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager):
         super().__init__(groups)
+
+        self.inputs = inputs
 
         self.image = resize_image('assets/sprites/player/down_idle/player.png')
 
@@ -77,41 +80,41 @@ class Player(pygame.sprite.Sprite):
     
     def input(self):
         if not self.attacking:
-            keys = pygame.key.get_pressed()
+            inputs = self.inputs.get_input()
 
-            if keys[pygame.K_w]:
+            if inputs.is_walk_up():
                 self.direction.y = -1
                 self.move_status = 'up'
-            elif keys[pygame.K_s]:
+            elif inputs.is_walk_down():
                 self.direction.y = 1
                 self.move_status = 'down'
             else:
                 self.direction.y = 0
 
-            if keys[pygame.K_a]:
+            if inputs.is_walk_left():
                 self.direction.x = -1
                 self.move_status = 'left'
-            elif keys[pygame.K_d]:
+            elif inputs.is_walk_right():
                 self.direction.x = 1
                 self.move_status = 'right'
             else:
                 self.direction.x = 0
 
-            if keys[pygame.K_n] and not self.attack_button_pressed and self.weapon["energy_spent"] <= self.actual_stats["energy"]:
+            if inputs.is_frst_attacking() and not self.attack_button_pressed and self.weapon["energy_spent"] <= self.actual_stats["energy"]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.attack_button_pressed = True
 
                 self.actual_stats["energy"] -= self.weapon["energy_spent"]
                 self.create_attack()
-            elif not keys[pygame.K_n] and self.attack_button_pressed:
+            elif not inputs.is_frst_attacking() and self.attack_button_pressed:
                 self.attack_button_pressed = False
 
-            if keys[pygame.K_m]:
+            if inputs.is_scd_attacking():
                 self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
             
-            if keys[pygame.K_q] and self.can_switch_weapon:
+            if inputs.is_changing_weapon() and self.can_switch_weapon:
                 self.can_switch_weapon = False
                 self.weapon_switch_time = pygame.time.get_ticks()
                 if self.weapon_index < len(list(WEAPON_DATA.keys())) - 1:

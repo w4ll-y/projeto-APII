@@ -11,7 +11,9 @@ class Event:
         self.window_h = HEIGTH
 
     def run(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -39,4 +41,6 @@ class Event:
                             self.game.screen = pygame.display.set_mode((self.window_w, self.window_h))
                         
                         self.game.level.visible_sprites.save_window_size()
+
+        return events
 

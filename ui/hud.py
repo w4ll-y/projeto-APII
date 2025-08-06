@@ -2,14 +2,15 @@ import pygame
 from entities.player import Player
 from settings import * 
 from utils.suport import resize_image
+from inputs.input_manager import InputManager
+from utils.enums import InputType
 
 class Hud:
-    def __init__(self):
+    def __init__(self, inputs: InputManager):
+        self.inputs = inputs
         self.display_surface = pygame.display.get_surface()
     
     def health_state_path(self, index: int, health: int, player_health: int):
-        compare_health = player_health - health
-
         if health <= player_health:
             return 'assets/graphics/hud/health/full_health.png'
         elif health - player_health == DEFAULT_ACTUAL_STATS_VALUE:
@@ -18,10 +19,9 @@ class Hud:
             return 'assets/graphics/hud/health/empty_health.png'
     
     def button_graphic(self, player_action: bool, button_name: str):
-        if player_action:
-            return f'assets/graphics/hud/keyboard/{button_name}/pressed.png'
+        selected_input = self.inputs.get_input()
         
-        return f'assets/graphics/hud/keyboard/{button_name}/default.png'
+        return f'assets/graphics/hud/inputs/{'keyboard' if selected_input.type == InputType.KEYBOARD else 'joystick'}/{button_name}/{'default' if not player_action else 'pressed'}.png'
 
     def show_health(self, player_health, player_max_health):
         for index, health in enumerate(range(DEFAULT_STATS_VALUE, player_max_health + 1, DEFAULT_STATS_VALUE)):
@@ -51,10 +51,10 @@ class Hud:
         weapon_graphic = resize_image(player_weapon["graphic"], 1.5)
         weapon_rect = weapon_graphic.get_rect(center= bg_rect.center)
 
-        key_graphic = resize_image(self.button_graphic(player_attacking, 'n_button'), 0.8)
+        key_graphic = resize_image(self.button_graphic(player_attacking, 'frst_attack_button'), 0.8)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
-        change_weapon_key_graphic = resize_image(self.button_graphic(change_weapon, 'q_button'), 0.6)
+        change_weapon_key_graphic = resize_image(self.button_graphic(change_weapon, 'change_weapon'), 0.6)
         change_weapon_key_rect = change_weapon_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
 
         change_weapon_graphic = resize_image('assets/graphics/hud/weapon/change_weapon.png', 0.12)
@@ -70,7 +70,7 @@ class Hud:
     def show_scd_hand_weapons(self, player_action: bool):
         bg_rect = pygame.Rect(70 + ITEM_BOX_SIZE, self.display_surface.get_height() - 180, ITEM_BOX_SIZE - 20, ITEM_BOX_SIZE - 20)
 
-        key_graphic = resize_image(self.button_graphic(player_action, 'm_button'), 0.7)
+        key_graphic = resize_image(self.button_graphic(player_action, 'scd_attack_button'), 0.7)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
