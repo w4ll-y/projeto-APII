@@ -34,8 +34,8 @@ def change_value_in_csv(path: str, pos: tuple, value: int):
         file.writerows(layout)
     
 
-def resize_image(image_path: str):
+def resize_image(image_path: str, zoom_modificator: float = 1):
     image = pygame.image.load(image_path).convert_alpha()
-    image = pygame.transform.scale(image, (image.get_width() * ZOOM, image.get_height() * ZOOM))
+    image = pygame.transform.scale(image, (image.get_width() * ZOOM * zoom_modificator, image.get_height() * ZOOM * zoom_modificator))
 
     return image

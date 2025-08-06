@@ -5,6 +5,7 @@ from utils.suport import import_csv_layout, import_folder, resize_image, change_
 from levels.tile import Tile
 from entities.player import Player
 from entities.weapons import Weapon
+from ui.hud import Hud
 
 class Level:
     def __init__(self):
@@ -14,6 +15,8 @@ class Level:
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
         self.current_attack = None
+
+        self.hud = Hud()
 
         self.level_map(LevelType.OPENMAP)
 
@@ -93,6 +96,7 @@ class Level:
         self.visible_sprites.custom_draw(self.player)
         self.player_attack_logic(self.player)
         self.visible_sprites.update()
+        self.hud.display(self.player)
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self):

@@ -4,6 +4,13 @@ FPS = 60
 TILESIZE = 32
 ZOOM = 1.5
 
+DEFAULT_HEALTH_VALUE = 50 #The player's default health must be a multiple of 50
+DEFAULT_ACTUAL_HEALTH_VALUE = 25 #The actual player health must be a multiple of 25
+
+HEALTH_HEIGHT = 64
+HEALTH_WIDTH = 64
+ITEM_BOX_SIZE = 80
+
 WORLD_MAP = [
     [''] * 30,
     [''] + [''] * 28 + [''],

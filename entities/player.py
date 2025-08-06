@@ -1,6 +1,6 @@
 import pygame
 from utils.enums import OpenMapTileType
-from settings import ZOOM,WEAPON_DATA   
+from settings import ZOOM,WEAPON_DATA, DEFAULT_HEALTH_VALUE, DEFAULT_ACTUAL_HEALTH_VALUE
 from utils.suport import resize_image
 from os import walk
 
@@ -19,7 +19,6 @@ class Player(pygame.sprite.Sprite):
         self.animation_speed = 0.15
 
         self.direction = pygame.math.Vector2()
-        self.speed = 5
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
@@ -35,6 +34,22 @@ class Player(pygame.sprite.Sprite):
         self.attack_button_pressed = False
 
         self.obstacle_sprites = obstacle_sprites
+
+        self.stats = {
+            'health': DEFAULT_HEALTH_VALUE * 3,
+            'energy': 50,
+            'attack': 8,
+            'magic':  4,
+            'speed': 5
+        }
+
+        self.actual_stats = {
+            'health': DEFAULT_ACTUAL_HEALTH_VALUE * 6,
+            'energy': 50,
+            'attack': 8,
+            'magic':  4,
+            'speed': 5
+        }
 
     def import_player_asset(self):
         character_path = 'assets/sprites/player/'
@@ -175,4 +190,4 @@ class Player(pygame.sprite.Sprite):
         self.cooldowns()
         self.get_status()
         self.animate()
-        self.move(self.speed)
+        self.move(self.actual_stats['speed'])
