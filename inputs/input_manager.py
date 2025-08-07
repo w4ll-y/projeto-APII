@@ -6,7 +6,7 @@ from utils.enums import InputType
 
 class InputManager():
     def __init__(self):
-        self.input_type = InputType.JOYSTICK
+        self.input_type = InputType.KEYBOARD
 
         try:
             self.joystick = pygame.joystick.Joystick(0)
