@@ -18,7 +18,7 @@ class InputManager():
         for event in events:
             if event.type == pygame.KEYDOWN:
                 self.input_type = InputType.KEYBOARD
-            elif event.type == pygame.JOYBUTTONDOWN:
+            elif event.type == pygame.JOYBUTTONDOWN or event.type == pygame.JOYAXISMOTION  or event.type == pygame.JOYHATMOTION:
                 self.input_type = InputType.JOYSTICK
 
     def get_input(self) -> InputInterface:
