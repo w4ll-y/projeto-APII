@@ -29,7 +29,7 @@ def change_value_in_csv(path: str, pos: tuple, value: int):
         layout = list(reader(level_map, delimiter=','))
         layout[int(pos[0])][int(pos[1])] = str(value)
 
-    with open(path, 'w') as level_map:
+    with open(path, 'w', newline='', encoding='utf-8') as level_map:
         file = writer(level_map)
         file.writerows(layout)
     
