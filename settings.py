@@ -50,6 +50,6 @@ WEAPON_DATA = {
 }
 
 ENEMY_DATA = {
-    'enemy1': {'helth': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistence': 3, 'attack_radius': 80, 'notice_radius': 360},
-    'enemy2': {'helth': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistence': 3, 'attack_radius': 80, 'notice_radius': 360}
+    'enemy1': {'health': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 80, 'notice_radius': 360},
+    'enemy2': {'health': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 80, 'notice_radius': 360}
 }
