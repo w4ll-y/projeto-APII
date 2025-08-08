@@ -61,7 +61,7 @@ class Enemy(Entity):
 
     def actions(self,player):
         if self.status == 'attack':
-            print('attack')
+           pass
         elif self.status == 'move':
             self.direction = self.get_player_distance_direction(player)[1]
         else:
