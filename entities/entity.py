@@ -8,6 +8,8 @@ class Entity(pygame.sprite.Sprite):
         self.animation_speed = 0.15
 
         self.direction = pygame.math.Vector2()
+
+        self.attacking = False
         
     def move(self, speed):
         if self.attacking:
