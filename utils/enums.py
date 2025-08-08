@@ -11,3 +11,7 @@ class BoundaryTyleTipe(Enum):
     SAND = 0
     GRASS = 1
     WATER = 2
+
+class InputType(Enum):
+    KEYBOARD = 0
+    JOYSTICK = 1

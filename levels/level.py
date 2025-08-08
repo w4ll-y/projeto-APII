@@ -6,6 +6,7 @@ from levels.tile import Tile
 from entities.player import Player
 from entities.weapons import Weapon
 from ui.hud import Hud
+from inputs.input_manager import InputManager
 from entities.enemy import Enemy
 
 class Level:
@@ -17,9 +18,13 @@ class Level:
         self.attackable_sprites = pygame.sprite.Group()
         self.current_attack = None
 
-        self.hud = Hud()
+        self.inputs = InputManager()
+        self.hud = Hud(self.inputs)
 
         self.level_map(LevelType.OPENMAP)
+
+    def set_input_type(self, events):
+        self.inputs.set_input_type(events)
 
     def create_map(self, level_map: list):
         self.layouts = {
@@ -60,12 +65,9 @@ class Level:
 
                             Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface, activated)
         
-
                         if style == 'entities':
-
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack)
-                            
+                                self.player = Player((x, y), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
                             else:
                                 if col == '0':
                                     entities_name = 'enemy1'
@@ -105,7 +107,8 @@ class Level:
 
                                 change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
 
-    def run(self):
+    def run(self, events):
+        self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.player_attack_logic(self.player)
         self.visible_sprites.update()
