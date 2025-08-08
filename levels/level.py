@@ -69,11 +69,7 @@ class Level:
                             if col == '1':
                                 self.player = Player((x, y), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
                             else:
-                                if col == '0':
-                                    entities_name = 'enemy1'
-                                elif col == '2':
-                                    entities_name = 'enemy2'
-                                Enemy(entities_name, (x,y), [self.visible_sprites], self.obstacles_sprites)
+                                Enemy(int(col), (x,y), [self.visible_sprites], self.obstacles_sprites)
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites])

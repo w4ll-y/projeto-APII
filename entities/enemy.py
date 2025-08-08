@@ -5,14 +5,14 @@ from os import walk
 from utils.suport import resize_image
 
 class Enemy(Entity):
-    def __init__(self, enemy_name, pos, groups, obstacle_sprites):
+    def __init__(self, id, pos, groups, obstacle_sprites):
 
         #geral
         super().__init__(groups)
         self.sprite_type = 'enemy'
 
         #grafico
-        self.import_graphics(enemy_name)
+        self.import_graphics(id)
         self.move_status = 'idle'
         self.image = self.animations[self.move_status][self.frame_index]
         
@@ -21,8 +21,8 @@ class Enemy(Entity):
         self.obstacle_sprites = obstacle_sprites
 
         #stats
-        self.enemy_name = enemy_name
-        enemy_info = ENEMY_DATA[self.enemy_name]
+        self.id = id
+        enemy_info = ENEMY_DATA[self.id]
         self.health = enemy_info['health']
         self.speed = enemy_info['speed']
         self.attack_damage = enemy_info['damage']
@@ -31,9 +31,9 @@ class Enemy(Entity):
         self.notice_radius = enemy_info['notice_radius']
         self.attack_type = enemy_info['attack_type']
 
-    def import_graphics(self,name):
+    def import_graphics(self, id):
         self.animations = {'idle': [], 'move': [], 'attack': []}
-        main_path = f'assets/sprites/enemies/{name}/'
+        main_path = f'assets/sprites/enemies/{id}/'
         for animaton in self.animations.keys():
             self.animations[animaton] = self.import_folder(main_path + animaton)
 
