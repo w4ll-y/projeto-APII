@@ -13,12 +13,12 @@ def import_folder(path: str):
     for _, __, img_files in walk(path):
         surface_list = [0 for _ in range(len(img_files))]
 
-        for image in img_files:
+        for index, image in enumerate(img_files):
             full_path = path + '/' + image
             image_surf = pygame.image.load(full_path).convert_alpha()
             image_surf = pygame.transform.scale(image_surf, (image_surf.get_width() * ZOOM, image_surf.get_height() * ZOOM))
 
-            surface_list[int(image[:2]) - 1] = image_surf 
+            surface_list[index] = image_surf 
 
         return surface_list
     
@@ -39,3 +39,29 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     image = pygame.transform.scale(image, (image.get_width() * ZOOM * zoom_modificator, image.get_height() * ZOOM * zoom_modificator))
 
     return image
+
+def obj_inflate_ajust(object_id: int):
+    if object_id == 0:
+        return (0, -20)
+    elif object_id == 11:
+        return (-160, 0)
+    elif object_id == 12:
+        return (-50, -60)
+        
+    return (0, -5)
+
+def obj_hitbox_ajust(object_id: int):
+    if object_id == 1 or object_id == 7:
+        return (-31, 0, -31, 0)
+    elif object_id == 2 or object_id == 8:
+        return (-32, 0, 64, 0)
+    elif object_id == 5:
+        return (-32, 25, 64, -25)
+    elif object_id == 9:
+        return (32, -30, -32, -30)
+    elif object_id == 11:
+        return (0, -80, 0, -80)
+    elif object_id == 15:
+        return (0, -40, 0, -40)
+        
+    return (0, 0, 0, 0)

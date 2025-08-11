@@ -1,7 +1,7 @@
 import pygame
 from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType
-from utils.suport import import_csv_layout, import_folder, resize_image, change_value_in_csv
+from utils.suport import *
 from levels.tile import Tile
 from entities.player import Player
 from entities.weapons import Weapon
@@ -31,14 +31,12 @@ class Level:
             #style: layout
             'boundary': import_csv_layout('./storage/map/map_Boundary.csv'),
             'objects': import_csv_layout('./storage/map/map_Objects.csv'),
-            'monuments': import_csv_layout('./storage/map/map_Monuments.csv'),
             'interactives': import_csv_layout('./storage/map/map_Interactives.csv'),
             'entities': import_csv_layout('./storage/map/map_Entities.csv')
         }
 
         self.graphics = {
             'objects': import_folder('./assets/graphics/objects'),
-            'monuments': import_folder('./assets/graphics/monuments'),
             'interactives': import_folder('./assets/graphics/interactives')
         }
 
@@ -50,20 +48,16 @@ class Level:
                         y = row_index * TILESIZE * ZOOM
 
                         if style == 'boundary':
-                            Tile((x, y), (row_index, col_index), int(col), [self.obstacles_sprites], 'invisible')
+                            Tile({'topleft': (x,y)}, (row_index, col_index), int(col), [self.obstacles_sprites], 'invisible')
                         if style == 'objects':
                             surface = self.graphics['objects'][int(col)]
 
-                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface)
-                        if style == 'monuments':
-                            surface = self.graphics['monuments'][int(col)]
-                            
-                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites], 'monuments', surface)
+                            Tile({'midleft': (x,y)}, (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface, inflate_ajust=obj_inflate_ajust(int(col)), hitbox_ajust=obj_hitbox_ajust(int(col)))
                         if style == 'interactives':
                             surface = self.graphics['interactives'][int(col)]
                             activated = bool(int(col))
 
-                            Tile((x, y), (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface, activated)
+                            Tile({'topleft': (x,y)}, (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface, activated)
         
                         if style == 'entities':
                             if col == '1':
@@ -93,15 +87,13 @@ class Level:
 
                 if collision_sprites:
                     for target_sprite in collision_sprites:
-                        if target_sprite.sprite_type == 'object':
-                            target_sprite.kill()
-                            change_value_in_csv('./storage/map/map_Objects.csv', target_sprite.original_pos, -1) #-1 = empty space in map
                         if target_sprite.sprite_type == 'interactive':
-                            if target_sprite.activated == False:
-                                target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1]
-                                target_sprite.activated = True
+                            if target_sprite.original_value == 1:
+                                if target_sprite.activated == False:
+                                    target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1]
+                                    target_sprite.activated = True
 
-                                change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
+                                    change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
 
     def run(self, events):
         self.set_input_type(events)
