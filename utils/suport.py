@@ -11,6 +11,7 @@ def import_csv_layout(path: str):
     
 def import_folder(path: str):
     for _, __, img_files in walk(path):
+        img_files.sort()
         surface_list = [0 for _ in range(len(img_files))]
 
         for index, image in enumerate(img_files):
