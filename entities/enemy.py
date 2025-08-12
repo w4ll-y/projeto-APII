@@ -27,7 +27,7 @@ class Enemy(Entity):
         self.speed = enemy_info['speed']
         self.attack_damage = enemy_info['damage']
         self.resistance = enemy_info['resistance']
-        self.attacl_radius = enemy_info['attack_radius']
+        self.attack_radius = enemy_info['attack_radius']
         self.notice_radius = enemy_info['notice_radius']
         self.attack_type = enemy_info['attack_type']
 
@@ -52,23 +52,34 @@ class Enemy(Entity):
     def get_status(self,player):
         distance = self.get_player_distance_direction(player)[0]
 
-        if distance <= self.attacl_radius:
-            self.status = 'attack'
+        if distance <= self.attack_radius:
+            self.move_status = 'attack'
         elif distance <= self.notice_radius:
-            self.status = 'move'
+            self.move_status = 'move'
         else:
-            self.status = 'idle'
+            self.move_status = 'idle'
 
     def actions(self,player):
-        if self.status == 'attack':
+        if self.move_status == 'attack':
            pass
-        elif self.status == 'move':
+        elif self.move_status == 'move':
             self.direction = self.get_player_distance_direction(player)[1]
         else:
             self.direction = pygame.math.Vector2()
 
+    def animate(self):
+        animation = self.animations[self.move_status]
+        print(self.move_status)
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+
+        self.image = animation[int(self.frame_index)]
+        self.rect = self.image.get_rect(center = self.hitbox.center)
+
     def update(self):
         self.move(self.speed)
+        self.animate()
 
     def enemy_update(self,player):
         self.get_status(player)
