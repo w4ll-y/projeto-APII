@@ -53,6 +53,9 @@ class Player(Entity):
             'speed': 5
         }
 
+        self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/brkn_wand_horizontal_sword.wav')
+        self.weapon_attack_sound.set_volume(0.5)
+
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[weapon_index]
         return WEAPON_DATA[weapon_name]
@@ -102,6 +105,7 @@ class Player(Entity):
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.attack_button_pressed = True
+                self.weapon_attack_sound.play()
 
                 self.actual_stats["energy"] -= self.weapon["energy_spent"]
                 self.create_attack()
