@@ -1,7 +1,8 @@
 import pygame
+import time
 from entities.player import Player
 from settings import * 
-from utils.suport import resize_image
+from utils.suport import resize_image, import_folder_resize_image
 from inputs.input_manager import InputManager
 from utils.enums import InputType
 
@@ -9,6 +10,10 @@ class Hud:
     def __init__(self, inputs: InputManager):
         self.inputs = inputs
         self.display_surface = pygame.display.get_surface()
+
+        self.clock_sprites = import_folder_resize_image('assets/sprites/hud/clock', 0.7)
+        self.actual_clock_sprite = 0
+        self.time_to_change_sprite = pygame.time.get_ticks() + 800
     
     def health_state_path(self, index: int, health: int, player_health: int):
         if health <= player_health:
@@ -84,9 +89,39 @@ class Hud:
 
             self.display_surface.blit(image, rect)
 
-    def display(self, player: Player):
+    def show_time_to_finish(self, finish_game_time: float):
+        if pygame.time.get_ticks() >= self.time_to_change_sprite:
+            self.actual_clock_sprite = self.actual_clock_sprite + 1 if self.actual_clock_sprite < len(self.clock_sprites) - 1 else 0
+
+            self.time_to_change_sprite = pygame.time.get_ticks() + 800
+
+        time_to_finish = finish_game_time - time.time()
+
+        minutes = int((time_to_finish // 60) % 60)
+        seconds = int(time_to_finish % 60)
+        milisec = int((time_to_finish % 1) * 1000)
+
+        time_text = f'{minutes:02d}:{seconds:02d}:{milisec:03d}'
+
+        font = pygame.font.Font(size=36)
+        text_surface = font.render(time_text, True, (255, 255, 255) if time_to_finish > 60 else (255,  80, 0))
+
+        pos_x = self.display_surface.get_width() - text_surface.get_width() - 30
+        pos_y = 30
+
+        text_rect = text_surface.get_rect(center = (pos_x, pos_y))
+
+        #clock sprite
+        clock_surface = self.clock_sprites[self.actual_clock_sprite]
+        clock_rect = clock_surface.get_rect(center= (pos_x - 80, pos_y))
+
+        self.display_surface.blit(clock_surface, clock_rect)
+        self.display_surface.blit(text_surface, text_rect)
+
+    def display(self, player: Player, finish_game_time: float):
         self.show_health(player.actual_stats["health"], player.stats["health"])
         self.show_energy_bar(player.actual_stats["energy"], player.stats["energy"])
         self.show_frt_hand_weapons(player.actual_stats["energy"], player.weapon, player.attacking, not player.can_switch_weapon)
         self.show_scd_hand_weapons(player.scd_attacking)
         self.show_getted_item(player)
+        self.show_time_to_finish(finish_game_time)

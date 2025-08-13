@@ -145,14 +145,14 @@ class Level:
                 elif target_sprite.sprite_type == 'drop':
                     target_sprite.interaction(self.player)
 
-    def run(self, events):
+    def run(self, events, finish_game_time):
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
         self.player_attack_collision()
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
-        self.hud.display(self.player)
+        self.hud.display(self.player, finish_game_time)
         self.play_music()
 
 class YSortCameraGroup(pygame.sprite.Group):

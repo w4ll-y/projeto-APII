@@ -1,4 +1,5 @@
 import pygame
+import time
 from settings import *
 from core.event import Event
 from levels.level import Level
@@ -14,13 +15,15 @@ class Game:
         
         self.level = Level()
 
+        self.finish_game_time = time.time() + 600
+
     def run(self):
         while True:
             events = self.event.run()
             
             self.screen.fill('black')
 
-            self.level.run(events)
+            self.level.run(events, self.finish_game_time)
 
             pygame.display.update()
             self.clock.tick(FPS)
