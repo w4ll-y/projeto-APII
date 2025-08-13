@@ -23,21 +23,22 @@ class Level:
         self.hud = Hud(self.inputs)
 
         self.music_folder = 'assets/musics/background'
-        self.musics = None
-        self.music_channel = None
-
-        self.actual_music = -1
-        self.playing_music = False
+        self.music_channel = pygame.mixer.find_channel()
+        self.music_channel.set_volume(0.4)
+        self.music_channel.fadeout(800)
 
         self.level_map(LevelType.OPENMAP)
 
-    def set_music_list(self):
-        self.musics = import_folder_files(self.music_folder)
-        shuffle(self.musics)
+    def set_musics(self):
+        musics = import_folder_files(self.music_folder)
+        shuffle(musics)
 
-        main_sound = pygame.mixer.Sound(self.musics[self.actual_music])
-        main_sound.set_volume(0.6)
-        self.music_channel = main_sound.play(loops = -1, fade_ms=1000)
+        sound = pygame.mixer.Sound(musics[0])
+        self.music_channel.play(sound)
+        
+        for i in range(1, len(musics)):
+            sound = pygame.mixer.Sound(musics[i])
+            self.music_channel.queue(sound)
 
     def set_input_type(self, events):
         self.inputs.set_input_type(events)
@@ -82,12 +83,8 @@ class Level:
                                 Enemy(int(col), (x,y), [self.visible_sprites], self.obstacles_sprites)
 
     def play_music(self):
-        if not self.music_channel.get_busy() and self.actual_music <= len(self.musics):
-            self.actual_music += 1
-            self.set_music()
-        elif not self.music_channel.get_busy() and self.actual_music > len(self.musics):
-            self.set_music_list()
-            self.set_music()
+        if not self.music_channel.get_busy():
+            self.set_musics()
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites])
@@ -101,12 +98,10 @@ class Level:
         match level_type:
             case LevelType.OPENMAP:
                 self.music_folder = 'assets/musics/background'
-                self.set_music_list()
 
                 self.create_map(WORLD_MAP)
             case LevelType.DUNGEON:
                 self.music_folder = 'assets/musics/background'
-                self.set_music_list()
 
                 self.create_map(WORLD_MAP)
 
