@@ -1,13 +1,14 @@
 import pygame
+from random import randint 
 from settings import *
 from entities.player import Player
 from entities.entity import Entity
-from os import walk
 from utils.suport import resize_image, import_folder
-
+from utils.enums import DropType
+from levels.tiles.drop import Drop
 
 class Enemy(Entity):
-    def __init__(self, id, pos, groups, obstacle_sprites,damage_player):
+    def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups):
 
         #geral
         super().__init__(groups)
@@ -41,6 +42,8 @@ class Enemy(Entity):
         self.vulnerable = True
         self.hit_time = None
         self.invencibilyty_duration = 300
+
+        self.drop_groups = drop_groups
 
     def import_graphics(self, id):
         self.animations = {'idle': [], 'move': [], 'attack': []}
@@ -122,7 +125,18 @@ class Enemy(Entity):
 
     def check_death(self):
         if self.health <= 0:
+            self.drop()
             self.kill()
+
+    def drop(self):
+        n = randint(1, 100)
+        
+        pos = {'center': (self.rect.center[0] + 20, self.rect.center[1] + 20)}
+        
+        if n <= 20:
+            Drop(self.drop_groups, DropType.HEALTH, pos)
+        if 20 < n <= 40:
+            Drop(self.drop_groups, DropType.ENERGY, pos)
 
     def hit_reaction(self):
         if not self.vulnerable:
