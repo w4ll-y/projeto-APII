@@ -24,11 +24,11 @@ class Interactives(Tile):
         if 20 < n <= 40:
             Drop(groups, DropType.ENERGY, pos)
 
-    def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics):
+    def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
         if self.original_value == 0:
             return self.cactus_interaction(player)
         if self.original_value == 1:
-            return self.chest_interaction(player, offset_x, offset_y, input, interactive_graphics)
+            return self.chest_interaction(player, offset_x, offset_y, input, interactive_graphics, chest_items_map)
         
     def cactus_interaction(self, player: Player):
         self.rect2 = self.image.get_rect(**self.pos)
@@ -42,8 +42,8 @@ class Interactives(Tile):
 
         if not self.is_colliding: player.actual_stats['health'] -= DEFAULT_ACTUAL_STATS_VALUE
 
-    def chest_interaction(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics):
-        self.display_surface = pygame.display.get_surface()
+    def chest_interaction(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
+        display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(20, 20)
 
@@ -54,7 +54,7 @@ class Interactives(Tile):
             key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/{'default' if not player.interaction_button_pressed else 'pressed'}.png', 0.8)
             key_rect = key_graphic.get_rect(topleft = (pos_x + 4, pos_y - 50))
 
-            self.display_surface.blit(key_graphic, key_rect)
+            display_surface.blit(key_graphic, key_rect)
 
         if player.interaction_button_pressed:
             self.image = interactive_graphics[self.next_value]
@@ -64,4 +64,29 @@ class Interactives(Tile):
             change_value_in_csv('./storage/map/map_Interactives_Activated.csv', self.original_pos, 1) #save the activated state
 
             self.original_value = self.next_value
+
+            #chest item logic
+            item = chest_items_map[self.original_pos[0]][self.original_pos[1]]
+
+            item_pos_x = display_surface.get_width() // 2 - 16
+            item_pos_y = display_surface.get_height() // 2 - 64
+            
+            item_graphic = resize_image(f'assets/graphics/collectibles/chest_items/{str(item).rjust(2, '0')}.png', 0.8)
+            item_rect = item_graphic.get_rect(topleft = (item_pos_x, item_pos_y))
+
+            player.getting_item = {
+                'getted_time': pygame.time.get_ticks(),
+                'player_move_stats': player.move_status,
+                'item_id': item,
+                'item_graphic': item_graphic,
+                'item_rect': item_rect,
+                'item_action': self.chest_item_action
+            }
+
+    def chest_item_action(self, item_id: int, player: Player):
+        print(player.stats['health'])
+        if int(item_id) == 0:
+            player.stats['health'] += DEFAULT_STATS_VALUE
+            player.actual_stats['health'] = player.stats['health']
+        print(player.stats['health'])
 

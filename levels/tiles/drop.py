@@ -22,9 +22,9 @@ class Drop(pygame.sprite.Sprite):
 
         match self.drop_type:
             case DropType.HEALTH:
-                return resize_image(base_path + '0.png', 0.8)
+                return resize_image(base_path + '00.png', 0.8)
             case DropType.ENERGY:
-                return resize_image(base_path + '1.png', 0.8)
+                return resize_image(base_path + '01.png', 0.8)
     
     def interaction(self, player: Player):
         if player.hitbox.colliderect(self.hitbox):

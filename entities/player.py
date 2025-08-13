@@ -14,7 +14,8 @@ class Player(Entity):
 
         self.image = resize_image('assets/sprites/player/down_idle/player.png')
 
-        self.rect = self.image.get_rect(topleft = pos)
+        self.pos = pos
+        self.rect = self.image.get_rect(topleft = self.pos)
         self.hitbox = self.rect.inflate(-10, -5)
 
         self.import_player_asset()
@@ -24,6 +25,8 @@ class Player(Entity):
         self.scd_attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
+
+        self.getting_item = None
         
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
@@ -170,6 +173,19 @@ class Player(Entity):
                 self.can_switch_weapon = True
 
     def update(self):
+        if self.getting_item is not None:
+            self.interaction_button_pressed = False
+            self.move_status = 'down'
+            self.get_status()
+            self.animate()
+            
+            if pygame.time.get_ticks() >= self.getting_item['getted_time'] + 1200:
+                self.move_status = self.getting_item['player_move_stats']
+                self.getting_item['item_action'](self.getting_item['item_id'], self)
+                self.getting_item = None
+
+            return
+
         self.input()
         self.cooldowns()
         self.get_status()

@@ -35,6 +35,7 @@ class Level:
             'objects': import_csv_layout('./storage/map/map_Objects.csv'),
             'interactives': import_csv_layout('./storage/map/map_Interactives.csv'),
             'interactives_activated': import_csv_layout('./storage/map/map_Interactives_Activated.csv'),
+            'interactives_chest_items': import_csv_layout('./storage/map/map_Interactives_Chest_Items.csv'),
             'entities': import_csv_layout('./storage/map/map_Entities.csv')
         }
 
@@ -105,7 +106,7 @@ class Level:
             if collision_sprites:
                 for target_sprite in collision_sprites:
                     if target_sprite.sprite_type == 'interactive':
-                        target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'])
+                        target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'], self.layouts['interactives_chest_items'])
                     elif target_sprite.sprite_type == 'drop':
                         target_sprite.interaction(self.player)
 

@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from entities.player import Player
 from entities.entity import Entity
 from os import walk
 from utils.suport import resize_image
@@ -67,10 +68,11 @@ class Enemy(Entity):
         else:
             self.direction = pygame.math.Vector2()
 
-    def update(self):
+    def enemy_update(self,player: Player):
+        if player.getting_item is not None:
+            return
+         
         self.move(self.speed)
-
-    def enemy_update(self,player):
         self.get_status(player)
         self.actions(player)
 
