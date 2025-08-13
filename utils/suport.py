@@ -73,3 +73,15 @@ def obj_hitbox_ajust(object_id: int):
         return (0, -40, 0, -40)
         
     return (0, 0, 0, 0)
+
+def is_icv_destructive(icv_id: int):
+    if icv_id in [0, 3, 4]:
+        return True
+    
+    return False
+
+def icv_next_value(icv_id: int):
+    if icv_id in [1]:
+        return icv_id + 1
+    
+    return icv_id

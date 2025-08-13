@@ -76,9 +76,17 @@ class Hud:
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
         self.display_surface.blit(key_graphic, key_rect)
+    
+    def show_getted_item(self, player: Player):
+        if player.getting_item is not None:
+            image = player.getting_item['item_graphic']
+            rect = player.getting_item['item_rect']
+
+            self.display_surface.blit(image, rect)
 
     def display(self, player: Player):
         self.show_health(player.actual_stats["health"], player.stats["health"])
         self.show_energy_bar(player.actual_stats["energy"], player.stats["energy"])
         self.show_frt_hand_weapons(player.actual_stats["energy"], player.weapon, player.attacking, not player.can_switch_weapon)
         self.show_scd_hand_weapons(player.scd_attacking)
+        self.show_getted_item(player)

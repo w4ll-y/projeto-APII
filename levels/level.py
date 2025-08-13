@@ -4,6 +4,7 @@ from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType
 from utils.suport import *
 from levels.tile import Tile
+from levels.tiles.interactives import Interactives
 from entities.player import Player
 from entities.weapons import Weapon
 from ui.hud import Hud
@@ -14,7 +15,9 @@ class Level:
     def __init__(self):
         self.visible_sprites = YSortCameraGroup()
         self.obstacles_sprites = pygame.sprite.Group()
+        self.interaction_sprites = pygame.sprite.Group()
 
+        self.player_sprite = pygame.sprite.Group()
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
         self.current_attack = None
@@ -49,6 +52,8 @@ class Level:
             'boundary': import_csv_layout('./storage/map/map_Boundary.csv'),
             'objects': import_csv_layout('./storage/map/map_Objects.csv'),
             'interactives': import_csv_layout('./storage/map/map_Interactives.csv'),
+            'interactives_activated': import_csv_layout('./storage/map/map_Interactives_Activated.csv'),
+            'interactives_chest_items': import_csv_layout('./storage/map/map_Interactives_Chest_Items.csv'),
             'entities': import_csv_layout('./storage/map/map_Entities.csv')
         }
 
@@ -63,36 +68,48 @@ class Level:
                     if col != '-1':
                         x = col_index * TILESIZE * ZOOM
                         y = row_index * TILESIZE * ZOOM
+                        col_value = int(col)
 
                         if style == 'boundary':
-                            Tile({'topleft': (x,y)}, (row_index, col_index), int(col), [self.obstacles_sprites], 'invisible')
+                            Tile({'topleft': (x,y)}, (row_index, col_index), col_value, [self.obstacles_sprites], 'invisible')
                         if style == 'objects':
-                            surface = self.graphics['objects'][int(col)]
+                            surface = self.graphics['objects'][col_value]
 
-                            Tile({'midleft': (x,y)}, (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface, inflate_ajust=obj_inflate_ajust(int(col)), hitbox_ajust=obj_hitbox_ajust(int(col)))
+                            Tile({'midleft': (x,y)}, (row_index, col_index), col_value, [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'object', surface, inflate_ajust=obj_inflate_ajust(col_value), hitbox_ajust=obj_hitbox_ajust(col_value))
                         if style == 'interactives':
-                            surface = self.graphics['interactives'][int(col)]
-                            activated = bool(int(col))
+                            surface = self.graphics['interactives'][col_value]
+                            activated = self.layouts['interactives_activated'][row_index][col_index]
+                            destructive = is_icv_destructive(col_value)
+                            next_value = icv_next_value(col_value)
 
-                            Tile({'topleft': (x,y)}, (row_index, col_index), int(col), [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites], 'interactive', surface, activated)
+                            Interactives({'topleft': (x,y)}, (row_index, col_index), col_value, [self.visible_sprites, self.obstacles_sprites, self.attackable_sprites, self.interaction_sprites], 'interactive', surface, activated, destructive=destructive, next_value=next_value)
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
                             else:
-                                Enemy(int(col), (x,y), [self.visible_sprites], self.obstacles_sprites)
+                                Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites])
 
     def play_music(self):
         if not self.music_channel.get_busy():
             self.set_musics()
 
     def create_attack(self):
-        self.current_attack = Weapon(self.player,[self.visible_sprites])
+        self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
         
     def destroy_attack(self):
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+
+    def damage_player(self,amount, attack_type):
+            if self.player.vulnerable:
+                if self.player.actual_stats['health'] - amount >= 0:
+                    self.player.actual_stats['health'] -= amount
+                else:
+                    self.player.actual_stats['health'] = 0
+                self.player.vulnerable = False
+                self.player.hurt_time = pygame.time.get_ticks()
 
     def level_map(self, level_type: str):
         match level_type:
@@ -105,25 +122,34 @@ class Level:
 
                 self.create_map(WORLD_MAP)
 
-    def player_attack_logic(self, player: Player):
-        if player.attacking:
+    def player_attack_collision(self):
+        if self.attack_sprites:
             for attack_sprite in self.attack_sprites:
-                collision_sprites = pygame.sprite.spritecollide(attack_sprite, self.attackable_sprites, False)
-
-                if collision_sprites:
-                    for target_sprite in collision_sprites:
+                colision_sprites = pygame.sprite.spritecollide(attack_sprite,self.attackable_sprites,False)
+                if colision_sprites:
+                    for target_sprite in colision_sprites:
                         if target_sprite.sprite_type == 'interactive':
-                            if target_sprite.original_value == 1:
-                                if target_sprite.activated == False:
-                                    target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1]
-                                    target_sprite.activated = True
+                            if target_sprite.destructive == True:
+                                target_sprite.drop([self.visible_sprites, self.interaction_sprites])
+                                target_sprite.kill()
+                        elif target_sprite.sprite_type == 'enemy':
+                            target_sprite.get_damaged(self.player,attack_sprite.sprite_type)
 
-                                    change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
+    def interaction_collision(self, player: Player):
+        collision_sprites = pygame.sprite.spritecollide(self.player_sprite.sprites()[0], self.interaction_sprites, False)
+
+        if collision_sprites:
+            for target_sprite in collision_sprites:
+                if target_sprite.sprite_type == 'interactive':
+                    target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'], self.layouts['interactives_chest_items'])
+                elif target_sprite.sprite_type == 'drop':
+                    target_sprite.interaction(self.player)
 
     def run(self, events):
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
-        self.player_attack_logic(self.player)
+        self.interaction_collision(self.player)
+        self.player_attack_collision()
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.hud.display(self.player)

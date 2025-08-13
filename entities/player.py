@@ -1,6 +1,6 @@
 import pygame
 from utils.enums import OpenMapTileType
-from settings import ZOOM,WEAPON_DATA, DEFAULT_STATS_VALUE, DEFAULT_ACTUAL_STATS_VALUE
+from settings import *
 from utils.suport import resize_image
 from os import walk
 from inputs.input_manager import InputManager
@@ -14,7 +14,8 @@ class Player(Entity):
 
         self.image = resize_image('assets/sprites/player/down_idle/player.png')
 
-        self.rect = self.image.get_rect(topleft = pos)
+        self.pos = pos
+        self.rect = self.image.get_rect(topleft = self.pos)
         self.hitbox = self.rect.inflate(-10, -5)
 
         self.import_player_asset()
@@ -24,6 +25,8 @@ class Player(Entity):
         self.scd_attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
+
+        self.getting_item = None
         
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
@@ -34,8 +37,14 @@ class Player(Entity):
         self.switch_duration_cooldown = 200
         
         self.attack_button_pressed = False
+        self.interaction_button_pressed = False
+        self.change_weapon_button_pressed = False
 
         self.obstacle_sprites = obstacle_sprites
+
+        self.vulnerable = True
+        self.hurt_time = None
+        self.ivulnerability_duration = 500
 
         self.stats = {
             'health': DEFAULT_STATS_VALUE * 3,
@@ -47,7 +56,7 @@ class Player(Entity):
 
         self.actual_stats = {
             'health': DEFAULT_ACTUAL_STATS_VALUE * 6,
-            'energy': DEFAULT_STATS_VALUE,
+            'energy': DEFAULT_ENERGY_STATS_VALUE * 10,
             'attack': DEFAULT_ACTUAL_STATS_VALUE,
             'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5
@@ -116,8 +125,9 @@ class Player(Entity):
                 self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
             
-            if inputs.is_changing_weapon() and self.can_switch_weapon:
+            if inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
                 self.can_switch_weapon = False
+                self.change_weapon_button_pressed = True
                 self.weapon_switch_time = pygame.time.get_ticks()
                 if self.weapon_index < len(list(WEAPON_DATA.keys())) - 1:
                     self.weapon_index+=1
@@ -125,6 +135,13 @@ class Player(Entity):
                     self.weapon_index = 0
 
                 self.weapon = self.get_weapon(self.weapon_index)
+            elif not inputs.is_changing_weapon() and self.change_weapon_button_pressed:
+                self.change_weapon_button_pressed = False
+
+            if inputs.is_interacting() and not self.interaction_button_pressed:
+                self.interaction_button_pressed = True
+            elif not inputs.is_interacting() and self.interaction_button_pressed:
+                self.interaction_button_pressed = False
 
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
@@ -152,10 +169,21 @@ class Player(Entity):
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
+        if not self.vulnerable:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+    def get_full_weapon_damage(self):
+        base_damage = self.stats['attack']
+        weapon_damage = WEAPON_DATA[self.weapon_index]['damage']
+        return base_damage + weapon_damage
+
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
         if self.attacking:
-            if current_time - self.attack_time >= self.attack_cooldown:
+            if current_time - self.attack_time >= self.attack_cooldown + WEAPON_DATA[self.weapon_index]['cooldown']:
                 self.attacking = False
                 self.destroy_attack()
         
@@ -163,7 +191,25 @@ class Player(Entity):
             if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:
                 self.can_switch_weapon = True
 
+        if not self.vulnerable:
+            if current_time - self.hurt_time >= self.ivulnerability_duration:
+                self.vulnerable = True
+
+
     def update(self):
+        if self.getting_item is not None:
+            self.interaction_button_pressed = False
+            self.move_status = 'down'
+            self.get_status()
+            self.animate()
+            
+            if pygame.time.get_ticks() >= self.getting_item['getted_time'] + 1200:
+                self.move_status = self.getting_item['player_move_stats']
+                self.getting_item['item_action'](self.getting_item['item_id'], self)
+                self.getting_item = None
+
+            return
+
         self.input()
         self.cooldowns()
         self.get_status()
