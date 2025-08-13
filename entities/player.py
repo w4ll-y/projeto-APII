@@ -34,6 +34,8 @@ class Player(Entity):
         self.switch_duration_cooldown = 200
         
         self.attack_button_pressed = False
+        self.interaction_button_pressed = False
+        self.change_weapon_button_pressed = False
 
         self.obstacle_sprites = obstacle_sprites
 
@@ -112,8 +114,9 @@ class Player(Entity):
                 self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
             
-            if inputs.is_changing_weapon() and self.can_switch_weapon:
+            if inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
                 self.can_switch_weapon = False
+                self.change_weapon_button_pressed = True
                 self.weapon_switch_time = pygame.time.get_ticks()
                 if self.weapon_index < len(list(WEAPON_DATA.keys())) - 1:
                     self.weapon_index+=1
@@ -121,6 +124,13 @@ class Player(Entity):
                     self.weapon_index = 0
 
                 self.weapon = self.get_weapon(self.weapon_index)
+            elif not inputs.is_changing_weapon() and self.change_weapon_button_pressed:
+                self.change_weapon_button_pressed = False
+
+            if inputs.is_interacting() and not self.interaction_button_pressed:
+                self.interaction_button_pressed = True
+            elif not inputs.is_interacting() and self.interaction_button_pressed:
+                self.interaction_button_pressed = False
 
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
