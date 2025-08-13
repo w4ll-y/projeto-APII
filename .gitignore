@@ -6,8 +6,6 @@ dist/
 wheels/
 *.egg-info
 
-#files that will always be changed
-storage/
 
 # Virtual environments
 .venv
