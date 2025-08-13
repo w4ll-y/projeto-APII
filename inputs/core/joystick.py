@@ -27,3 +27,6 @@ class Joystick(InputInterface):
 
     def is_changing_weapon(self) -> bool:
         return self.joystick.get_button(5)
+    
+    def is_interacting(self):
+        return self.joystick.get_button(4)
