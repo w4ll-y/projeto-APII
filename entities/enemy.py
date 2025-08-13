@@ -3,7 +3,7 @@ from random import randint
 from settings import *
 from entities.player import Player
 from entities.entity import Entity
-from utils.suport import resize_image, import_folder
+from utils.suport import resize_image, import_folder_resize_image
 from utils.enums import DropType
 from levels.tiles.drop import Drop
 
@@ -49,7 +49,7 @@ class Enemy(Entity):
         self.animations = {'idle': [], 'move': [], 'attack': []}
         main_path = f'assets/sprites/enemies/{id}/'
         for animaton in self.animations.keys():
-            self.animations[animaton] = self.import_folder_resize_image(main_path + animaton)
+            self.animations[animaton] = import_folder_resize_image(main_path + animaton)
 
 
     def get_player_distance_direction(self,player):
