@@ -94,12 +94,9 @@ class Level:
                 if collision_sprites:
                     for target_sprite in collision_sprites:
                         if target_sprite.sprite_type == 'interactive':
-                            if target_sprite.original_value == 1:
-                                if target_sprite.activated == False:
-                                    target_sprite.image = self.graphics['interactives'][target_sprite.original_value + 1]
-                                    target_sprite.activated = True
-
-                                    change_value_in_csv('./storage/map/map_Interactives.csv', target_sprite.original_pos, target_sprite.original_value + 1) #get the next tile Sprite
+                            if target_sprite.destructive == True:
+                                target_sprite.kill()
+                                target_sprite.drop()
 
     def interaction_logic(self, player: Player):
         for attack_sprite in self.attack_sprites:

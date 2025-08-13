@@ -11,10 +11,28 @@ class Interactives(Tile):
         super().__init__(pos, original_pos, original_value, groups, sprite_type, surface, activated, inflate_ajust, hitbox_ajust, destructive, next_value)
 
         self.hitbox2 = None
+        self.is_colliding = False
+
+    def drop(self):
+        pass
 
     def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics):
+        if self.original_value == 0:
+            return self.cactus_interaction(player)
         if self.original_value == 1:
             return self.chest_interaction(player, offset_x, offset_y, input, interactive_graphics)
+        
+    def cactus_interaction(self, player: Player):
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(20, 20)
+
+        if self.hitbox.inflate(2, 2).colliderect(player.hitbox):
+            self.is_colliding = True
+
+        if self.hitbox2.colliderect(player.hitbox) and not self.hitbox.inflate(2, 2).colliderect(player.hitbox) and self.is_colliding == True:
+            self.is_colliding = False
+
+        if not self.is_colliding: player.actual_stats['health'] -= DEFAULT_ACTUAL_STATS_VALUE
 
     def chest_interaction(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics):
         self.display_surface = pygame.display.get_surface()
