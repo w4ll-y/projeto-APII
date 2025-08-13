@@ -25,11 +25,11 @@ WORLD_MAP = [[''] * 100 for _ in range(100)]
 WORLD_MAP[72][42] = 'p'
 
 WEAPON_DATA = {
-    1: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0},
-    2: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': 10}
+    0: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0},
+    1: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': 10}
 }
 
 ENEMY_DATA = {
     0: {'health': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 80, 'notice_radius': 360},
-    2: {'health': 40, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 80, 'notice_radius': 360}
+    2: {'health': 100, 'damage': 50 , 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 80, 'notice_radius': 360}
 }
