@@ -6,7 +6,7 @@ from utils.suport import resize_image, import_folder
 
 
 class Enemy(Entity):
-    def __init__(self, id, pos, groups, obstacle_sprites):
+    def __init__(self, id, pos, groups, obstacle_sprites,damage_player):
 
         #geral
         super().__init__(groups)
@@ -35,6 +35,7 @@ class Enemy(Entity):
         self.can_attack = True
         self.attack_time = None
         self.attack_cooldown = 400
+        self.damage_player = damage_player
 
         self.vulnerable = True
         self.hit_time = None
@@ -73,6 +74,7 @@ class Enemy(Entity):
     def actions(self,player):
         if self.move_status == 'attack':
            self.attack_time = pygame.time.get_ticks()
+           self.damage_player(self.attack_damage,self.attack_type)
            print('attack')
         elif self.move_status == 'move':
             self.direction = self.get_player_distance_direction(player)[1]

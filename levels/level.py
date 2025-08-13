@@ -64,7 +64,7 @@ class Level:
                                 self.player = Player((x, y), [self.visible_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites],
-                                    self.obstacles_sprites)
+                                    self.obstacles_sprites,self.damage_player)
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
@@ -85,6 +85,11 @@ class Level:
                         else:
                             target_sprite.get_damaged(self.player,attack_sprite.sprite_type)
 
+    def damage_player(self,amount, attack_type):
+            if self.player.vulnerable:
+                self.player.actual_stats['health'] -= amount
+                self.player.vulnerable = False
+                self.player.hurt_time = pygame.time.get_ticks()
 
     def level_map(self, level_type: str):
         match level_type:
