@@ -84,9 +84,7 @@ class Interactives(Tile):
             }
 
     def chest_item_action(self, item_id: int, player: Player):
-        print(player.stats['health'])
         if int(item_id) == 0:
             player.stats['health'] += DEFAULT_STATS_VALUE
             player.actual_stats['health'] = player.stats['health']
-        print(player.stats['health'])
 

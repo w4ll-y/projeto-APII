@@ -42,6 +42,10 @@ class Player(Entity):
 
         self.obstacle_sprites = obstacle_sprites
 
+        self.vulnerable = True
+        self.hurt_time = None
+        self.ivulnerability_duration = 500
+
         self.stats = {
             'health': DEFAULT_STATS_VALUE * 3,
             'energy': DEFAULT_STATS_VALUE,
@@ -161,16 +165,32 @@ class Player(Entity):
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
+        if not self.vulnerable:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+    def get_full_weapon_damage(self):
+        base_damage = self.stats['attack']
+        weapon_damage = WEAPON_DATA[self.weapon_index]['damage']
+        return base_damage + weapon_damage
+
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
         if self.attacking:
-            if current_time - self.attack_time >= self.attack_cooldown:
+            if current_time - self.attack_time >= self.attack_cooldown + WEAPON_DATA[self.weapon_index]['cooldown']:
                 self.attacking = False
                 self.destroy_attack()
         
         if not self.can_switch_weapon:
             if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:
                 self.can_switch_weapon = True
+
+        if not self.vulnerable:
+            if current_time - self.hurt_time >= self.ivulnerability_duration:
+                self.vulnerable = True
+
 
     def update(self):
         if self.getting_item is not None:

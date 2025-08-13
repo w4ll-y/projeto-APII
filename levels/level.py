@@ -16,6 +16,7 @@ class Level:
         self.obstacles_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
 
+        self.player_sprite = pygame.sprite.Group()
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
         self.current_attack = None
@@ -68,17 +69,40 @@ class Level:
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.attack_sprites], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
                             else:
-                                Enemy(col_value, (x,y), [self.visible_sprites], self.obstacles_sprites)
+                                Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites],
+                                    self.obstacles_sprites,self.damage_player)
 
     def create_attack(self):
-        self.current_attack = Weapon(self.player,[self.visible_sprites, self.attack_sprites])
+        self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
         
     def destroy_attack(self):
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+
+    def player_attack_collision(self):
+        if self.attack_sprites:
+            for attack_sprite in self.attack_sprites:
+                colision_sprites = pygame.sprite.spritecollide(attack_sprite,self.attackable_sprites,False)
+                if colision_sprites:
+                    for target_sprite in colision_sprites:
+                        if target_sprite.sprite_type == 'interactive':
+                            if target_sprite.destructive == True:
+                                target_sprite.drop([self.visible_sprites, self.interaction_sprites])
+                                target_sprite.kill()
+                        elif target_sprite.sprite_type == 'enemy':
+                            target_sprite.get_damaged(self.player,attack_sprite.sprite_type)
+
+    def damage_player(self,amount, attack_type):
+            if self.player.vulnerable:
+                if self.player.actual_stats['health'] - amount >= 0:
+                    self.player.actual_stats['health'] -= amount
+                else:
+                    self.player.actual_stats['health'] = 0
+                self.player.vulnerable = False
+                self.player.hurt_time = pygame.time.get_ticks()
 
     def level_map(self, level_type: str):
         match level_type:
@@ -87,34 +111,21 @@ class Level:
             case LevelType.DUNGEON:
                 self.create_map(WORLD_MAP)
 
-    def player_attack_logic(self, player: Player):
-        if player.attacking:
-            for attack_sprite in self.attack_sprites:
-                collision_sprites = pygame.sprite.spritecollide(attack_sprite, self.attackable_sprites, False)
+    def interaction_collision(self, player: Player):
+        collision_sprites = pygame.sprite.spritecollide(self.player_sprite.sprites()[0], self.interaction_sprites, False)
 
-                if collision_sprites:
-                    for target_sprite in collision_sprites:
-                        if target_sprite.sprite_type == 'interactive':
-                            if target_sprite.destructive == True:
-                                target_sprite.drop([self.visible_sprites, self.interaction_sprites])
-                                target_sprite.kill()
-
-    def interaction_logic(self, player: Player):
-        for attack_sprite in self.attack_sprites:
-            collision_sprites = pygame.sprite.spritecollide(attack_sprite, self.interaction_sprites, False)
-
-            if collision_sprites:
-                for target_sprite in collision_sprites:
-                    if target_sprite.sprite_type == 'interactive':
-                        target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'], self.layouts['interactives_chest_items'])
-                    elif target_sprite.sprite_type == 'drop':
-                        target_sprite.interaction(self.player)
+        if collision_sprites:
+            for target_sprite in collision_sprites:
+                if target_sprite.sprite_type == 'interactive':
+                    target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'], self.layouts['interactives_chest_items'])
+                elif target_sprite.sprite_type == 'drop':
+                    target_sprite.interaction(self.player)
 
     def run(self, events):
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
-        self.player_attack_logic(self.player)
-        self.interaction_logic(self.player)
+        self.interaction_collision(self.player)
+        self.player_attack_collision()
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.hud.display(self.player)
