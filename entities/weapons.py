@@ -3,6 +3,7 @@ import pygame
 class Weapon(pygame.sprite.Sprite):
     def __init__(self,player,groups):
         super().__init__(groups)
+        self.sprite_type = 'weapon'
         direction = player.move_status.split('_')[0]
         
         full_path = f'assets/sprites/weapons/{player.weapon["name"]}/{direction}.png'
