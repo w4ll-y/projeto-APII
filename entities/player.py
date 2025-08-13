@@ -68,9 +68,9 @@ class Player(Entity):
 
         for animation in self.animations.keys():
             full_path = character_path + animation
-            self.animations[animation] = self.import_folder(full_path)
+            self.animations[animation] = self.import_folder_resize_image(full_path)
 
-    def import_folder(self, path):
+    def import_folder_resize_image(self, path):
         surface_list = []
         for _,__,img_files in walk(path):
             for image in img_files:

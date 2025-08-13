@@ -35,7 +35,7 @@ class Enemy(Entity):
         self.animations = {'idle': [], 'move': [], 'attack': []}
         main_path = f'assets/sprites/enemies/{id}/'
         for animaton in self.animations.keys():
-            self.animations[animaton] = self.import_folder(main_path + animaton)
+            self.animations[animaton] = self.import_folder_resize_image(main_path + animaton)
 
     def get_player_distance_direction(self,player):
         enemy_vec = pygame.math.Vector2(self.rect.center)
@@ -74,7 +74,7 @@ class Enemy(Entity):
         self.get_status(player)
         self.actions(player)
 
-    def import_folder(self, path):
+    def import_folder_resize_image(self, path):
         surface_list = []
         for _,__,img_files in walk(path):
             for image in img_files:
