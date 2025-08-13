@@ -6,6 +6,7 @@ ZOOM = 1.5
 
 DEFAULT_STATS_VALUE = 50 #The player's default stats must be a multiple of 50
 DEFAULT_ACTUAL_STATS_VALUE = 25 #The actual player stats must be a multiple of 25
+DEFAULT_ENERGY_STATS_VALUE = 5 #The actual player stats must be a multiple of 25
 
 HEALTH_HEIGHT = 64
 HEALTH_WIDTH = 64
@@ -26,7 +27,7 @@ WORLD_MAP[72][42] = 'p'
 
 WEAPON_DATA = {
     1: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0},
-    2: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': 10}
+    2: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': DEFAULT_ENERGY_STATS_VALUE * 2}
 }
 
 ENEMY_DATA = {

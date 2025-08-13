@@ -72,7 +72,7 @@ class Level:
                                 Enemy(col_value, (x,y), [self.visible_sprites], self.obstacles_sprites)
 
     def create_attack(self):
-        self.current_attack = Weapon(self.player,[self.visible_sprites])
+        self.current_attack = Weapon(self.player,[self.visible_sprites, self.attack_sprites])
         
     def destroy_attack(self):
         if self.current_attack:
@@ -95,8 +95,8 @@ class Level:
                     for target_sprite in collision_sprites:
                         if target_sprite.sprite_type == 'interactive':
                             if target_sprite.destructive == True:
+                                target_sprite.drop([self.visible_sprites, self.interaction_sprites])
                                 target_sprite.kill()
-                                target_sprite.drop()
 
     def interaction_logic(self, player: Player):
         for attack_sprite in self.attack_sprites:
@@ -104,7 +104,10 @@ class Level:
 
             if collision_sprites:
                 for target_sprite in collision_sprites:
-                    target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'])
+                    if target_sprite.sprite_type == 'interactive':
+                        target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'])
+                    elif target_sprite.sprite_type == 'drop':
+                        target_sprite.interaction(self.player)
 
     def run(self, events):
         self.set_input_type(events)

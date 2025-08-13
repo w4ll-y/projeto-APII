@@ -1,10 +1,12 @@
 import pygame
+from random import randint
 from levels.tile import Tile
 from entities.player import Player
 from settings import *
 from utils.suport import *
-from utils.enums import InputType
+from utils.enums import InputType, DropType
 from inputs.input_manager import InputManager
+from levels.tiles.drop import Drop
 
 class Interactives(Tile):
     def __init__(self, pos: dict, original_pos: tuple, original_value: int, groups: list, sprite_type: str, surface = pygame.Surface((TILESIZE * ZOOM, TILESIZE * ZOOM)), activated: bool | None = None, inflate_ajust: tuple = (0, -5), hitbox_ajust: tuple = (0,0, 0, 0), destructive: bool = False, next_value: int = 0):
@@ -13,8 +15,14 @@ class Interactives(Tile):
         self.hitbox2 = None
         self.is_colliding = False
 
-    def drop(self):
-        pass
+    def drop(self, groups: list):
+        n = randint(1, 100)
+        pos = {'center': (self.pos['topleft'][0] + 20, self.pos['topleft'][1] + 20)}
+
+        if n <= 20:
+            Drop(groups, DropType.HEALTH, pos)
+        if 20 < n <= 40:
+            Drop(groups, DropType.ENERGY, pos)
 
     def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics):
         if self.original_value == 0:

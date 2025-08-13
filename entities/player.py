@@ -1,6 +1,6 @@
 import pygame
 from utils.enums import OpenMapTileType
-from settings import ZOOM,WEAPON_DATA, DEFAULT_STATS_VALUE, DEFAULT_ACTUAL_STATS_VALUE
+from settings import *
 from utils.suport import resize_image
 from os import walk
 from inputs.input_manager import InputManager
@@ -49,7 +49,7 @@ class Player(Entity):
 
         self.actual_stats = {
             'health': DEFAULT_ACTUAL_STATS_VALUE * 6,
-            'energy': DEFAULT_STATS_VALUE,
+            'energy': DEFAULT_ENERGY_STATS_VALUE * 10,
             'attack': DEFAULT_ACTUAL_STATS_VALUE,
             'magic':  DEFAULT_ACTUAL_STATS_VALUE,
             'speed': 5

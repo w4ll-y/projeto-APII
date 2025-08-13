@@ -15,3 +15,8 @@ class BoundaryTyleTipe(Enum):
 class InputType(Enum):
     KEYBOARD = 0
     JOYSTICK = 1
+
+class DropType(Enum):
+    HEALTH = 0
+    ENERGY = 1
+    COIN = 2
