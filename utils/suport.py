@@ -16,7 +16,7 @@ def import_folder_files(path: str):
         
         return list(files)
     
-def import_folder_resize_image(path: str):
+def import_folder_resize_image(path: str, zoom_modificator: float = 1):
     for _, __, img_files in walk(path):
         img_files.sort()
         surface_list = [0 for _ in range(len(img_files))]
@@ -24,7 +24,7 @@ def import_folder_resize_image(path: str):
         for index, image in enumerate(img_files):
             full_path = path + '/' + image
             image_surf = pygame.image.load(full_path).convert_alpha()
-            image_surf = pygame.transform.scale(image_surf, (image_surf.get_width() * ZOOM, image_surf.get_height() * ZOOM))
+            image_surf = pygame.transform.scale(image_surf, (image_surf.get_width() * ZOOM * zoom_modificator, image_surf.get_height() * ZOOM * zoom_modificator))
 
             surface_list[index] = image_surf 
 
