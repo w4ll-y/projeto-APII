@@ -1,4 +1,5 @@
 import pygame
+from random import shuffle
 from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType
 from utils.suport import *
@@ -24,7 +25,23 @@ class Level:
         self.inputs = InputManager()
         self.hud = Hud(self.inputs)
 
+        self.music_folder = 'assets/musics/background'
+        self.music_channel = pygame.mixer.find_channel()
+        self.music_channel.set_volume(0.4)
+        self.music_channel.fadeout(800)
+
         self.level_map(LevelType.OPENMAP)
+
+    def set_musics(self):
+        musics = import_folder_files(self.music_folder)
+        shuffle(musics)
+
+        sound = pygame.mixer.Sound(musics[0])
+        self.music_channel.play(sound)
+        
+        for i in range(1, len(musics)):
+            sound = pygame.mixer.Sound(musics[i])
+            self.music_channel.queue(sound)
 
     def set_input_type(self, events):
         self.inputs.set_input_type(events)
@@ -41,8 +58,8 @@ class Level:
         }
 
         self.graphics = {
-            'objects': import_folder('./assets/graphics/objects'),
-            'interactives': import_folder('./assets/graphics/interactives')
+            'objects': import_folder_resize_image('./assets/graphics/objects'),
+            'interactives': import_folder_resize_image('./assets/graphics/interactives')
         }
 
         for style, layout in self.layouts.items():
@@ -73,6 +90,10 @@ class Level:
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites])
 
+    def play_music(self):
+        if not self.music_channel.get_busy():
+            self.set_musics()
+
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
         
@@ -93,8 +114,12 @@ class Level:
     def level_map(self, level_type: str):
         match level_type:
             case LevelType.OPENMAP:
+                self.music_folder = 'assets/musics/background'
+
                 self.create_map(WORLD_MAP)
             case LevelType.DUNGEON:
+                self.music_folder = 'assets/musics/background'
+
                 self.create_map(WORLD_MAP)
 
     def player_attack_collision(self):
@@ -128,6 +153,7 @@ class Level:
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
         self.hud.display(self.player)
+        self.play_music()
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self):

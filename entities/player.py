@@ -62,6 +62,9 @@ class Player(Entity):
             'speed': 5
         }
 
+        self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/brkn_wand_horizontal_sword.wav')
+        self.weapon_attack_sound.set_volume(0.5)
+
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[weapon_index]
         return WEAPON_DATA[weapon_name]
@@ -74,9 +77,9 @@ class Player(Entity):
 
         for animation in self.animations.keys():
             full_path = character_path + animation
-            self.animations[animation] = self.import_folder(full_path)
+            self.animations[animation] = self.import_folder_resize_image(full_path)
 
-    def import_folder(self, path):
+    def import_folder_resize_image(self, path):
         surface_list = []
         for _,__,img_files in walk(path):
             for image in img_files:
@@ -111,6 +114,7 @@ class Player(Entity):
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.attack_button_pressed = True
+                self.weapon_attack_sound.play()
 
                 self.actual_stats["energy"] -= self.weapon["energy_spent"]
                 self.create_attack()
