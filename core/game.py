@@ -17,8 +17,7 @@ class Game:
         #O tempo para finalizar o jogo é salvo em uma lista porque, quando uma lista é passada
         #como parâmetro, eu posso alterar o valor original em outra parte do código.
         #Uma variável comum, quando passada como parâmetro, altera uma cópia criada para aquela parte do código, o valor original nâo é alterado
-        self.finish_game_time = [time.time() + 600]
-        self.level = Level(self.finish_game_time, LevelType.OPENMAP)
+        self.level = Level(LevelType.MAINMENU)
 
     def run(self):
         while True:

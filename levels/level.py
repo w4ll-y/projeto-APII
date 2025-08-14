@@ -12,10 +12,14 @@ from ui.hud import Hud
 from inputs.input_manager import InputManager
 from entities.enemy import Enemy
 from ui.menu.pause import Pause
+from ui.menu.main_menu import MainMenu
 
 class Level:
-    def __init__(self, finish_game_time, level_map: LevelType):
-        self.finish_game_time = finish_game_time
+    def __init__(self, level_map: LevelType, finish_game_time = [time.time() + 600]):
+        if level_map != LevelType.MAINMENU:
+            self.finish_game_time = finish_game_time
+            self.hud = Hud(self.inputs, self.finish_game_time)
+            self.pause = Pause(self.inputs, self, self.finish_game_time)
 
         self.visible_sprites = YSortCameraGroup()
         self.obstacles_sprites = pygame.sprite.Group()
@@ -27,22 +31,22 @@ class Level:
         self.current_attack = None
 
         self.inputs = InputManager()
-        self.hud = Hud(self.inputs, self.finish_game_time)
 
-        self.music_folder = 'assets/musics/background'
+        self.music_folder = 'assets/musics/background'        
         self.music_channel = pygame.mixer.find_channel()
         self.music_channel.set_volume(0.4)
         self.music_channel.fadeout(800)
 
         self.player = None
 
-        self.pause = Pause(self.inputs, self, self.finish_game_time)
+        self.main_menu = MainMenu(self.inputs, self)
+        self.is_main_menu = False
 
         self.created_map = time.time()
         self.level_map(level_map)
 
-    def reset(self, finish_game_time, level_map):
-        self.__init__(finish_game_time, level_map)
+    def reset(self, level_map, finish_game_time):
+        self.__init__(level_map, finish_game_time)
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -137,10 +141,10 @@ class Level:
                 self.music_folder = 'assets/musics/background'
 
                 self.create_map(WORLD_MAP)
-            case LevelType.DUNGEON:
-                self.music_folder = 'assets/musics/background'
+            case LevelType.MAINMENU:
+                self.music_folder = 'assets/musics/menu'
 
-                self.create_map(WORLD_MAP)
+                self.is_main_menu = True
 
     def player_attack_collision(self):
         if self.attack_sprites:
@@ -166,6 +170,10 @@ class Level:
                     target_sprite.interaction(self.player)
 
     def run(self, events):
+        if self.is_main_menu:
+            self.main_menu.display_menu()
+            return
+        
         if self.created_map != 0:
             return
         

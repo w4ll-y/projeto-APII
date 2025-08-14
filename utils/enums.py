@@ -1,6 +1,7 @@
 from enum import Enum
 
 class LevelType(Enum):
+    MAINMENU = 0
     OPENMAP = 1
     DUNGEON = 2
 
