@@ -1,6 +1,7 @@
 from csv import reader, writer
-from os import walk
+from os import walk, listdir, path, remove
 from settings import ZOOM
+import shutil
 import pygame
 
 def import_csv_layout(path: str):
@@ -47,6 +48,29 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     image = pygame.transform.scale(image, (image.get_width() * ZOOM * zoom_modificator, image.get_height() * ZOOM * zoom_modificator))
 
     return image
+
+def reset_game():
+    origin = "storage/map/backup"
+    destination = "storage/map"
+
+    for file_name in listdir(destination):
+        origin_way = path.join(destination, file_name)
+
+        if path.isfile(origin_way):
+            remove(path.abspath(origin_way))
+
+    for file_name in listdir(origin):
+        origin_way = path.join(origin, file_name)
+
+        if path.isfile(origin_way):
+            extensao = path.splitext(file_name)[1]
+            
+            base_name = path.splitext(file_name)[0][:-7]
+            new_name = f"{base_name}{extensao}"
+            
+            destination_way = path.join(destination, new_name)
+            
+            shutil.copy2(origin_way, destination_way)
 
 def obj_inflate_ajust(object_id: int):
     if object_id == 0:

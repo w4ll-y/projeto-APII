@@ -30,3 +30,12 @@ class Joystick(InputInterface):
     
     def is_interacting(self):
         return self.joystick.get_button(4)
+    
+    def is_pausing(self):
+        return self.joystick.get_button(7)
+    
+    def is_unpausing(self):
+        return self.joystick.get_button(7) or self.joystick.get_button(2)
+    
+    def is_selecting(self):
+        return self.joystick.get_button(0)
