@@ -2,6 +2,7 @@ from csv import reader, writer
 from os import walk, listdir, path, remove
 from settings import ZOOM
 import shutil
+import json
 import pygame
 
 def import_csv_layout(path: str):
@@ -71,6 +72,19 @@ def reset_game():
             destination_way = path.join(destination, new_name)
             
             shutil.copy2(origin_way, destination_way)
+
+def read_settings():
+    with open("data/settings.json", "r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    return data
+
+def change_settings_value(key, new_value):
+    data = read_settings()
+    data[key] = new_value
+
+    with open("data/settings.json", "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 def obj_inflate_ajust(object_id: int):
     if object_id == 0:
