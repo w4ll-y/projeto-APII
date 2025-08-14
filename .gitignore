@@ -7,7 +7,6 @@ wheels/
 *.egg-info
 
 storage
-data
 
 # Virtual environments
 .venv
