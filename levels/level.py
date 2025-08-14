@@ -1,4 +1,5 @@
 import pygame
+import time
 from random import shuffle
 from settings import WORLD_MAP, TILESIZE, ZOOM
 from utils.enums import LevelType
@@ -10,9 +11,12 @@ from entities.weapons import Weapon
 from ui.hud import Hud
 from inputs.input_manager import InputManager
 from entities.enemy import Enemy
+from ui.menu.pause import Pause
 
 class Level:
-    def __init__(self, finish_game_time):
+    def __init__(self, finish_game_time, level_map: LevelType):
+        self.finish_game_time = finish_game_time
+
         self.visible_sprites = YSortCameraGroup()
         self.obstacles_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
@@ -23,14 +27,22 @@ class Level:
         self.current_attack = None
 
         self.inputs = InputManager()
-        self.hud = Hud(self.inputs, finish_game_time)
+        self.hud = Hud(self.inputs, self.finish_game_time)
 
         self.music_folder = 'assets/musics/background'
         self.music_channel = pygame.mixer.find_channel()
         self.music_channel.set_volume(0.4)
         self.music_channel.fadeout(800)
 
-        self.level_map(LevelType.OPENMAP)
+        self.player = None
+
+        self.pause = Pause(self.inputs, self, self.finish_game_time)
+
+        self.created_map = time.time()
+        self.level_map(level_map)
+
+    def reset(self, finish_game_time, level_map):
+        self.__init__(finish_game_time, level_map)
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -86,9 +98,12 @@ class Level:
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause)
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites])
+
+        self.finish_game_time[0] += time.time() - self.created_map
+        self.created_map = 0
 
     def play_music(self, is_paused: bool):
         if is_paused:
@@ -151,6 +166,10 @@ class Level:
                     target_sprite.interaction(self.player)
 
     def run(self, events):
+        if self.created_map != 0:
+            return
+        
+        self.play_music(self.player.paused_game)
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
@@ -158,7 +177,6 @@ class Level:
         self.visible_sprites.enemy_update(self.player)
         self.hud.display(self.player)
         self.visible_sprites.update()
-        self.play_music(self.player.paused_game)
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self):

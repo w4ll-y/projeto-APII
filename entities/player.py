@@ -8,7 +8,7 @@ from entities.entity import Entity
 from ui.menu.pause import Pause
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack, inputs: InputManager):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack, inputs: InputManager, pause: Pause):
         super().__init__(groups)
 
         self.inputs = inputs
@@ -67,7 +67,8 @@ class Player(Entity):
         self.weapon_attack_sound.set_volume(0.5)
 
         self.paused_game = False
-        self.pause = Pause(self.inputs, self)
+        self.pause = pause
+        self.pause.set_player(self)
 
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[weapon_index]

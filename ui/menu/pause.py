@@ -1,10 +1,15 @@
 import pygame
+import time
 from inputs.input_manager import InputManager
+from utils.suport import reset_game
+from utils.enums import LevelType
 
 class Pause():
-    def __init__(self, inputs: InputManager, player):
+    def __init__(self, inputs: InputManager, level, finish_game_time):
         self.inputs = inputs
-        self.player = player
+        self.player = None
+        self.level = level
+        self.finish_game_time = finish_game_time
 
         self.display_surface = pygame.display.get_surface()
 
@@ -12,11 +17,16 @@ class Pause():
         self.selected_option = 0
 
         self.button_clicked_time = pygame.time.get_ticks()
+        
+        self.reset_game = False
+
+    def set_player(self, player):
+        self.player = player
 
     def display_menu(self):
         overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0))
-        overlay.set_alpha(120)
+        overlay.set_alpha(120 if not self.reset_game else 256)
 
         self.display_surface.blit(overlay, (0, 0))
 
@@ -50,6 +60,11 @@ class Pause():
             match self.selected_option:
                 case 0:
                     self.player.paused_game = False
+                case 1:
+                    self.reset_game = True
+                    self.finish_game_time[0] = time.time() + 600
+                    reset_game()
+                    self.level.reset(self.finish_game_time, LevelType.OPENMAP)
 
             self.button_clicked_time = now + 300
             
