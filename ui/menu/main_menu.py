@@ -11,7 +11,7 @@ class MainMenu():
 
         self.display_surface = pygame.display.get_surface()
 
-        self.options = ["Iniciar Jogo", "Sair do Jogo"]
+        self.options = ["Iniciar Jogo", "Ver História", "Sair do Jogo"]
         self.selected_option = 0
 
         self.button_clicked_time = pygame.time.get_ticks()
@@ -65,6 +65,8 @@ class MainMenu():
                 case 0:
                     self.level.reset(LevelType.OPENMAP, [time.time() + 600])
                 case 1:
+                    self.level.reset(LevelType.HISTORY, [time.time() + 600])
+                case 2:
                     reset_game()
                     exit()
 
