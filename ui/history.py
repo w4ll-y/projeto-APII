@@ -77,6 +77,6 @@ class History():
             else:
                 reset_game()
                 change_settings_value('first_time', False)
-                self.level.reset(LevelType.MAINMENU, [time.time() + 600])
+                self.level.reset(LevelType.MAINMENU, self.level.settings, [time.time() + 600])
 
             self.button_clicked_time = now + 300

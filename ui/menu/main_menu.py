@@ -3,7 +3,7 @@ import time
 from inputs.input_manager import InputManager
 from utils.suport import reset_game, resize_image
 from utils.enums import LevelType, InputType
-from ui.menu.config import Config
+from ui.menu.config import ConfigScreen
 
 class MainMenu():
     def __init__(self, inputs: InputManager, level):
@@ -17,7 +17,7 @@ class MainMenu():
 
         self.button_clicked_time = pygame.time.get_ticks()
 
-        self.config = Config(self.inputs, self.level, [time.time() + 600], self)
+        self.config = ConfigScreen(self.inputs, self.level, [time.time() + 600], self)
         self.is_config_screen = False
 
     def display_menu(self):
@@ -71,9 +71,9 @@ class MainMenu():
         elif inputs.is_selecting() and now > self.button_clicked_time:
             match self.selected_option:
                 case 0:
-                    self.level.reset(LevelType.OPENMAP, [time.time() + 600])
+                    self.level.reset(LevelType.OPENMAP, self.level.settings, [time.time() + 600])
                 case 1:
-                    self.level.reset(LevelType.HISTORY, [time.time() + 600])
+                    self.level.reset(LevelType.HISTORY, self.level.settings, [time.time() + 600])
                 case 2:
                     self.is_config_screen = True
                 case 3:

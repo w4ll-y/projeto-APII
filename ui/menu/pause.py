@@ -3,7 +3,7 @@ import time
 from inputs.input_manager import InputManager
 from utils.suport import reset_game, resize_image
 from utils.enums import LevelType, InputType
-from ui.menu.config import Config
+from ui.menu.config import ConfigScreen
 
 class Pause():
     def __init__(self, inputs: InputManager, level, finish_game_time):
@@ -21,7 +21,7 @@ class Pause():
         
         self.reset_game = False
         
-        self.config_screen = Config(self.inputs, self.level, self.finish_game_time, self)
+        self.config_screen = ConfigScreen(self.inputs, self.level, self.finish_game_time, self)
         self.is_config_screen = False
 
     def set_player(self, player):
@@ -96,13 +96,13 @@ class Pause():
                     self.reset_game = True
                     self.finish_game_time[0] = time.time() + 600
                     reset_game()
-                    self.level.reset(LevelType.OPENMAP, self.finish_game_time)
+                    self.level.reset(LevelType.OPENMAP, self.level.settings, self.finish_game_time)
                 case 2:
                     self.is_config_screen = True
                 case 3:
                     self.reset_game = True
                     reset_game()
-                    self.level.reset(LevelType.MAINMENU, self.finish_game_time)
+                    self.level.reset(LevelType.MAINMENU, self.level.settings, self.finish_game_time)
 
             self.button_clicked_time = now + 300
             

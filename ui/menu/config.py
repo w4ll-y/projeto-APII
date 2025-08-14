@@ -4,7 +4,7 @@ from inputs.input_manager import InputManager
 from utils.suport import reset_game, resize_image, read_settings, change_settings_value, read_json
 from utils.enums import LevelType, InputType
 
-class Config():
+class ConfigScreen():
     def __init__(self, inputs: InputManager, level, finish_game_time, pre_screen):
         self.inputs = inputs
         self.level = level
@@ -100,7 +100,7 @@ class Config():
     def display_saved_text(self):
         if self.saved_time != 0 and self.saved_time >= pygame.time.get_ticks():
             saved_font = pygame.font.Font(size=24)
-            saved_text_surface = saved_font.render("Configurações Salvas com Sucesso", True, (255, 255, 255))
+            saved_text_surface = saved_font.render("Configurações Salvas", True, (255, 255, 255))
 
             pos_x = self.display_surface.get_width() - 10
             pos_y = self.display_surface.get_height() - 64

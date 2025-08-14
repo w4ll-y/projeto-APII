@@ -14,9 +14,11 @@ from entities.enemy import Enemy
 from ui.menu.pause import Pause
 from ui.menu.main_menu import MainMenu
 from ui.history import History
+from core.config import Config
 
 class Level:
-    def __init__(self, level_map: LevelType, finish_game_time = [time.time() + 600]):
+    def __init__(self, level_map: LevelType, settings: Config, finish_game_time = [time.time() + 600]):
+        self.settings = settings
         pygame.mixer.quit()
         pygame.mixer.init()
 
@@ -39,9 +41,8 @@ class Level:
 
         self.inputs = InputManager()
 
-        self.music_folder = 'assets/musics/background'        
+        self.music_folder = 'assets/musics/background'  
         self.music_channel = pygame.mixer.find_channel()
-        self.music_channel.set_volume(0.4)
         self.music_channel.fadeout(800)
 
         self.player = None
@@ -55,8 +56,8 @@ class Level:
         self.created_map = time.time()
         self.level_map(level_map)
 
-    def reset(self, level_map, finish_game_time):
-        self.__init__(level_map, finish_game_time)
+    def reset(self, level_map, settings, finish_game_time):
+        self.__init__(level_map, settings, finish_game_time)
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -114,12 +115,19 @@ class Level:
                             if col == '1':
                                 self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause)
                             else:
-                                Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites])
+                                Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings)
 
         self.finish_game_time[0] += time.time() - self.created_map
         self.created_map = 0
 
-    def play_music(self):        
+    def play_music(self):
+        self.music_channel.set_volume(self.settings.music_volume)
+
+        if not self.settings.play_music:
+            self.music_channel.pause()
+        else:
+            self.music_channel.unpause()
+        
         if self.player is not None:
             if self.player.paused_game:
                 self.music_channel.pause()
