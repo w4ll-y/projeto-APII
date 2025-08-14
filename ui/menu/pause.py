@@ -1,8 +1,8 @@
 import pygame
 import time
 from inputs.input_manager import InputManager
-from utils.suport import reset_game
-from utils.enums import LevelType
+from utils.suport import reset_game, resize_image
+from utils.enums import LevelType, InputType
 
 class Pause():
     def __init__(self, inputs: InputManager, level, finish_game_time):
@@ -29,6 +29,30 @@ class Pause():
         overlay.set_alpha(120 if not self.reset_game else 256)
 
         self.display_surface.blit(overlay, (0, 0))
+
+        #display buttons
+        pos_x = self.display_surface.get_width() // 2
+        pos_y = self.display_surface.get_height() - 64
+
+        select_btn_font = pygame.font.Font(size=24)
+        select_btn_text_surface = select_btn_font.render("Selecionar", True, (255, 255, 255))
+        select_btn_text_rect = select_btn_text_surface.get_rect(midright = (pos_x, pos_y))
+
+        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 0.7)
+        select_btn_rect = select_btn_graphic.get_rect(midright = (pos_x - select_btn_text_surface.get_width() - 10, pos_y))
+
+        quit_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/scd_attack_button/default.png', 0.7)
+        quit_btn_rect = quit_btn_graphic.get_rect(midleft = (pos_x + 40, pos_y))
+
+        quit_btn_font = pygame.font.Font(size=24)
+        quit_btn_text_surface = quit_btn_font.render("Cancelar", True, (255, 255, 255))
+        quit_btn_text_rect = quit_btn_text_surface.get_rect(midleft = (pos_x + quit_btn_graphic.get_width() + 50, pos_y))
+
+        self.display_surface.blit(select_btn_graphic, select_btn_rect)
+        self.display_surface.blit(select_btn_text_surface, select_btn_text_rect)
+
+        self.display_surface.blit(quit_btn_graphic, quit_btn_rect)
+        self.display_surface.blit(quit_btn_text_surface, quit_btn_text_rect)
 
         for index, text in enumerate(self.options):
             font = pygame.font.Font(size=36)
