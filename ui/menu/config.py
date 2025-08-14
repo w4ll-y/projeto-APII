@@ -50,10 +50,10 @@ class Config():
 
             text_rect = text_surface.get_rect(midright = (pos_x, pos_y))
 
-            value_text = str(self.settings[key])
+            val = self.settings[key]
 
             value_font = pygame.font.Font(size=36)
-            value_text_surface = value_font.render(value_text, True, (255, 255, 255) if key != self.selected_option else (128, 128, 128))
+            value_text_surface = value_font.render(self.format_values(val), True, (255, 255, 255) if key != self.selected_option else (128, 128, 128))
             value_text_rect = text_surface.get_rect(midleft = (pos_x + 200, pos_y))
 
             self.display_surface.blit(text_surface, text_rect)
@@ -98,7 +98,7 @@ class Config():
         self.display_surface.blit(quit_btn_text_surface, quit_btn_text_rect)
 
     def display_saved_text(self):
-        if self.saved_time >= pygame.time.get_ticks():
+        if self.saved_time != 0 and self.saved_time >= pygame.time.get_ticks():
             saved_font = pygame.font.Font(size=24)
             saved_text_surface = saved_font.render("Configurações Salvas com Sucesso", True, (255, 255, 255))
 
@@ -110,6 +110,24 @@ class Config():
             self.display_surface.blit(saved_text_surface, saved_text_rect)
         else:
             self.saved_time = 0
+
+    def format_values(self, value):
+        if type(value) == bool:    
+            if value == True:
+                return "Sim"
+            elif value == False:
+                return "Não"
+        elif type(value) == int:
+            if value == 1:
+                return "Fácil"
+            elif value == 2:
+                return "Médio"
+            elif value == 3:
+                return "Difícil"
+        elif type(value) == list:
+            return f"{value[0]}x{value[1]}"
+        else:
+            return str(value)
 
     def can_change_option(self, direction):
         options = list(self.options.keys())
