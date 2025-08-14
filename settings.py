@@ -22,9 +22,6 @@ UI_BORDER_COLOR = '#0A0A0A'
 ENERGY_BORDER_COLOR = '#4b726e'
 ENERGY_COLOR = '#8caba1'
 
-WORLD_MAP = [[''] * 100 for _ in range(100)]
-WORLD_MAP[72][42] = 'p'
-
 WEAPON_DATA = {
     0: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0},
     1: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': DEFAULT_ENERGY_STATS_VALUE * 2}

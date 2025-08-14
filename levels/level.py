@@ -1,7 +1,7 @@
 import pygame
 import time
 from random import shuffle
-from settings import WORLD_MAP, TILESIZE, ZOOM
+from settings import TILESIZE, ZOOM
 from utils.enums import LevelType
 from utils.suport import *
 from levels.tile import Tile
@@ -72,7 +72,7 @@ class Level:
     def set_input_type(self, events):
         self.inputs.set_input_type(events)
 
-    def create_map(self, level_map: list):
+    def create_map(self):
         self.layouts = {
             #style: layout
             'boundary': import_csv_layout('./storage/map/map_Boundary.csv'),
@@ -151,7 +151,7 @@ class Level:
             case LevelType.OPENMAP:
                 self.music_folder = 'assets/musics/background'
 
-                self.create_map(WORLD_MAP)
+                self.create_map()
             case LevelType.MAINMENU:
                 self.music_folder = 'assets/musics/menu'
 

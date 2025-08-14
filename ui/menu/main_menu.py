@@ -3,6 +3,7 @@ import time
 from inputs.input_manager import InputManager
 from utils.suport import reset_game, resize_image
 from utils.enums import LevelType, InputType
+from ui.menu.config import Config
 
 class MainMenu():
     def __init__(self, inputs: InputManager, level):
@@ -11,12 +12,19 @@ class MainMenu():
 
         self.display_surface = pygame.display.get_surface()
 
-        self.options = ["Iniciar Jogo", "Ver História", "Sair do Jogo"]
+        self.options = ["Iniciar Jogo", "Ver História", "Configurações", "Sair do Jogo"]
         self.selected_option = 0
 
         self.button_clicked_time = pygame.time.get_ticks()
 
+        self.config = Config(self.inputs, self.level, [time.time() + 600], self)
+        self.is_config_screen = False
+
     def display_menu(self):
+        if self.is_config_screen:
+            self.config.display_menu()
+            return
+        
         overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0))
         overlay.set_alpha(256)
@@ -67,6 +75,8 @@ class MainMenu():
                 case 1:
                     self.level.reset(LevelType.HISTORY, [time.time() + 600])
                 case 2:
+                    self.is_config_screen = True
+                case 3:
                     reset_game()
                     exit()
 
