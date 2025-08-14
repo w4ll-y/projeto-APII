@@ -16,6 +16,9 @@ from ui.menu.main_menu import MainMenu
 
 class Level:
     def __init__(self, level_map: LevelType, finish_game_time = [time.time() + 600]):
+        pygame.mixer.quit()
+        pygame.mixer.init()
+
         if level_map != LevelType.MAINMENU:
             self.finish_game_time = finish_game_time
             self.hud = Hud(self.inputs, self.finish_game_time)
@@ -109,11 +112,12 @@ class Level:
         self.finish_game_time[0] += time.time() - self.created_map
         self.created_map = 0
 
-    def play_music(self, is_paused: bool):
-        if is_paused:
-            self.music_channel.pause()
-        else:
-            self.music_channel.unpause()
+    def play_music(self):
+        if self.player is not None:
+            if self.player.paused_game:
+                self.music_channel.pause()
+            else:
+                self.music_channel.unpause()
             
         if not self.music_channel.get_busy():
             self.set_musics()
@@ -170,6 +174,8 @@ class Level:
                     target_sprite.interaction(self.player)
 
     def run(self, events):
+        self.play_music()
+
         if self.is_main_menu:
             self.main_menu.display_menu()
             return
@@ -177,7 +183,6 @@ class Level:
         if self.created_map != 0:
             return
         
-        self.play_music(self.player.paused_game)
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
