@@ -143,8 +143,8 @@ class Enemy(Entity):
         if not self.vulnerable:
             self.direction *= -self.resistance
 
-    def enemy_update(self,player):
-        if player.getting_item is not None:
+    def enemy_update(self, player: Player):
+        if player.getting_item is not None or player.paused_game:
             return
         
         self.hit_reaction()

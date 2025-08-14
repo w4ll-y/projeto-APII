@@ -32,3 +32,15 @@ class InputInterface(ABC):
     @abstractmethod
     def is_interacting(self) -> bool:
         pass
+
+    @abstractmethod
+    def is_pausing(self) -> bool:
+        pass
+
+    @abstractmethod
+    def is_unpausing(self) -> bool:
+        pass
+
+    @abstractmethod
+    def is_selecting(self) -> bool:
+        pass

@@ -5,6 +5,7 @@ from utils.suport import resize_image
 from os import walk
 from inputs.input_manager import InputManager
 from entities.entity import Entity
+from ui.menu.pause import Pause
 
 class Player(Entity):
     def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack, inputs: InputManager):
@@ -64,6 +65,9 @@ class Player(Entity):
 
         self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/brkn_wand_horizontal_sword.wav')
         self.weapon_attack_sound.set_volume(0.5)
+
+        self.paused_game = False
+        self.pause = Pause(self.inputs, self)
 
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[weapon_index]
@@ -143,6 +147,10 @@ class Player(Entity):
             elif not inputs.is_interacting() and self.interaction_button_pressed:
                 self.interaction_button_pressed = False
 
+            if inputs.is_pausing():
+                self.paused_game = True
+
+
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
             if not 'idle' in self.move_status and not 'attack' in self.move_status:
@@ -197,6 +205,10 @@ class Player(Entity):
 
 
     def update(self):
+        if self.paused_game:
+            self.pause.display_menu()
+            return
+
         if self.getting_item is not None:
             self.interaction_button_pressed = False
             self.move_status = 'down'

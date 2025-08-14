@@ -30,3 +30,12 @@ class Keyboard(InputInterface):
     
     def is_interacting(self):
         return self.keys[pygame.K_e]
+    
+    def is_pausing(self):
+        return self.keys[pygame.K_RETURN]
+    
+    def is_unpausing(self):
+        return self.keys[pygame.K_ESCAPE] or self.keys[pygame.K_m]
+    
+    def is_selecting(self):
+        return self.keys[pygame.K_n]

@@ -12,7 +12,7 @@ from inputs.input_manager import InputManager
 from entities.enemy import Enemy
 
 class Level:
-    def __init__(self):
+    def __init__(self, finish_game_time):
         self.visible_sprites = YSortCameraGroup()
         self.obstacles_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
@@ -23,7 +23,7 @@ class Level:
         self.current_attack = None
 
         self.inputs = InputManager()
-        self.hud = Hud(self.inputs)
+        self.hud = Hud(self.inputs, finish_game_time)
 
         self.music_folder = 'assets/musics/background'
         self.music_channel = pygame.mixer.find_channel()
@@ -90,7 +90,12 @@ class Level:
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites])
 
-    def play_music(self):
+    def play_music(self, is_paused: bool):
+        if is_paused:
+            self.music_channel.pause()
+        else:
+            self.music_channel.unpause()
+            
         if not self.music_channel.get_busy():
             self.set_musics()
 
@@ -145,15 +150,15 @@ class Level:
                 elif target_sprite.sprite_type == 'drop':
                     target_sprite.interaction(self.player)
 
-    def run(self, events, finish_game_time):
+    def run(self, events):
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
         self.player_attack_collision()
-        self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
-        self.hud.display(self.player, finish_game_time)
-        self.play_music()
+        self.hud.display(self.player)
+        self.visible_sprites.update()
+        self.play_music(self.player.paused_game)
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self):
