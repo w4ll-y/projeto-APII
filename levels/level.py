@@ -13,13 +13,17 @@ from inputs.input_manager import InputManager
 from entities.enemy import Enemy
 from ui.menu.pause import Pause
 from ui.menu.main_menu import MainMenu
+from ui.history import History
 
 class Level:
     def __init__(self, level_map: LevelType, finish_game_time = [time.time() + 600]):
         pygame.mixer.quit()
         pygame.mixer.init()
 
-        if level_map != LevelType.MAINMENU:
+        if [LevelType.MAINMENU, LevelType.HISTORY].count(level_map) == 0:
+            #O tempo para finalizar o jogo é salvo em uma lista porque, quando uma lista é passada
+            #como parâmetro, eu posso alterar o valor original em outra parte do código.
+            #Uma variável comum, quando passada como parâmetro, altera uma cópia criada para aquela parte do código, o valor original nâo é alterado
             self.finish_game_time = finish_game_time
             self.hud = Hud(self.inputs, self.finish_game_time)
             self.pause = Pause(self.inputs, self, self.finish_game_time)
@@ -44,6 +48,9 @@ class Level:
 
         self.main_menu = MainMenu(self.inputs, self)
         self.is_main_menu = False
+
+        self.history = History(self.inputs, self)
+        self.is_history = False
 
         self.created_map = time.time()
         self.level_map(level_map)
@@ -112,7 +119,7 @@ class Level:
         self.finish_game_time[0] += time.time() - self.created_map
         self.created_map = 0
 
-    def play_music(self):
+    def play_music(self):        
         if self.player is not None:
             if self.player.paused_game:
                 self.music_channel.pause()
@@ -149,6 +156,10 @@ class Level:
                 self.music_folder = 'assets/musics/menu'
 
                 self.is_main_menu = True
+            case LevelType.HISTORY:
+                self.music_folder = ''
+
+                self.is_history = True
 
     def player_attack_collision(self):
         if self.attack_sprites:
@@ -174,6 +185,10 @@ class Level:
                     target_sprite.interaction(self.player)
 
     def run(self, events):
+        if self.is_history:
+            self.history.display_text()
+            return
+
         self.play_music()
 
         if self.is_main_menu:

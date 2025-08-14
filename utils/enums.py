@@ -4,6 +4,7 @@ class LevelType(Enum):
     MAINMENU = 0
     OPENMAP = 1
     DUNGEON = 2
+    HISTORY = 3
 
 class OpenMapTileType(Enum):
     ROCK = 1
