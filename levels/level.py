@@ -27,6 +27,7 @@ class Level:
             #como parâmetro, eu posso alterar o valor original em outra parte do código.
             #Uma variável comum, quando passada como parâmetro, altera uma cópia criada para aquela parte do código, o valor original nâo é alterado
             self.finish_game_time = finish_game_time
+            self.finish_game_time[0] += 1.2
             self.hud = Hud(self.inputs, self.finish_game_time)
             self.pause = Pause(self.inputs, self, self.finish_game_time)
 
