@@ -3,12 +3,15 @@ from random import randint
 from settings import *
 from entities.player import Player
 from entities.entity import Entity
-from utils.suport import resize_image, import_folder_resize_image
+from utils.suport import resize_image, import_folder_resize_image, read_settings
 from utils.enums import DropType
 from levels.tiles.drop import Drop
+from core.config import Config
 
 class Enemy(Entity):
-    def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups):
+    def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups, settings: Config):
+        self.settings = settings
+        self.difficult = settings.difficult
 
         #geral
         super().__init__(groups)
@@ -25,14 +28,14 @@ class Enemy(Entity):
 
         #stats
         self.id = id
-        enemy_info = ENEMY_DATA[self.id]
-        self.health = enemy_info['health']
-        self.speed = enemy_info['speed']
-        self.attack_damage = enemy_info['damage']
-        self.resistance = enemy_info['resistance']
-        self.attack_radius = enemy_info['attack_radius']
-        self.notice_radius = enemy_info['notice_radius']
-        self.attack_type = enemy_info['attack_type']
+        self.enemy_info = ENEMY_DATA[self.id]
+        self.health = self.enemy_info['health'] * (self.difficult - self.difficult / 2)
+        self.speed = self.enemy_info['speed'] * (self.difficult - self.difficult / 2)
+        self.attack_damage = self.enemy_info['damage'] * (self.difficult - self.difficult / 2)
+        self.resistance = self.enemy_info['resistance'] * (self.difficult - self.difficult / 2)
+        self.attack_radius = self.enemy_info['attack_radius']
+        self.notice_radius = self.enemy_info['notice_radius']
+        self.attack_type = self.enemy_info['attack_type']
 
         self.can_attack = True
         self.attack_time = None
@@ -44,6 +47,15 @@ class Enemy(Entity):
         self.invencibilyty_duration = 300
 
         self.drop_groups = drop_groups
+
+    def ajust_difficult(self):
+        if self.settings.difficult != self.difficult:
+            self.difficult = self.settings.difficult
+
+            self.health = self.enemy_info['health'] * (self.difficult - self.difficult / 2)
+            self.speed = self.enemy_info['speed'] * (self.difficult - self.difficult / 2)
+            self.attack_damage = self.enemy_info['damage'] * (self.difficult - self.difficult / 2)
+            self.resistance = self.enemy_info['resistance'] * (self.difficult - self.difficult / 2)
 
     def import_graphics(self, id):
         self.animations = {'idle': [], 'move': [], 'attack': []}
@@ -147,6 +159,7 @@ class Enemy(Entity):
         if player.getting_item is not None or player.paused_game:
             return
         
+        self.ajust_difficult()
         self.hit_reaction()
         self.move(self.speed)
         self.animate()

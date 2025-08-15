@@ -73,11 +73,14 @@ def reset_game():
             
             shutil.copy2(origin_way, destination_way)
 
-def read_settings():
-    with open("data/settings.json", "r", encoding="utf-8") as file:
+def read_json(path):
+    with open(path, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     return data
+
+def read_settings():
+    return read_json("data/settings.json")
 
 def change_settings_value(key, new_value):
     data = read_settings()

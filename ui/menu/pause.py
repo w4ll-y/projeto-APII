@@ -3,6 +3,7 @@ import time
 from inputs.input_manager import InputManager
 from utils.suport import reset_game, resize_image
 from utils.enums import LevelType, InputType
+from ui.menu.config import ConfigScreen
 
 class Pause():
     def __init__(self, inputs: InputManager, level, finish_game_time):
@@ -13,17 +14,24 @@ class Pause():
 
         self.display_surface = pygame.display.get_surface()
 
-        self.options = ["Continue", "Reiniciar", "Sair para o Menu"]
+        self.options = ["Continue", "Reiniciar", "Configurações", "Sair para o Menu"]
         self.selected_option = 0
 
         self.button_clicked_time = pygame.time.get_ticks()
         
         self.reset_game = False
+        
+        self.config_screen = ConfigScreen(self.inputs, self.level, self.finish_game_time, self)
+        self.is_config_screen = False
 
     def set_player(self, player):
         self.player = player
 
     def display_menu(self):
+        if self.is_config_screen:
+            self.config_screen.display_menu()
+            return
+
         overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0))
         overlay.set_alpha(120 if not self.reset_game else 256)
@@ -88,11 +96,13 @@ class Pause():
                     self.reset_game = True
                     self.finish_game_time[0] = time.time() + 600
                     reset_game()
-                    self.level.reset(LevelType.OPENMAP, self.finish_game_time)
+                    self.level.reset(LevelType.OPENMAP, self.level.settings, self.finish_game_time)
                 case 2:
+                    self.is_config_screen = True
+                case 3:
                     self.reset_game = True
                     reset_game()
-                    self.level.reset(LevelType.MAINMENU, self.finish_game_time)
+                    self.level.reset(LevelType.MAINMENU, self.level.settings, self.finish_game_time)
 
             self.button_clicked_time = now + 300
             
