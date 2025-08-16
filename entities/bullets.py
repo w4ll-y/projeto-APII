@@ -20,7 +20,6 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.direction.x * self.speed
         self.rect.y += self.direction.y * self.speed
-        print(self.rect)
 
         current_pos = pygame.math.Vector2(self.rect.center)
         if current_pos.distance_to(self.start_pos) >= self.max_range:

@@ -72,9 +72,9 @@ class ConfigScreen():
         select_btn_text_surface = select_btn_font.render("Mudar Valor", True, (255, 255, 255))
         select_btn_text_rect = select_btn_text_surface.get_rect(midright = (pos_x, pos_y))
 
-        right_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/menu_btns/r_btn.png', 0.7)
+        right_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/menu_btns/r_btn.png', 1)
         right_btn_rect = right_btn_graphic.get_rect(center = (pos_x - select_btn_text_surface.get_width() - 30, pos_y))
-        left_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/menu_btns/l_btn.png', 0.7)
+        left_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/menu_btns/l_btn.png', 1)
         left_btn_rect = left_btn_graphic.get_rect(center = (pos_x - select_btn_text_surface.get_width() - right_btn_graphic.get_width() - 30, pos_y))
 
         pos_x = self.display_surface.get_width() // 2
@@ -84,10 +84,10 @@ class ConfigScreen():
         confirm_btn_text_surface = confirm_btn_font.render("Salvar", True, (255, 255, 255))
         confirm_btn_text_rect = confirm_btn_text_surface.get_rect(center = (pos_x, pos_y))
 
-        confirm_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 0.7)
+        confirm_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 1)
         confirm_btn_rect = confirm_btn_graphic.get_rect(center = (pos_x - confirm_btn_text_surface.get_width() - 10, pos_y))
 
-        quit_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/scd_attack_button/default.png', 0.7)
+        quit_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/scd_attack_button/default.png', 1)
         quit_btn_rect = quit_btn_graphic.get_rect(midleft = (pos_x + 40, pos_y))
 
         quit_btn_font = pygame.font.Font(size=24)

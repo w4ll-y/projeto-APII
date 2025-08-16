@@ -23,7 +23,7 @@ class Drop(pygame.sprite.Sprite):
         match self.drop_type:
             case DropType.HEALTH:
                 return resize_image(base_path + '00.png', 0.8)
-            case DropType.ENERGY:
+            case DropType.BULLET:
                 return resize_image(base_path + '01.png', 0.8)
     
     def interaction(self, player: Player):
@@ -32,8 +32,8 @@ class Drop(pygame.sprite.Sprite):
                 case DropType.HEALTH:
                     if player.stats['health'] > player.actual_stats['health']:
                         player.actual_stats['health'] += DEFAULT_ACTUAL_STATS_VALUE
-                case DropType.ENERGY:
-                    if player.stats['energy'] > player.actual_stats['energy']:
-                        player.actual_stats['energy'] += DEFAULT_ENERGY_STATS_VALUE * 2
+                case DropType.BULLET:
+                    if player.stats['bullets'] > player.actual_stats['bullets']:
+                        player.actual_stats['bullets'] += 1
                     
             self.kill()

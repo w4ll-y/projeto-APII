@@ -21,22 +21,28 @@ class Hud:
 
         self.finish_game_time = finish_game_time
     
-    def health_state_path(self, index: int, health: int, player_health: int):
+    def health_state_path(self, health: int, player_health: int):
         if health <= player_health:
             return 'assets/graphics/hud/health/full_health.png'
         elif health - player_health == DEFAULT_ACTUAL_STATS_VALUE:
             return 'assets/graphics/hud/health/mid_health.png'
         else:
             return 'assets/graphics/hud/health/empty_health.png'
+        
+    def bullet_state_path(self, bullets: int, player_bullets: int):
+        if bullets <= player_bullets:
+            return 'assets/graphics/hud/bullets/full.png'
+        else:
+            return 'assets/graphics/hud/bullets/empty.png'
     
-    def button_graphic(self, player_action: bool, button_name: str):
+    def button_graphic(self, button_name: str):
         selected_input = self.inputs.get_input()
         
-        return f'assets/graphics/hud/inputs/{'keyboard' if selected_input.type == InputType.KEYBOARD else 'joystick'}/{button_name}/{'default' if not player_action else 'pressed'}.png'
+        return f'assets/graphics/hud/inputs/{'keyboard' if selected_input.type == InputType.KEYBOARD else 'joystick'}/{button_name}/default.png'
 
     def show_health(self, player_health, player_max_health):
         for index, health in enumerate(range(DEFAULT_STATS_VALUE, player_max_health + 1, DEFAULT_STATS_VALUE)):
-            heart_graphic = resize_image(self.health_state_path(index, health, player_health), 1.7)
+            heart_graphic = resize_image(self.health_state_path(health, player_health), 1.7)
             heart_rect = heart_graphic.get_rect()
 
             heart_rect.topleft = (index * HEALTH_WIDTH + 10, 10)
@@ -45,48 +51,70 @@ class Hud:
 
             self.display_surface.blit(heart_graphic, heart_rect)
 
-    def show_energy_bar(self, player_energy, player_max_energy):
-        energy_bar = pygame.Rect(20, HEALTH_HEIGHT, player_energy  * 3, BAR_HEIGHT)
-        max_energy_bar = pygame.Rect(20, HEALTH_HEIGHT, player_max_energy * 3, BAR_HEIGHT)
+    def show_bullets(self, player_bullets, player_max_bullets):
+        for index, bullet in enumerate(range(player_max_bullets)):
+            bullet_graphic = resize_image(self.bullet_state_path(bullet + 1, player_bullets), 0.8)
+            bullet_rect = bullet_graphic.get_rect()
 
-        energy_graphic = resize_image('assets/graphics/hud/energy/energy.png', 0.06)
-        energy_rect = energy_graphic.get_rect(center= (energy_bar.left, energy_bar.centery))
+            bullet_rect.topleft = (index * 20 + 10, 60)
+            bullet_rect.width = HEALTH_WIDTH
+            bullet_rect.height = HEALTH_HEIGHT
 
-        pygame.draw.rect(self.display_surface, ENERGY_COLOR, energy_bar)
-        pygame.draw.rect(self.display_surface, ENERGY_BORDER_COLOR, max_energy_bar, 3)
-        self.display_surface.blit(energy_graphic, energy_rect)
+            self.display_surface.blit(bullet_graphic, bullet_rect)
 
-    def show_frt_hand_weapons(self, player_energy: int, player_weapon: dict, player_attacking: bool, change_weapon: bool):
+    def show_frt_hand_weapons(self,player_weapon: dict, player_attacking: bool, change_weapon: bool):
         bg_rect = pygame.Rect(50, self.display_surface.get_height() - 200, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
 
         weapon_graphic = resize_image(player_weapon["graphic"], 1.5)
         weapon_rect = weapon_graphic.get_rect(center= bg_rect.center)
 
-        key_graphic = resize_image(self.button_graphic(player_attacking, 'frst_attack_button'), 0.8)
+        key_graphic = resize_image(self.button_graphic('frst_attack_button'), 1)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
-        change_weapon_key_graphic = resize_image(self.button_graphic(change_weapon, 'change_weapon'), 0.6)
+        change_weapon_key_graphic = resize_image(self.button_graphic('change_weapon'), 1)
         change_weapon_key_rect = change_weapon_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
 
-        change_weapon_graphic = resize_image('assets/graphics/hud/weapon/change_weapon.png', 0.12)
+        change_weapon_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
         change_weapon_rect = change_weapon_graphic.get_rect(center= (bg_rect.left + change_weapon_key_rect.width + 15, bg_rect.top + 20))
 
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
-        pygame.draw.rect(self.display_surface, UI_BORDER_COLOR if player_energy >= player_weapon["energy_spent"] else 'red', bg_rect, 3)
+        pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
         self.display_surface.blit(weapon_graphic, weapon_rect)
         self.display_surface.blit(key_graphic, key_rect)
         self.display_surface.blit(change_weapon_key_graphic, change_weapon_key_rect)
         self.display_surface.blit(change_weapon_graphic, change_weapon_rect)
     
-    def show_scd_hand_weapons(self, player_action: bool):
+    def show_scd_hand_weapons(self, player_bullets: int, player_gun: dict, player_action: bool):
         bg_rect = pygame.Rect(70 + ITEM_BOX_SIZE, self.display_surface.get_height() - 180, ITEM_BOX_SIZE - 20, ITEM_BOX_SIZE - 20)
 
-        key_graphic = resize_image(self.button_graphic(player_action, 'scd_attack_button'), 0.7)
+        gun_graphic = resize_image(player_gun["graphic"], 1.5)
+        gun_rect = gun_graphic.get_rect(center= bg_rect.center)
+
+        key_graphic = resize_image(self.button_graphic('scd_attack_button'), 1)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
-        pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
+        bullet_graphic = resize_image('assets/graphics/hud/bullets/full.png', 0.6)
+        bullet_rect = bullet_graphic.get_rect(midright = (bg_rect.right - 24, bg_rect.bottom - 15))
+
+        bullet_quantity_font = pygame.font.Font(size=20)
+        bullet_quantity_text_surface = bullet_quantity_font.render(f"x{player_gun['cost']}", True, (255, 255, 255))
+        bullet_quantity_text_rect = bullet_quantity_text_surface.get_rect(midleft = (bg_rect.right - 20, bg_rect.bottom - 15))
+
+        change_gun_key_graphic = resize_image(self.button_graphic('change_gun'), 1)
+        change_gun_key_rect = change_gun_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
+
+        change_gun_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
+        change_gun_rect = change_gun_graphic.get_rect(center= (bg_rect.left + change_gun_key_rect.width + 15, bg_rect.top + 20))
+
+        pygame.draw.rect(self.display_surface, UI_BG_COLOR if player_bullets >= player_gun["cost"] else 'red', bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
+
+        self.display_surface.blit(gun_graphic, gun_rect)
         self.display_surface.blit(key_graphic, key_rect)
+        self.display_surface.blit(bullet_graphic, bullet_rect)
+        self.display_surface.blit(bullet_quantity_text_surface, bullet_quantity_text_rect)
+        self.display_surface.blit(change_gun_key_graphic, change_gun_key_rect)
+        self.display_surface.blit(change_gun_graphic, change_gun_rect)
     
     def show_getted_item(self, player: Player):
         if player.getting_item is not None:
@@ -140,8 +168,8 @@ class Hud:
                 self.paused_start = 0
 
         self.show_health(player.actual_stats["health"], player.stats["health"])
-        self.show_energy_bar(player.actual_stats["energy"], player.stats["energy"])
-        self.show_frt_hand_weapons(player.actual_stats["energy"], player.weapon, player.attacking, not player.can_switch_weapon)
-        self.show_scd_hand_weapons(player.scd_attacking)
+        self.show_bullets(player.actual_stats["bullets"], player.stats["bullets"])
+        self.show_frt_hand_weapons(player.weapon, player.attacking, not player.can_switch_weapon)
+        self.show_scd_hand_weapons(player.actual_stats["bullets"], player.gun, player.scd_attacking)
         self.show_getted_item(player)
         self.show_time_to_finish()

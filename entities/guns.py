@@ -25,21 +25,17 @@ class GunsPlayer(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center = player.rect.center)
 
     #se quiser alinhar o sprite da bala é só mudar o valor dps do + ou -
-        if player.actual_stats['energy'] >= cost:
-            player.actual_stats['energy'] -= cost
+        if player.move_status.split('_')[0] == 'right':
+            direction_bullet = pygame.math.Vector2(1, 0)
+            spawn_pos = pygame.math.Vector2(player.rect.centerx + 40, player.rect.centery + 10)
+        elif player.move_status.split('_')[0] == 'left':
+            direction_bullet = pygame.math.Vector2(-1, 0)
+            spawn_pos = pygame.math.Vector2(player.rect.centerx - 40, player.rect.centery + 10)
+        elif player.move_status.split('_')[0] == 'up':
+            direction_bullet = pygame.math.Vector2(0, -1)
+            spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery - 40)
+        elif player.move_status.split('_')[0] == 'down':
+            direction_bullet = pygame.math.Vector2(0, 1)
+            spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery + 40)
 
-            if player.move_status.split('_')[0] == 'right':
-                direction_bullet = pygame.math.Vector2(1, 0)
-                spawn_pos = pygame.math.Vector2(player.rect.centerx + 40, player.rect.centery + 10)
-            elif player.move_status.split('_')[0] == 'left':
-                direction_bullet = pygame.math.Vector2(-1, 0)
-                spawn_pos = pygame.math.Vector2(player.rect.centerx - 40, player.rect.centery + 10)
-            elif player.move_status.split('_')[0] == 'up':
-                direction_bullet = pygame.math.Vector2(0, -1)
-                spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery - 40)
-            else:
-                direction_bullet = pygame.math.Vector2(0, 1)
-                spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery + 40)
-
-            print(direction_bullet)
-            Bullet(player,spawn_pos, direction_bullet, max_range, groups)
+        Bullet(player,spawn_pos, direction_bullet, max_range, groups)

@@ -149,7 +149,7 @@ class Enemy(Entity):
         if n <= 20:
             Drop(self.drop_groups, DropType.HEALTH, pos)
         if 20 < n <= 40:
-            Drop(self.drop_groups, DropType.ENERGY, pos)
+            Drop(self.drop_groups, DropType.BULLET, pos)
 
     def hit_reaction(self):
         if not self.vulnerable:

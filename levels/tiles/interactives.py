@@ -22,7 +22,7 @@ class Interactives(Tile):
         if n <= 20:
             Drop(groups, DropType.HEALTH, pos)
         if 20 < n <= 40:
-            Drop(groups, DropType.ENERGY, pos)
+            Drop(groups, DropType.BULLET, pos)
 
     def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
         if self.original_value == 0:
@@ -51,7 +51,7 @@ class Interactives(Tile):
         pos_y = self.pos['topleft'][1] - offset_y
         
         if self.hitbox2.colliderect(player.hitbox):
-            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/{'default' if not player.interaction_button_pressed else 'pressed'}.png', 0.8)
+            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/default.png', 1)
             key_rect = key_graphic.get_rect(topleft = (pos_x + 4, pos_y - 50))
 
             display_surface.blit(key_graphic, key_rect)

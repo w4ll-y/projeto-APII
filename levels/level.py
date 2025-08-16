@@ -143,10 +143,7 @@ class Level:
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
 
     def create_gun_attack(self,gun,max_range,cost,):
-        if gun == 'espingarda':
-            self.current_attack = GunsPlayer(self.player,cost, max_range, [self.visible_sprites,self.attack_sprites])
-        if gun == 'revolver':
-            pass
+        self.current_attack = GunsPlayer(self.player,cost, max_range, [self.visible_sprites,self.attack_sprites])
 
     def destroy_attack(self):
         if self.current_attack:

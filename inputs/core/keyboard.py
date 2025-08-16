@@ -28,6 +28,9 @@ class Keyboard(InputInterface):
     def is_changing_weapon(self) -> bool:
         return self.keys[pygame.K_q]
     
+    def is_changing_gun(self) -> bool:
+        return self.keys[pygame.K_j]
+    
     def is_interacting(self):
         return self.keys[pygame.K_e]
     

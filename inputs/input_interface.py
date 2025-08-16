@@ -30,6 +30,10 @@ class InputInterface(ABC):
         pass
 
     @abstractmethod
+    def is_changing_gun(self) -> bool:
+        pass
+
+    @abstractmethod
     def is_interacting(self) -> bool:
         pass
 

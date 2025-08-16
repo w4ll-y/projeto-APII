@@ -23,13 +23,13 @@ ENERGY_BORDER_COLOR = '#4b726e'
 ENERGY_COLOR = '#8caba1'
 
 WEAPON_DATA = {
-    0: {'name': 'faca', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/faca/right.png', 'energy_spent': 0},
-    1: {'name': 'facao', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0}
+    0: {'name': 'faca', 'cooldown': 100 , 'damage': 10, 'graphic': 'assets/sprites/weapons/faca/right.png'},
+    1: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png'}
 }
 
 GUNS_DATA = {
-    0:{'name': 'espingarda', 'cost': 5, 'damage': 20, 'speed': 20, 'max_range': 200, 'cooldown': 100 , 'graphic': 'assets/sprites/weapons/espingarda/right.png' },
-    1:{'name': 'revolver', 'cost': 5, 'damage': 20, 'speed': 20, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/weapons/revolver/right.png' }
+    0:{'name': 'espingarda', 'cost': 2, 'damage': 50, 'speed': 20, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
+    1:{'name': 'revolver', 'cost': 1, 'damage': 20, 'speed': 20, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
 }
 
 ENEMY_DATA = {
