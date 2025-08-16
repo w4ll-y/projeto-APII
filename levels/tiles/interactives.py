@@ -87,7 +87,11 @@ class Interactives(Tile):
         if int(item_id) == 0:
             player.stats['health'] += DEFAULT_STATS_VALUE
             player.actual_stats['health'] = player.stats['health']
-        if int(item_id) == 1:
+        elif int(item_id) == 1:
             player.stats['bullets'] += 2
             player.actual_stats['bullets'] = player.stats['bullets']
+        elif int(item_id) == 2:
+            player.numb_guns.append(0)
+        elif int(item_id) == 3:
+            player.numb_weapons.append(1)
 

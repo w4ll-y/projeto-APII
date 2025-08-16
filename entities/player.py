@@ -31,6 +31,8 @@ class Player(Entity):
         
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
+
+        self.numb_weapons = [0]
         self.weapon_index = 0
         self.weapon = self.get_weapon(self.weapon_index)
         self.can_switch_weapon = True
@@ -43,6 +45,7 @@ class Player(Entity):
         self.change_gun_button_pressed = False
 
         #guns
+        self.numb_guns = [1]
         self.create_gun_attack = create_gun_attack
         self.gun_index = 0
         self.gun = self.get_gun(self.gun_index)
@@ -79,11 +82,11 @@ class Player(Entity):
         self.pause.set_player(self)
 
     def get_weapon(self, weapon_index: int):
-        weapon_name = list(WEAPON_DATA.keys())[weapon_index]
+        weapon_name = list(WEAPON_DATA.keys())[self.numb_weapons[weapon_index]]
         return WEAPON_DATA[weapon_name]
 
     def get_gun(self, gun_index: int):
-        gun_name = list(GUNS_DATA.keys())[gun_index]
+        gun_name = list(GUNS_DATA.keys())[self.numb_guns[gun_index]]
         return GUNS_DATA[gun_name]
 
     def import_player_asset(self):
@@ -149,7 +152,7 @@ class Player(Entity):
 
                 self.actual_stats["bullets"] -= cost
             
-            if inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
+            if len(self.numb_weapons) > 1 and inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
                 self.can_switch_weapon = False
                 self.change_weapon_button_pressed = True
                 self.weapon_switch_time = pygame.time.get_ticks()
@@ -162,7 +165,7 @@ class Player(Entity):
             elif not inputs.is_changing_weapon() and self.change_weapon_button_pressed:
                 self.change_weapon_button_pressed = False
 
-            if inputs.is_changing_gun() and self.can_switch_gun and not self.change_gun_button_pressed:
+            if len(self.numb_guns) > 1 and inputs.is_changing_gun() and self.can_switch_gun and not self.change_gun_button_pressed:
                 self.can_switch_gun = False
                 self.change_gun_button_pressed = True
                 self.gun_switch_time = pygame.time.get_ticks()

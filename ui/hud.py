@@ -70,7 +70,7 @@ class Hud:
 
             last_mid_right = holder_rect.midright[0]
 
-    def show_frt_hand_weapons(self,player_weapon: dict, player_attacking: bool, change_weapon: bool):
+    def show_frt_hand_weapons(self,player_weapon: dict, numb_weapons: int):
         bg_rect = pygame.Rect(50, self.display_surface.get_height() - 200, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
 
         weapon_graphic = resize_image(player_weapon["graphic"], 1.5)
@@ -79,20 +79,22 @@ class Hud:
         key_graphic = resize_image(self.button_graphic('frst_attack_button'), 1)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
-        change_weapon_key_graphic = resize_image(self.button_graphic('change_weapon'), 1)
-        change_weapon_key_rect = change_weapon_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
-
-        change_weapon_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
-        change_weapon_rect = change_weapon_graphic.get_rect(center= (bg_rect.left + change_weapon_key_rect.width + 15, bg_rect.top + 20))
-
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
         self.display_surface.blit(weapon_graphic, weapon_rect)
         self.display_surface.blit(key_graphic, key_rect)
-        self.display_surface.blit(change_weapon_key_graphic, change_weapon_key_rect)
-        self.display_surface.blit(change_weapon_graphic, change_weapon_rect)
+
+        if numb_weapons > 1:
+            change_weapon_key_graphic = resize_image(self.button_graphic('change_weapon'), 1)
+            change_weapon_key_rect = change_weapon_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
+
+            change_weapon_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
+            change_weapon_rect = change_weapon_graphic.get_rect(center= (bg_rect.left + change_weapon_key_rect.width + 15, bg_rect.top + 20))
+            
+            self.display_surface.blit(change_weapon_key_graphic, change_weapon_key_rect)
+            self.display_surface.blit(change_weapon_graphic, change_weapon_rect)
     
-    def show_scd_hand_weapons(self, player_bullets: int, player_gun: dict, player_action: bool):
+    def show_scd_hand_weapons(self, player_bullets: int, player_gun: dict, numb_guns: int):
         bg_rect = pygame.Rect(70 + ITEM_BOX_SIZE, self.display_surface.get_height() - 180, ITEM_BOX_SIZE - 20, ITEM_BOX_SIZE - 20)
 
         gun_graphic = resize_image(player_gun["graphic"], 1.5)
@@ -108,12 +110,6 @@ class Hud:
         bullet_quantity_text_surface = bullet_quantity_font.render(f"x{player_gun['cost']}", True, (255, 255, 255))
         bullet_quantity_text_rect = bullet_quantity_text_surface.get_rect(midleft = (bg_rect.right - 20, bg_rect.bottom - 15))
 
-        change_gun_key_graphic = resize_image(self.button_graphic('change_gun'), 1)
-        change_gun_key_rect = change_gun_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
-
-        change_gun_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
-        change_gun_rect = change_gun_graphic.get_rect(center= (bg_rect.left + change_gun_key_rect.width + 15, bg_rect.top + 20))
-
         pygame.draw.rect(self.display_surface, UI_BG_COLOR if player_bullets >= player_gun["cost"] else 'red', bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
 
@@ -121,8 +117,16 @@ class Hud:
         self.display_surface.blit(key_graphic, key_rect)
         self.display_surface.blit(bullet_graphic, bullet_rect)
         self.display_surface.blit(bullet_quantity_text_surface, bullet_quantity_text_rect)
-        self.display_surface.blit(change_gun_key_graphic, change_gun_key_rect)
-        self.display_surface.blit(change_gun_graphic, change_gun_rect)
+
+        if numb_guns > 1:
+            change_gun_key_graphic = resize_image(self.button_graphic('change_gun'), 1)
+            change_gun_key_rect = change_gun_key_graphic.get_rect(center= (bg_rect.left + 20, bg_rect.top + 20))
+
+            change_gun_graphic = resize_image('assets/graphics/hud/weapon/change.png', 0.12)
+            change_gun_rect = change_gun_graphic.get_rect(center= (bg_rect.left + change_gun_key_rect.width + 15, bg_rect.top + 20))
+        
+            self.display_surface.blit(change_gun_key_graphic, change_gun_key_rect)
+            self.display_surface.blit(change_gun_graphic, change_gun_rect)
     
     def show_getted_item(self, player: Player):
         if player.getting_item is not None:
@@ -177,7 +181,7 @@ class Hud:
 
         self.show_health(player.actual_stats["health"], player.stats["health"])
         self.show_bullets(player.actual_stats["bullets"], player.stats["bullets"])
-        self.show_frt_hand_weapons(player.weapon, player.attacking, not player.can_switch_weapon)
-        self.show_scd_hand_weapons(player.actual_stats["bullets"], player.gun, player.scd_attacking)
+        self.show_frt_hand_weapons(player.weapon, len(player.numb_weapons))
+        self.show_scd_hand_weapons(player.actual_stats["bullets"], player.gun, len(player.numb_guns))
         self.show_getted_item(player)
         self.show_time_to_finish()
