@@ -130,9 +130,9 @@ class Enemy(Entity):
         if self.vulnerable:
             self.direction = self.get_player_distance_direction(player)[1]
             if attack_type == 'weapon':
-                self.health -= player.get_full_weapon_damage()
-            else:
-                pass #aqui será para as magias
+                self.health -= player.get_full_weapon_damage(attack_type)
+            elif(attack_type == 'gun'):
+                self.health -= player.get_full_weapon_damage(attack_type)
             self.hit_time = pygame.time.get_ticks()
             self.vulnerable = False
 

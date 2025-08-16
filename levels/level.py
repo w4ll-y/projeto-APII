@@ -15,6 +15,7 @@ from ui.menu.pause import Pause
 from ui.menu.main_menu import MainMenu
 from ui.history import History
 from core.config import Config
+from entities.guns import GunsPlayer
 
 class Level:
     def __init__(self, level_map: LevelType, settings: Config, finish_game_time = [time.time() + 600]):
@@ -114,7 +115,7 @@ class Level:
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack)
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings)
 
@@ -140,7 +141,13 @@ class Level:
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
-        
+
+    def create_gun_attack(self,gun,max_range,cost,):
+        if gun == 'espingarda':
+            self.current_attack = GunsPlayer(self.player,cost, max_range, [self.visible_sprites,self.attack_sprites])
+        if gun == 'revolver':
+            pass
+
     def destroy_attack(self):
         if self.current_attack:
             self.current_attack.kill()

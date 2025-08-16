@@ -8,7 +8,7 @@ from entities.entity import Entity
 from ui.menu.pause import Pause
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack, inputs: InputManager, pause: Pause):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack,destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack):
         super().__init__(groups)
 
         self.inputs = inputs
@@ -40,6 +40,13 @@ class Player(Entity):
         self.attack_button_pressed = False
         self.interaction_button_pressed = False
         self.change_weapon_button_pressed = False
+
+        #guns
+        self.create_gun_attack = create_gun_attack
+        self.guns_index = 0
+        self.gun = self.get_guns(self.guns_index)
+        self.can_switch_gun = True
+        self.gun_switch_time = None
 
         self.obstacle_sprites = obstacle_sprites
 
@@ -73,6 +80,10 @@ class Player(Entity):
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[weapon_index]
         return WEAPON_DATA[weapon_name]
+
+    def get_guns(self, gun_index: int):
+        gun_name = list(GUNS_DATA.keys())[gun_index]
+        return GUNS_DATA[gun_name]
 
     def import_player_asset(self):
         character_path = 'assets/sprites/player/'
@@ -126,9 +137,14 @@ class Player(Entity):
             elif not inputs.is_frst_attacking() and self.attack_button_pressed:
                 self.attack_button_pressed = False
 
-            if inputs.is_scd_attacking():
+            if inputs.is_scd_attacking() and self.scd_attacking == False:
                 self.scd_attacking = True
                 self.attack_time = pygame.time.get_ticks()
+                gun = self.get_guns(self.guns_index)['name']
+                strength = self.get_guns(self.guns_index)['damage']
+                cost = self.get_guns(self.guns_index)['cost']
+                max_range = self.get_guns(self.guns_index)['max_range']
+                self.create_gun_attack(gun, max_range, cost)
             
             if inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
                 self.can_switch_weapon = False
@@ -150,7 +166,6 @@ class Player(Entity):
 
             if inputs.is_pausing():
                 self.paused_game = True
-
 
     def get_status(self):
         if self.direction.x == 0 and self.direction.y == 0:
@@ -184,10 +199,14 @@ class Player(Entity):
         else:
             self.image.set_alpha(255)
 
-    def get_full_weapon_damage(self):
+    def get_full_weapon_damage(self,attack_type):
         base_damage = self.stats['attack']
         weapon_damage = WEAPON_DATA[self.weapon_index]['damage']
-        return base_damage + weapon_damage
+        gun_damage = GUNS_DATA[self.guns_index]['damage']
+        if attack_type == 'weapon':
+            return base_damage + weapon_damage
+        if attack_type == 'gun':
+            return base_damage + gun_damage
 
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
@@ -195,7 +214,12 @@ class Player(Entity):
             if current_time - self.attack_time >= self.attack_cooldown + WEAPON_DATA[self.weapon_index]['cooldown']:
                 self.attacking = False
                 self.destroy_attack()
-        
+
+        if self.scd_attacking:
+            if current_time - self.attack_time >= self.attack_cooldown + GUNS_DATA[self.guns_index]['cooldown']:
+                self.scd_attacking = False
+                self.destroy_attack()
+
         if not self.can_switch_weapon:
             if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:
                 self.can_switch_weapon = True
