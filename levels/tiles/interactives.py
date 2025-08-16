@@ -71,7 +71,7 @@ class Interactives(Tile):
             item_pos_x = display_surface.get_width() // 2 - 16
             item_pos_y = display_surface.get_height() // 2 - 64
             
-            item_graphic = resize_image(f'assets/graphics/collectibles/chest_items/{str(item).rjust(2, '0')}.png', 0.8)
+            item_graphic = resize_image(f'assets/graphics/collectibles/chest_items/{str(item).rjust(2, '0')}.png', 1)
             item_rect = item_graphic.get_rect(topleft = (item_pos_x, item_pos_y))
 
             player.getting_item = {
@@ -87,4 +87,7 @@ class Interactives(Tile):
         if int(item_id) == 0:
             player.stats['health'] += DEFAULT_STATS_VALUE
             player.actual_stats['health'] = player.stats['health']
+        if int(item_id) == 1:
+            player.stats['bullets'] += 2
+            player.actual_stats['bullets'] = player.stats['bullets']
 

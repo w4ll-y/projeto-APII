@@ -15,7 +15,7 @@ class Drop(pygame.sprite.Sprite):
         self.pos = pos
 
         self.rect = self.image.get_rect(**self.pos)
-        self.hitbox = self.rect.inflate(-10, -10)
+        self.hitbox = self.rect.inflate(self.image.get_width() - 10, self.image.get_height() - 10)
 
     def get_image(self):
         base_path = 'assets/graphics/collectibles/drops/'
