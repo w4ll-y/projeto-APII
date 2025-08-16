@@ -4,10 +4,6 @@ FPS = 60
 TILESIZE = 32
 ZOOM = 1.5
 
-DEFAULT_STATS_VALUE = 50 #The player's default stats must be a multiple of 50
-DEFAULT_ACTUAL_STATS_VALUE = 25 #The actual player stats must be a multiple of 25
-DEFAULT_ENERGY_STATS_VALUE = 5 #The actual player stats must be a multiple of 25
-
 HEALTH_HEIGHT = 64
 HEALTH_WIDTH = 64
 

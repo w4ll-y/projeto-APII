@@ -2,7 +2,7 @@ import pygame
 from utils.enums import DropType
 from utils.suport import *
 from entities.player import Player
-from settings import DEFAULT_ACTUAL_STATS_VALUE, DEFAULT_ENERGY_STATS_VALUE
+from settings import DEFAULT_ACTUAL_STATS_VALUE
 
 class Drop(pygame.sprite.Sprite):
     def __init__(self, groups, drop_type: DropType, pos: dict):
