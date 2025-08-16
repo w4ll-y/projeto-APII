@@ -29,11 +29,13 @@ class Hud:
         else:
             return 'assets/graphics/hud/health/empty_health.png'
         
-    def bullet_state_path(self, bullets: int, player_bullets: int):
-        if bullets <= player_bullets:
-            return 'assets/graphics/hud/bullets/full.png'
+    def bullet_holder_path(self, index: int, player_max_bullets: int):
+        if index == 0:
+            return 'assets/graphics/hud/ammo/holder_0.png'
+        elif index < player_max_bullets - 1:
+            return 'assets/graphics/hud/ammo/holder_1.png'
         else:
-            return 'assets/graphics/hud/bullets/empty.png'
+            return 'assets/graphics/hud/ammo/holder_2.png'
     
     def button_graphic(self, button_name: str):
         selected_input = self.inputs.get_input()
@@ -52,15 +54,21 @@ class Hud:
             self.display_surface.blit(heart_graphic, heart_rect)
 
     def show_bullets(self, player_bullets, player_max_bullets):
+        last_mid_right = 20
+
         for index, bullet in enumerate(range(player_max_bullets)):
-            bullet_graphic = resize_image(self.bullet_state_path(bullet + 1, player_bullets), 0.8)
-            bullet_rect = bullet_graphic.get_rect()
+            holder_graphic = resize_image(self.bullet_holder_path(index, player_max_bullets), 2.2)
+            holder_rect = holder_graphic.get_rect(midleft = (last_mid_right, 70))
 
-            bullet_rect.topleft = (index * 20 + 10, 60)
-            bullet_rect.width = HEALTH_WIDTH
-            bullet_rect.height = HEALTH_HEIGHT
+            self.display_surface.blit(holder_graphic, holder_rect)
 
-            self.display_surface.blit(bullet_graphic, bullet_rect)
+            if bullet + 1 <= player_bullets:
+                bullet_graphic = resize_image('assets/graphics/hud/ammo/bullet.png', 1.8)
+                bullet_rect = bullet_graphic.get_rect(center = holder_rect.center)
+
+                self.display_surface.blit(bullet_graphic, bullet_rect)
+
+            last_mid_right = holder_rect.midright[0]
 
     def show_frt_hand_weapons(self,player_weapon: dict, player_attacking: bool, change_weapon: bool):
         bg_rect = pygame.Rect(50, self.display_surface.get_height() - 200, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
@@ -93,7 +101,7 @@ class Hud:
         key_graphic = resize_image(self.button_graphic('scd_attack_button'), 1)
         key_rect = key_graphic.get_rect(center= (bg_rect.left + 5, bg_rect.bottom - 5))
 
-        bullet_graphic = resize_image('assets/graphics/hud/bullets/full.png', 0.6)
+        bullet_graphic = resize_image('assets/graphics/hud/ammo/bullet.png', 1)
         bullet_rect = bullet_graphic.get_rect(midright = (bg_rect.right - 24, bg_rect.bottom - 15))
 
         bullet_quantity_font = pygame.font.Font(size=20)
