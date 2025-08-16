@@ -46,10 +46,10 @@ class Pause():
         select_btn_text_surface = select_btn_font.render("Selecionar", True, (255, 255, 255))
         select_btn_text_rect = select_btn_text_surface.get_rect(midright = (pos_x, pos_y))
 
-        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 0.7)
+        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 1)
         select_btn_rect = select_btn_graphic.get_rect(midright = (pos_x - select_btn_text_surface.get_width() - 10, pos_y))
 
-        quit_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/scd_attack_button/default.png', 0.7)
+        quit_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/scd_attack_button/default.png', 1)
         quit_btn_rect = quit_btn_graphic.get_rect(midleft = (pos_x + 40, pos_y))
 
         quit_btn_font = pygame.font.Font(size=24)

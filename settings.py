@@ -6,7 +6,6 @@ ZOOM = 1.5
 
 DEFAULT_STATS_VALUE = 50 #The player's default stats must be a multiple of 50
 DEFAULT_ACTUAL_STATS_VALUE = 25 #The actual player stats must be a multiple of 25
-DEFAULT_ENERGY_STATS_VALUE = 5 #The actual player stats must be a multiple of 25
 
 HEALTH_HEIGHT = 64
 HEALTH_WIDTH = 64
@@ -23,8 +22,13 @@ ENERGY_BORDER_COLOR = '#4b726e'
 ENERGY_COLOR = '#8caba1'
 
 WEAPON_DATA = {
-    0: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png', 'energy_spent': 0},
-    1: {'name': 'espingarda', 'cooldown': 100 , 'damage': 30, 'graphic': 'assets/sprites/weapons/espingarda/right.png', 'energy_spent': DEFAULT_ENERGY_STATS_VALUE * 2}
+    0: {'name': 'faca', 'cooldown': 100 , 'damage': 10, 'graphic': 'assets/sprites/weapons/faca/right.png'},
+    1: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png'}
+}
+
+GUNS_DATA = {
+    0:{'name': 'espingarda', 'cost': 2, 'damage': 50, 'speed': 20, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
+    1:{'name': 'revolver', 'cost': 1, 'damage': 20, 'speed': 20, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
 }
 
 ENEMY_DATA = {

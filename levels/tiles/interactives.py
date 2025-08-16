@@ -22,7 +22,7 @@ class Interactives(Tile):
         if n <= 20:
             Drop(groups, DropType.HEALTH, pos)
         if 20 < n <= 40:
-            Drop(groups, DropType.ENERGY, pos)
+            Drop(groups, DropType.BULLET, pos)
 
     def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
         if self.original_value == 0:
@@ -51,7 +51,7 @@ class Interactives(Tile):
         pos_y = self.pos['topleft'][1] - offset_y
         
         if self.hitbox2.colliderect(player.hitbox):
-            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/{'default' if not player.interaction_button_pressed else 'pressed'}.png', 0.8)
+            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/default.png', 1)
             key_rect = key_graphic.get_rect(topleft = (pos_x + 4, pos_y - 50))
 
             display_surface.blit(key_graphic, key_rect)
@@ -71,7 +71,7 @@ class Interactives(Tile):
             item_pos_x = display_surface.get_width() // 2 - 16
             item_pos_y = display_surface.get_height() // 2 - 64
             
-            item_graphic = resize_image(f'assets/graphics/collectibles/chest_items/{str(item).rjust(2, '0')}.png', 0.8)
+            item_graphic = resize_image(f'assets/graphics/collectibles/chest_items/{str(item).rjust(2, '0')}.png', 1)
             item_rect = item_graphic.get_rect(topleft = (item_pos_x, item_pos_y))
 
             player.getting_item = {
@@ -87,4 +87,11 @@ class Interactives(Tile):
         if int(item_id) == 0:
             player.stats['health'] += DEFAULT_STATS_VALUE
             player.actual_stats['health'] = player.stats['health']
+        elif int(item_id) == 1:
+            player.stats['bullets'] += 2
+            player.actual_stats['bullets'] = player.stats['bullets']
+        elif int(item_id) == 2:
+            player.numb_guns.append(0)
+        elif int(item_id) == 3:
+            player.numb_weapons.append(1)
 

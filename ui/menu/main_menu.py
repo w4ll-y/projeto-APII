@@ -39,7 +39,7 @@ class MainMenu():
         select_btn_text_surface = select_btn_font.render("Selecionar", True, (255, 255, 255))
         select_btn_text_rect = select_btn_text_surface.get_rect(center = (pos_x, pos_y))
 
-        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 0.7)
+        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 1)
         select_btn_rect = select_btn_graphic.get_rect(center= (pos_x - select_btn_text_surface.get_width(), pos_y))
 
         self.display_surface.blit(select_btn_graphic, select_btn_rect)
