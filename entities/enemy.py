@@ -19,7 +19,7 @@ class Enemy(Entity):
 
         #grafico
         self.import_graphics(id)
-        self.move_status = 'idle'
+        self.move_status = 'down_idle'
         self.image = self.animations[self.move_status][self.frame_index]
         
         self.rect = self.image.get_rect(topleft = pos)
@@ -58,7 +58,11 @@ class Enemy(Entity):
             self.resistance = self.enemy_info['resistance'] * (self.difficult - self.difficult / 2)
 
     def import_graphics(self, id):
-        self.animations = {'idle': [], 'move': [], 'attack': []}
+        self.animations = {
+        'up': [], 'down': [], 'left': [], 'right': [],
+        'up_idle': [], 'down_idle': [], 'left_idle': [], 'right_idle': [],
+        'up_attack': [], 'down_attack': [], 'left_attack': [], 'right_attack': []}
+
         main_path = f'assets/sprites/enemies/{id}/'
         for animaton in self.animations.keys():
             self.animations[animaton] = import_folder_resize_image(main_path + animaton)
@@ -77,22 +81,46 @@ class Enemy(Entity):
         return (distance,direction)
     
     def get_status(self,player):
-        distance = self.get_player_distance_direction(player)[0]
+        # distance = self.get_player_distance_direction(player)[0]
+
+        # if distance <= self.attack_radius and self.can_attack:
+        #     if self.move_status !='attack':
+        #         self.frame_index = 0
+        #     self.move_status = 'attack'
+        # elif distance <= self.notice_radius:
+        #     self.move_status = 'move'
+        # else:
+        #     self.move_status = 'idle'
+
+        distance, direction = self.get_player_distance_direction(player)
+
+        # decide direção principal (parecido com o player.input())
+        if abs(direction.x) > abs(direction.y):
+            if direction.x > 0:
+                base_status = "right"
+            else:
+                base_status = "left"
+        else:
+            if direction.y > 0:
+                base_status = "down"
+            else:
+                base_status = "up"
 
         if distance <= self.attack_radius and self.can_attack:
-            if self.move_status !='attack':
+            if "attack" not in self.move_status:
                 self.frame_index = 0
-            self.move_status = 'attack'
+            self.move_status = base_status + "_attack"
         elif distance <= self.notice_radius:
-            self.move_status = 'move'
+            self.move_status = base_status
         else:
-            self.move_status = 'idle'
+            self.move_status = base_status + "_idle"
 
     def actions(self,player):
-        if self.move_status == 'attack':
+        if 'attack' in self.move_status:
            self.attack_time = pygame.time.get_ticks()
            self.damage_player(self.attack_damage,self.attack_type)
-        elif self.move_status == 'move':
+           self.direction = pygame.math.Vector2()
+        elif 'idle' not in self.move_status:
             self.direction = self.get_player_distance_direction(player)[1]
         else:
             self.direction = pygame.math.Vector2()
