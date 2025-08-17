@@ -33,15 +33,15 @@ class Interactives(Tile):
         if self.original_value == 0:
             return self.cactus_interaction(player)
         if self.original_value == 1:
-            return self.chest_interaction(player, offset_x, offset_y, player_input, interactive_graphics, layout["interactives_chest_items"])
+            return self.chest_interaction(player, offset_x, offset_y, player_input, interactive_graphics, layout["interactives_chest_items"], level)
         if self.original_value == 6:
-            return self.pre_hole_interaction(player, interactive_graphics)
+            return self.pre_hole_interaction(player, interactive_graphics, level)
         if self.original_value == 7:
             return self.hole_interaction(player, offset_x, offset_y, level, player_input)
-        if self.original_value == 10:
+        if self.original_value == 9:
             return self.dungeon_door(player, offset_x, offset_y, level, player_input)
         
-    def dungeon_door(self, player, offset_x, offset_y, level, player_input):
+    def dungeon_door(self, player: Player, offset_x, offset_y, level, player_input):
         self.hitbox.height = 1
         self.hitbox.bottom = 0
 
@@ -52,22 +52,29 @@ class Interactives(Tile):
         pos_x = self.pos['topleft'][0] - offset_x
         pos_y = self.pos['topleft'][1] - offset_y
 
+        pre_level = LevelType.OPENMAP
+        player_pos = (46, 42)
+
+        if level.level_map_type == LevelType.CHESTDUNGEON:
+            pre_level = LevelType.DUNGEON
+            player_pos = (2, 7)
+
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed and pygame.time.get_ticks() > player.interaction_button_pressed_time:
-            level.reset(LevelType.OPENMAP, level.settings, level.finish_game_time, (46, 42))
+            level.reset(pre_level, level.settings, level.finish_game_time, player_pos, (player.stats, player.actual_stats, player.numb_weapons, player.numb_guns))
         
         
-    def pre_hole_interaction(self, player: Player, interactive_graphics):
+    def pre_hole_interaction(self, player: Player, interactive_graphics, level):
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(0, 10)
 
         if player.attacking and player.hitbox.colliderect(self.hitbox2):
-            change_value_in_csv('./storage/open_map/map_Interactives.csv', self.original_pos, 7)
+            change_value_in_csv(f'./storage/{level.level_map_type.value}/map_Interactives.csv', self.original_pos, self.next_value)
             self.image = interactive_graphics[self.next_value]
             self.original_value = self.next_value
 
-    def hole_interaction(self, player, offset_x, offset_y, level, player_input):
+    def hole_interaction(self, player: Player, offset_x, offset_y, level, player_input):
         display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(0, 10)
@@ -75,10 +82,17 @@ class Interactives(Tile):
         pos_x = self.pos['topleft'][0] - offset_x
         pos_y = self.pos['topleft'][1] - offset_y
 
+        next_level = LevelType.DUNGEON
+        player_pos = (11, 6)
+
+        if level.level_map_type == LevelType.DUNGEON:
+            next_level = LevelType.CHESTDUNGEON
+            player_pos = (14, 6)
+
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed:
-            level.reset(LevelType.DUNGEON, level.settings, level.finish_game_time, (11, 6))
+            level.reset(next_level, level.settings, level.finish_game_time, player_pos, (player.stats, player.actual_stats, player.numb_weapons, player.numb_guns))
         
     def cactus_interaction(self, player: Player):
         self.rect2 = self.image.get_rect(**self.pos)
@@ -99,7 +113,7 @@ class Interactives(Tile):
                 player.vulnerable = False
                 player.hurt_time = pygame.time.get_ticks()
 
-    def chest_interaction(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, chest_items_map):
+    def chest_interaction(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, chest_items_map, level):
         display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(20, 20)
@@ -113,8 +127,8 @@ class Interactives(Tile):
             self.image = interactive_graphics[self.next_value]
             self.activated = True
 
-            change_value_in_csv('./storage/open_map/map_Interactives.csv', self.original_pos, self.next_value) #get the next tile Sprite
-            change_value_in_csv('./storage/open_map/map_Interactives_Activated.csv', self.original_pos, 1) #save the activated state
+            change_value_in_csv(f'./storage/{level.level_map_type.value}/map_Interactives.csv', self.original_pos, self.next_value) #get the next tile Sprite
+            change_value_in_csv(f'./storage/{level.level_map_type.value}/map_Interactives_Activated.csv', self.original_pos, 1) #save the activated state
 
             self.original_value = self.next_value
 

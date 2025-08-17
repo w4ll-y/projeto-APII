@@ -52,7 +52,7 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     return image
 
 def reset_game():
-    for level in ['open_map', 'dungeon']:
+    for level in ['open_map', 'dungeon', 'chest_dungeon']:
         origin = f"storage/{level}/backup"
         destination = f"storage/{level}"
 

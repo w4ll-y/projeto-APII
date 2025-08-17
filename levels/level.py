@@ -1,7 +1,7 @@
 import pygame
 import time
 from random import shuffle
-from settings import TILESIZE, ZOOM
+from settings import TILESIZE, ZOOM, PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS
 from utils.enums import LevelType
 from utils.suport import *
 from levels.tile import Tile
@@ -18,13 +18,15 @@ from core.config import Config
 from entities.guns import GunsPlayer
 
 class Level:
-    def __init__(self, level_map: LevelType, settings: Config, player_position: tuple | None = (53, 83), finish_game_time = [time.time() + 600]):
+    def __init__(self, level_map: LevelType, settings: Config, player_position: tuple | None = (53, 83), finish_game_time = [time.time() + 600], player_stats: tuple = (PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS, [0], [1])):
         self.settings = settings
         pygame.mixer.quit()
         pygame.mixer.init()
 
         self.level_map_type = level_map
         self.map_path = ''
+
+        self.player_stats = player_stats
 
         if [LevelType.MAINMENU, LevelType.HISTORY].count(self.level_map_type) == 0:
             #O tempo para finalizar o jogo é salvo em uma lista porque, quando uma lista é passada
@@ -64,8 +66,24 @@ class Level:
         self.created_map = time.time()
         self.level_map(level_map)
 
-    def reset(self, level_map, settings, finish_game_time, player_position: tuple | None = (53, 83)):
+    def reset(self, level_map, settings, finish_game_time, player_position: tuple | None = (53, 83), player_stats: tuple = (PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS, [0], [1])):
         self.__init__(level_map, settings, player_position, finish_game_time)
+
+    def special_function(self):
+        if self.level_map_type == LevelType.DUNGEON:
+            if len(self.player.numb_guns) > 1:
+                for sprite in self.interaction_sprites.sprites():
+                    if sprite.sprite_type == 'enemy':
+                        sprite.kill()
+            if len(self.attackable_sprites) == 8 or len(self.player.numb_guns) > 1:
+                for sprite in self.interaction_sprites.sprites():
+                    if sprite.sprite_type == 'interactive':
+                        if sprite.original_value == 6:
+                            change_value_in_csv('./storage/open_map/map_Interactives.csv', sprite.original_pos, sprite.next_value)
+                            sprite.image = self.graphics['interactives'][sprite.next_value]
+                            sprite.original_value = sprite.next_value
+                        if sprite.original_value == 8:
+                            sprite.kill()
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -119,7 +137,7 @@ class Level:
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack, *self.player_stats)
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings)
 
@@ -175,6 +193,11 @@ class Level:
                 self.music_folder = 'assets/musics/background'
 
                 self.create_map(layouts)
+            case LevelType.CHESTDUNGEON:
+                layouts = ['boundary', 'interactives', 'interactives_activated', 'interactives_chest_items', 'entities']
+                self.music_folder = 'assets/musics/background'
+
+                self.create_map(layouts)
             case LevelType.MAINMENU:
                 self.music_folder = 'assets/musics/menu'
 
@@ -221,6 +244,7 @@ class Level:
         if self.created_map != 0:
             return
         
+        self.special_function()
         self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
