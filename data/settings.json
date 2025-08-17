@@ -1,5 +1,5 @@
 {
-    "first_time": false,
+    "first_time": true,
     "window_size": [
         1280,
         720
@@ -7,5 +7,5 @@
     "fullscreen_mode": false,
     "music_volume": 0,
     "play_music": false,
-    "difficult": 2
+    "difficult": 1
 }

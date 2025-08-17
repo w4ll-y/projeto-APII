@@ -1,6 +1,7 @@
 from csv import reader, writer
 from os import walk, listdir, path, remove
-from settings import ZOOM
+from settings import *
+from utils.enums import LevelType
 import shutil
 import json
 import pygame
@@ -51,27 +52,29 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     return image
 
 def reset_game():
-    origin = "storage/map/backup"
-    destination = "storage/map"
 
-    for file_name in listdir(destination):
-        origin_way = path.join(destination, file_name)
+    for level in ['open_map', 'dungeon', 'chest_dungeon']:
+        origin = f"storage/{level}/backup"
+        destination = f"storage/{level}"
 
-        if path.isfile(origin_way):
-            remove(path.abspath(origin_way))
+        for file_name in listdir(destination):
+            origin_way = path.join(destination, file_name)
 
-    for file_name in listdir(origin):
-        origin_way = path.join(origin, file_name)
+            if path.isfile(origin_way):
+                remove(path.abspath(origin_way))
 
-        if path.isfile(origin_way):
-            extensao = path.splitext(file_name)[1]
-            
-            base_name = path.splitext(file_name)[0][:-7]
-            new_name = f"{base_name}{extensao}"
-            
-            destination_way = path.join(destination, new_name)
-            
-            shutil.copy2(origin_way, destination_way)
+        for file_name in listdir(origin):
+            origin_way = path.join(origin, file_name)
+
+            if path.isfile(origin_way):
+                extensao = path.splitext(file_name)[1]
+                
+                base_name = path.splitext(file_name)[0][2:-7]
+                new_name = f"{base_name}{extensao}"
+                
+                destination_way = path.join(destination, new_name)
+                
+                shutil.copy2(origin_way, destination_way)
 
 def read_json(path):
     with open(path, "r", encoding="utf-8") as file:
@@ -89,6 +92,21 @@ def change_settings_value(key, new_value):
     with open("data/settings.json", "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+def layout_file(layout):
+    match layout:
+        case 'boundary':
+            return 'map_Boundary.csv'
+        case 'objects':
+            return 'map_Objects.csv'
+        case 'interactives':
+            return 'map_Interactives.csv'
+        case 'interactives_activated':
+            return 'map_Interactives_Activated.csv'
+        case 'interactives_chest_items':
+            return 'map_Interactives_Chest_Items.csv'
+        case 'entities':
+            return 'map_Entities.csv'
+        
 def obj_inflate_ajust(object_id: int):
     if object_id == 0:
         return (0, -20)
@@ -122,7 +140,7 @@ def is_icv_destructive(icv_id: int):
     return False
 
 def icv_next_value(icv_id: int):
-    if icv_id in [1]:
+    if icv_id in [1, 6]:
         return icv_id + 1
     
     return icv_id

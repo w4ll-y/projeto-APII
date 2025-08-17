@@ -71,6 +71,7 @@ class MainMenu():
         elif inputs.is_selecting() and now > self.button_clicked_time:
             match self.selected_option:
                 case 0:
+                    reset_game()
                     self.level.reset(LevelType.OPENMAP, self.level.settings, [time.time() + 600])
                 case 1:
                     self.level.reset(LevelType.HISTORY, self.level.settings, [time.time() + 600])
