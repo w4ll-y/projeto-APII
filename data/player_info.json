@@ -1,0 +1,7 @@
+{
+    "health": 150,
+    "bullets": 4,
+    "attack": 25,
+    "magic":  25,
+    "speed": 5
+}
