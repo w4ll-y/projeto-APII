@@ -1,11 +1,12 @@
 from enum import Enum
 
 class LevelType(Enum):
-    MAINMENU = 0
-    OPENMAP = 1
-    DUNGEON = 2
-    HISTORY = 3
-    CONFIGSCREEN = 4
+    MAINMENU = 'main_menu'
+    OPENMAP = 'open_map'
+    DUNGEON = 'dungeon'
+    CHESTDUNGEON = 'chest_dungeon'
+    HISTORY = 'history'
+    CONFIGSCREEN = 'configscreen'
 
 class OpenMapTileType(Enum):
     ROCK = 1

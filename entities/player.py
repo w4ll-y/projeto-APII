@@ -8,7 +8,7 @@ from entities.entity import Entity
 from ui.menu.pause import Pause
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack, stats: dict, actual_stats: dict, numb_weapons: list, numb_guns: list):
         super().__init__(groups)
 
         self.inputs = inputs
@@ -32,7 +32,7 @@ class Player(Entity):
         self.create_attack = create_attack
         self.destroy_attack = destroy_attack
 
-        self.numb_weapons = [0]
+        self.numb_weapons = numb_weapons
         self.weapon_index = 0
         self.weapon = self.get_weapon(self.weapon_index)
         self.can_switch_weapon = True
@@ -44,8 +44,10 @@ class Player(Entity):
         self.change_weapon_button_pressed = False
         self.change_gun_button_pressed = False
 
+        self.interaction_button_pressed_time = None
+
         #guns
-        self.numb_guns = [1]
+        self.numb_guns = numb_guns
         self.create_gun_attack = create_gun_attack
         self.gun_index = 0
         self.gun = self.get_gun(self.gun_index)
@@ -58,21 +60,8 @@ class Player(Entity):
         self.hurt_time = None
         self.ivulnerability_duration = 500
 
-        self.stats = {
-            'health': DEFAULT_STATS_VALUE * 3,
-            'bullets': 4,
-            'attack': DEFAULT_ACTUAL_STATS_VALUE,
-            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
-            'speed': 5
-        }
-
-        self.actual_stats = {
-            'health': DEFAULT_ACTUAL_STATS_VALUE * 6,
-            'bullets': 4,
-            'attack': DEFAULT_ACTUAL_STATS_VALUE,
-            'magic':  DEFAULT_ACTUAL_STATS_VALUE,
-            'speed': 5
-        }
+        self.stats = stats
+        self.actual_stats = actual_stats
 
         self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/brkn_wand_horizontal_sword.wav')
         self.weapon_attack_sound.set_volume(0.5)
@@ -180,8 +169,7 @@ class Player(Entity):
 
             if inputs.is_interacting() and not self.interaction_button_pressed:
                 self.interaction_button_pressed = True
-            elif not inputs.is_interacting() and self.interaction_button_pressed:
-                self.interaction_button_pressed = False
+                self.interaction_button_pressed_time = pygame.time.get_ticks() + 300
 
             if inputs.is_pausing():
                 self.paused_game = True
@@ -250,6 +238,11 @@ class Player(Entity):
         if not self.vulnerable:
             if current_time - self.hurt_time >= self.ivulnerability_duration:
                 self.vulnerable = True
+
+        if self.interaction_button_pressed:
+            if current_time > self.interaction_button_pressed_time:
+                self.interaction_button_pressed_time = None
+                self.interaction_button_pressed = False
 
 
     def update(self):
