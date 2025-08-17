@@ -1,7 +1,7 @@
 import pygame
 import time
 from random import shuffle
-from settings import TILESIZE, ZOOM, PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS
+from settings import TILESIZE, ZOOM
 from utils.enums import LevelType
 from utils.suport import *
 from levels.tile import Tile
@@ -13,12 +13,13 @@ from inputs.input_manager import InputManager
 from entities.enemy import Enemy
 from ui.menu.pause import Pause
 from ui.menu.main_menu import MainMenu
+from ui.menu.game_over import GameOver
 from ui.history import History
 from core.config import Config
 from entities.guns import GunsPlayer
 
 class Level:
-    def __init__(self, level_map: LevelType, settings: Config, player_position: tuple | None = (53, 83), finish_game_time = [time.time() + 600], player_stats: tuple = (PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS, [0], [1])):
+    def __init__(self, level_map: LevelType, settings: Config, player_position: tuple | None = (53, 83), finish_game_time = [time.time() + 600], player_stats: dict = read_json('data/player_info.json'), player_actual_stats: dict = read_json('data/player_info.json'), player_numb_weapons: list = [0], player_numb_guns: list = [1]):
         self.settings = settings
         pygame.mixer.quit()
         pygame.mixer.init()
@@ -27,6 +28,9 @@ class Level:
         self.map_path = ''
 
         self.player_stats = player_stats
+        self.player_actual_stats = player_actual_stats
+        self.player_numb_weapons = player_numb_weapons
+        self.player_numb_guns = player_numb_guns
 
         if [LevelType.MAINMENU, LevelType.HISTORY].count(self.level_map_type) == 0:
             #O tempo para finalizar o jogo é salvo em uma lista porque, quando uma lista é passada
@@ -63,11 +67,20 @@ class Level:
         self.history = History(self.inputs, self)
         self.is_history = False
 
+        self.gameover_menu = GameOver(self.inputs, self)
+        self.is_gameover_menu = False
+
         self.created_map = time.time()
         self.level_map(level_map)
 
-    def reset(self, level_map, settings, finish_game_time, player_position: tuple | None = (53, 83), player_stats: tuple = (PLAYER_DEFAULT_STATS, PLAYER_DEFAULT_ACTUAL_STATS, [0], [1])):
-        self.__init__(level_map, settings, player_position, finish_game_time)
+    def reset(self, level_map, settings, finish_game_time, player_position: tuple | None = None, player_stats: dict | None = None, player_actual_stats: dict | None = None, player_numb_weapons: list | None = None, player_numb_guns: list | None = None):
+        if player_position is None: player_position = (53, 83)
+        if player_stats is None: player_stats = read_json('data/player_info.json')
+        if player_actual_stats is None: player_actual_stats = read_json('data/player_info.json')
+        if player_numb_weapons is None: player_numb_weapons = [0]
+        if player_numb_guns is None: player_numb_guns = [1]
+
+        self.__init__(level_map, settings, player_position, finish_game_time, player_stats, player_actual_stats, player_numb_weapons, player_numb_guns)
 
     def special_function(self):
         if self.level_map_type == LevelType.DUNGEON:
@@ -137,7 +150,7 @@ class Level:
         
                         if style == 'entities':
                             if col == '1':
-                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack, *self.player_stats)
+                                self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack, self, self.player_stats, self.player_actual_stats, self.player_numb_weapons, self.player_numb_guns)
                             else:
                                 Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings)
 
@@ -252,6 +265,9 @@ class Level:
         self.visible_sprites.enemy_update(self.player)
         self.hud.display(self.player)
         self.visible_sprites.update()
+
+        if self.is_gameover_menu:
+            self.gameover_menu.display_menu()
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self, map_path):

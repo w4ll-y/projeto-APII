@@ -7,6 +7,7 @@ class LevelType(Enum):
     CHESTDUNGEON = 'chest_dungeon'
     HISTORY = 'history'
     CONFIGSCREEN = 'configscreen'
+    GAMEOVER = 'game_over'
 
 class OpenMapTileType(Enum):
     ROCK = 1

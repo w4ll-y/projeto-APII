@@ -62,7 +62,7 @@ class Interactives(Tile):
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed and pygame.time.get_ticks() > player.interaction_button_pressed_time:
-            level.reset(pre_level, level.settings, level.finish_game_time, player_pos, (player.stats, player.actual_stats, player.numb_weapons, player.numb_guns))
+            level.reset(pre_level, level.settings, level.finish_game_time, player_pos, player.stats, player.actual_stats, player.numb_weapons, player.numb_guns)
         
         
     def pre_hole_interaction(self, player: Player, interactive_graphics, level):
@@ -92,7 +92,7 @@ class Interactives(Tile):
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed:
-            level.reset(next_level, level.settings, level.finish_game_time, player_pos, (player.stats, player.actual_stats, player.numb_weapons, player.numb_guns))
+            level.reset(next_level, level.settings, level.finish_game_time, player_pos, player.stats, player.actual_stats, player.numb_weapons, player.numb_guns)
         
     def cactus_interaction(self, player: Player):
         self.rect2 = self.image.get_rect(**self.pos)
