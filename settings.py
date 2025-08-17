@@ -35,19 +35,3 @@ ENEMY_DATA = {
     0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360},
     2: {'health': 100, 'damage': DEFAULT_ACTUAL_STATS_VALUE * 2, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360}
 }
-
-PLAYER_DEFAULT_STATS = {
-    'health': DEFAULT_STATS_VALUE * 3,
-    'bullets': 4,
-    'attack': DEFAULT_ACTUAL_STATS_VALUE,
-    'magic':  DEFAULT_ACTUAL_STATS_VALUE,
-    'speed': 5
-}
-
-PLAYER_DEFAULT_ACTUAL_STATS = {
-    'health': DEFAULT_STATS_VALUE * 3,
-    'bullets': 4,
-    'attack': DEFAULT_ACTUAL_STATS_VALUE,
-    'magic':  DEFAULT_ACTUAL_STATS_VALUE,
-    'speed': 5
-}

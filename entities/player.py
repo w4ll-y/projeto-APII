@@ -1,5 +1,5 @@
 import pygame
-from utils.enums import OpenMapTileType
+from utils.enums import LevelType
 from settings import *
 from utils.suport import resize_image
 from os import walk
@@ -8,8 +8,10 @@ from entities.entity import Entity
 from ui.menu.pause import Pause
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack, stats: dict, actual_stats: dict, numb_weapons: list, numb_guns: list):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack, level, stats: dict, actual_stats: dict, numb_weapons: list, numb_guns: list):
         super().__init__(groups)
+
+        self.level = level
 
         self.inputs = inputs
 
@@ -69,6 +71,9 @@ class Player(Entity):
         self.paused_game = False
         self.pause = pause
         self.pause.set_player(self)
+
+        self.deading = False
+        self.deading_cooldown = None
 
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[self.numb_weapons[weapon_index]]
@@ -244,11 +249,25 @@ class Player(Entity):
                 self.interaction_button_pressed_time = None
                 self.interaction_button_pressed = False
 
+    def check_pause_funcs(self):
+        if self.actual_stats['health'] == 0:
+            self.paused_game = True
+            
+            if self.deading_cooldown == None:
+                self.deading_cooldown = pygame.time.get_ticks() + 1000
 
-    def update(self):
+            self.move_status = 'down'
+            self.get_status()
+            self.animate()
+
+            if self.deading_cooldown <= pygame.time.get_ticks():
+                self.level.is_gameover_menu = True
+
+            return True
+
         if self.paused_game:
             self.pause.display_menu()
-            return
+            return True
 
         if self.getting_item is not None:
             self.interaction_button_pressed = False
@@ -261,6 +280,12 @@ class Player(Entity):
                 self.getting_item['item_action'](self.getting_item['item_id'], self)
                 self.getting_item = None
 
+            return True
+        
+        return False
+
+    def update(self):
+        if self.check_pause_funcs():
             return
 
         self.input()
