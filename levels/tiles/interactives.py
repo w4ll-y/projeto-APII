@@ -4,7 +4,7 @@ from levels.tile import Tile
 from entities.player import Player
 from settings import *
 from utils.suport import *
-from utils.enums import InputType, DropType
+from utils.enums import InputType, DropType, LevelType
 from inputs.input_manager import InputManager
 from levels.tiles.drop import Drop
 
@@ -15,6 +15,11 @@ class Interactives(Tile):
         self.hitbox2 = None
         self.is_colliding = False
 
+    def destroyed_action(self, groups):
+        if self.destructive:
+            self.drop(groups)
+            self.kill()
+
     def drop(self, groups: list):
         n = randint(1, 100)
         pos = {'center': (self.pos['topleft'][0] + 20, self.pos['topleft'][1] + 20)}
@@ -24,11 +29,56 @@ class Interactives(Tile):
         if 20 < n <= 40:
             Drop(groups, DropType.BULLET, pos)
 
-    def special_function(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
+    def special_function(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, layout, level):
         if self.original_value == 0:
             return self.cactus_interaction(player)
         if self.original_value == 1:
-            return self.chest_interaction(player, offset_x, offset_y, input, interactive_graphics, chest_items_map)
+            return self.chest_interaction(player, offset_x, offset_y, player_input, interactive_graphics, layout["interactives_chest_items"])
+        if self.original_value == 6:
+            return self.pre_hole_interaction(player, interactive_graphics)
+        if self.original_value == 7:
+            return self.hole_interaction(player, offset_x, offset_y, level, player_input)
+        if self.original_value == 10:
+            return self.dungeon_door(player, offset_x, offset_y, level, player_input)
+        
+    def dungeon_door(self, player, offset_x, offset_y, level, player_input):
+        self.hitbox.height = 1
+        self.hitbox.bottom = 0
+
+        display_surface = pygame.display.get_surface()
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(0, 20)
+
+        pos_x = self.pos['topleft'][0] - offset_x
+        pos_y = self.pos['topleft'][1] - offset_y
+
+        self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
+
+        if player.interaction_button_pressed and pygame.time.get_ticks() > player.interaction_button_pressed_time:
+            level.reset(LevelType.OPENMAP, level.settings, level.finish_game_time, (46, 42))
+        
+        
+    def pre_hole_interaction(self, player: Player, interactive_graphics):
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(0, 10)
+
+        if player.attacking and player.hitbox.colliderect(self.hitbox2):
+            change_value_in_csv('./storage/open_map/map_Interactives.csv', self.original_pos, 7)
+            self.image = interactive_graphics[self.next_value]
+            self.original_value = self.next_value
+
+    def hole_interaction(self, player, offset_x, offset_y, level, player_input):
+        display_surface = pygame.display.get_surface()
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(0, 10)
+
+        pos_x = self.pos['topleft'][0] - offset_x
+        pos_y = self.pos['topleft'][1] - offset_y
+
+        self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
+
+        if player.interaction_button_pressed:
+            level.reset(LevelType.DUNGEON, level.settings, level.finish_game_time, (11, 6))
         
     def cactus_interaction(self, player: Player):
         self.rect2 = self.image.get_rect(**self.pos)
@@ -40,9 +90,16 @@ class Interactives(Tile):
         if self.hitbox2.colliderect(player.hitbox) and not self.hitbox.inflate(2, 2).colliderect(player.hitbox) and self.is_colliding == True:
             self.is_colliding = False
 
-        if not self.is_colliding: player.actual_stats['health'] -= DEFAULT_ACTUAL_STATS_VALUE
+        if not self.is_colliding: 
+            if player.vulnerable:
+                if player.actual_stats['health'] - DEFAULT_ACTUAL_STATS_VALUE >= 0:
+                    player.actual_stats['health'] -= DEFAULT_ACTUAL_STATS_VALUE
+                else:
+                    player.actual_stats['health'] = 0
+                player.vulnerable = False
+                player.hurt_time = pygame.time.get_ticks()
 
-    def chest_interaction(self, player: Player, offset_x, offset_y, input: InputManager, interactive_graphics, chest_items_map):
+    def chest_interaction(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, chest_items_map):
         display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(20, 20)
@@ -50,18 +107,14 @@ class Interactives(Tile):
         pos_x = self.pos['topleft'][0] - offset_x
         pos_y = self.pos['topleft'][1] - offset_y
         
-        if self.hitbox2.colliderect(player.hitbox):
-            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/default.png', 1)
-            key_rect = key_graphic.get_rect(topleft = (pos_x + 4, pos_y - 50))
-
-            display_surface.blit(key_graphic, key_rect)
+        self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed:
             self.image = interactive_graphics[self.next_value]
             self.activated = True
 
-            change_value_in_csv('./storage/map/map_Interactives.csv', self.original_pos, self.next_value) #get the next tile Sprite
-            change_value_in_csv('./storage/map/map_Interactives_Activated.csv', self.original_pos, 1) #save the activated state
+            change_value_in_csv('./storage/open_map/map_Interactives.csv', self.original_pos, self.next_value) #get the next tile Sprite
+            change_value_in_csv('./storage/open_map/map_Interactives_Activated.csv', self.original_pos, 1) #save the activated state
 
             self.original_value = self.next_value
 
@@ -94,4 +147,11 @@ class Interactives(Tile):
             player.numb_guns.append(0)
         elif int(item_id) == 3:
             player.numb_weapons.append(1)
+
+    def interaction_button(self, player, hitbox, pos, display_surface, player_input):
+        if hitbox.colliderect(player.hitbox):
+            key_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if player_input.get_input().type == InputType.KEYBOARD else 'joystick'}/interact/default.png', 1)
+            key_rect = key_graphic.get_rect(topleft = pos)
+
+            display_surface.blit(key_graphic, key_rect)
 

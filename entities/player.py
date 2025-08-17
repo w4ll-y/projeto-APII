@@ -44,6 +44,8 @@ class Player(Entity):
         self.change_weapon_button_pressed = False
         self.change_gun_button_pressed = False
 
+        self.interaction_button_pressed_time = None
+
         #guns
         self.numb_guns = [1]
         self.create_gun_attack = create_gun_attack
@@ -180,8 +182,7 @@ class Player(Entity):
 
             if inputs.is_interacting() and not self.interaction_button_pressed:
                 self.interaction_button_pressed = True
-            elif not inputs.is_interacting() and self.interaction_button_pressed:
-                self.interaction_button_pressed = False
+                self.interaction_button_pressed_time = pygame.time.get_ticks() + 300
 
             if inputs.is_pausing():
                 self.paused_game = True
@@ -250,6 +251,11 @@ class Player(Entity):
         if not self.vulnerable:
             if current_time - self.hurt_time >= self.ivulnerability_duration:
                 self.vulnerable = True
+
+        if self.interaction_button_pressed:
+            if current_time > self.interaction_button_pressed_time:
+                self.interaction_button_pressed_time = None
+                self.interaction_button_pressed = False
 
 
     def update(self):
