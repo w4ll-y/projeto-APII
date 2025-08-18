@@ -8,8 +8,9 @@ from utils.enums import DropType
 from levels.tiles.drop import Drop
 from core.config import Config
 
+
 class Enemy(Entity):
-    def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups, settings: Config):
+    def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups, settings: Config, create_gun_enemy_attack):
         self.settings = settings
         self.difficult = settings.difficult
 
@@ -39,8 +40,10 @@ class Enemy(Entity):
 
         self.can_attack = True
         self.attack_time = None
-        self.attack_cooldown = 400
+        self.attack_cooldown = 1000
         self.damage_player = damage_player
+        self.gun = GUNS_DATA[1]
+        self.create_gun_enemy_attack = create_gun_enemy_attack
 
         self.vulnerable = True
         self.hit_time = None
@@ -73,7 +76,9 @@ class Enemy(Entity):
         player_vec = pygame.math.Vector2(player.rect.center)
         distance = (player_vec - enemy_vec).magnitude()
 
-        if distance > 0:
+        if distance > 0 and self.id == 2:
+            direction = (player_vec - enemy_vec).normalize()
+        elif distance > 100 and self.id == 0:
             direction = (player_vec - enemy_vec).normalize()
         else:
             direction = pygame.math.Vector2()
@@ -81,17 +86,6 @@ class Enemy(Entity):
         return (distance,direction)
     
     def get_status(self,player):
-        # distance = self.get_player_distance_direction(player)[0]
-
-        # if distance <= self.attack_radius and self.can_attack:
-        #     if self.move_status !='attack':
-        #         self.frame_index = 0
-        #     self.move_status = 'attack'
-        # elif distance <= self.notice_radius:
-        #     self.move_status = 'move'
-        # else:
-        #     self.move_status = 'idle'
-
         distance, direction = self.get_player_distance_direction(player)
 
         # decide direção principal (parecido com o player.input())
@@ -110,16 +104,23 @@ class Enemy(Entity):
             if "attack" not in self.move_status:
                 self.frame_index = 0
             self.move_status = base_status + "_attack"
+            
         elif distance <= self.notice_radius:
-            self.move_status = base_status
+                self.move_status = base_status
         else:
             self.move_status = base_status + "_idle"
 
     def actions(self,player):
         if 'attack' in self.move_status:
-           self.attack_time = pygame.time.get_ticks()
-           self.damage_player(self.attack_damage,self.attack_type)
-           self.direction = pygame.math.Vector2()
+            if self.id == 2:
+                self.attack_time = pygame.time.get_ticks()
+                self.damage_player(self.attack_damage,self.attack_type)
+                self.direction = pygame.math.Vector2()
+            elif self.id == 0:
+                self.attack_time = pygame.time.get_ticks()
+                self.create_gun_enemy_attack(150, self.move_status, self.rect)
+                self.direction = pygame.math.Vector2()
+
         elif 'idle' not in self.move_status:
             self.direction = self.get_player_distance_direction(player)[1]
         else:
@@ -127,10 +128,11 @@ class Enemy(Entity):
 
     def animate(self):
         animation = self.animations[self.move_status]
-
+        
         self.frame_index += self.animation_speed
         if self.frame_index >= len(animation):
-            if self.move_status == 'attack':
+           
+            if 'attack' in self.move_status:
                 self.can_attack = False
             self.frame_index = 0
 
@@ -156,7 +158,6 @@ class Enemy(Entity):
             
     def get_damaged(self,player, attack_type):
         if self.vulnerable:
-            self.direction = self.get_player_distance_direction(player)[1]
             if attack_type == 'weapon':
                 self.health -= player.get_full_weapon_damage(attack_type)
             elif(attack_type == 'gun'):
@@ -165,6 +166,9 @@ class Enemy(Entity):
             self.vulnerable = False
 
     def check_death(self):
+        if 'attack' in self.move_status: #gambiarra pros inimigos não ficarem muito tempo atirando
+                self.can_attack = False
+                self.frame_index = 0
         if self.health <= 0:
             self.drop()
             self.kill()
