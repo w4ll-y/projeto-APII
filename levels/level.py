@@ -242,6 +242,11 @@ class Level:
                 self.music_folder = ''
 
                 self.is_history = True
+            case LevelType.STORE:
+                layouts = ['boundary', 'interactives', 'interactives_activated', 'entities']
+                self.music_folder = 'assets/musics/background'
+
+                self.create_map(layouts)
 
     def player_attack_collision(self):
         if self.attack_sprites:

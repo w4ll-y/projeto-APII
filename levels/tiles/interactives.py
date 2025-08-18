@@ -50,7 +50,7 @@ class Interactives(Tile):
     def buy_item(self, player: Player, offset_x, offset_y, player_input, price, upgrade_id):
         display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
-        self.hitbox2 = self.rect2.inflate(0, 20)
+        self.hitbox2 = self.rect2.inflate(0, 70)
 
         pos_x = self.pos['topleft'][0] - offset_x
         pos_y = self.pos['topleft'][1] - offset_y
@@ -104,6 +104,11 @@ class Interactives(Tile):
         if level.level_map_type == LevelType.CHESTDUNGEON:
             pre_level = LevelType.DUNGEON
             player_pos = (2, 7)
+        elif level.level_map_type == LevelType.OPENMAP:
+            pre_level = LevelType.STORE
+            player_pos = (9, 6)
+        elif level.level_map_type == LevelType.STORE:
+            player_pos = (53, 83)
 
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
