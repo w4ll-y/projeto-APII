@@ -8,6 +8,7 @@ class LevelType(Enum):
     HISTORY = 'history'
     CONFIGSCREEN = 'configscreen'
     GAMEOVER = 'game_over'
+    STORE = 'store'
 
 class OpenMapTileType(Enum):
     ROCK = 1
