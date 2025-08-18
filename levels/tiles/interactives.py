@@ -30,7 +30,7 @@ class Interactives(Tile):
             Drop(groups, DropType.BULLET, pos)
 
     def special_function(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, layout, level):
-        if self.original_value == 0:
+        if self.original_value in [0, 16, 17]:
             return self.cactus_interaction(player)
         if self.original_value == 1:
             return self.chest_interaction(player, offset_x, offset_y, player_input, interactive_graphics, layout["interactives_chest_items"], level)
