@@ -53,7 +53,7 @@ class ConfigScreen():
             val = self.settings[key]
 
             value_font = pygame.font.Font(size=36)
-            value_text_surface = value_font.render(self.format_values(val), True, (255, 255, 255) if key != self.selected_option else (128, 128, 128))
+            value_text_surface = value_font.render(self.format_values(key, val), True, (255, 255, 255) if key != self.selected_option else (128, 128, 128))
             value_text_rect = text_surface.get_rect(midleft = (pos_x + 200, pos_y))
 
             self.display_surface.blit(text_surface, text_rect)
@@ -119,13 +119,13 @@ class ConfigScreen():
         else:
             self.saved_time = 0
 
-    def format_values(self, value):
+    def format_values(self, key, value):
         if type(value) == bool:    
             if value == True:
                 return "Sim"
             elif value == False:
                 return "Não"
-        elif type(value) == int:
+        elif type(value) == int and key != 'music_volume':
             if value == 1:
                 return "Fácil"
             elif value == 2:
