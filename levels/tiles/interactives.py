@@ -161,6 +161,10 @@ class Interactives(Tile):
             player.numb_guns.append(0)
         elif int(item_id) == 3:
             player.numb_weapons.append(1)
+        elif int(item_id) == 4:
+            player.actual_stats['reis'] += 50
+        elif int(item_id) == 5:
+            player.actual_stats['reis'] += 100
 
     def interaction_button(self, player, hitbox, pos, display_surface, player_input):
         if hitbox.colliderect(player.hitbox):
