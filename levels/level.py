@@ -17,6 +17,7 @@ from ui.menu.game_over import GameOver
 from ui.history import History
 from core.config import Config
 from entities.guns import GunsPlayer
+from entities.bullets import Bullet
 
 class Level:
     def __init__(self, level_map: LevelType, settings: Config, player_position: tuple | None = (53, 83), finish_game_time = [time.time() + 600], player_stats: dict = read_json('data/player_info.json'), player_actual_stats: dict = read_json('data/player_info.json'), player_numb_weapons: list = [0], player_numb_guns: list = [1]):
@@ -60,6 +61,7 @@ class Level:
         self.music_channel.fadeout(800)
 
         self.player = None
+        self.enemy = None
 
         self.main_menu = MainMenu(self.inputs, self)
         self.is_main_menu = False
@@ -152,7 +154,7 @@ class Level:
                             if col == '1':
                                 self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack, self, self.player_stats, self.player_actual_stats, self.player_numb_weapons, self.player_numb_guns)
                             else:
-                                Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings)
+                                self.enemy = Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings, self.create_gun_enemy_attack)
 
         self.finish_game_time[0] += time.time() - self.created_map
         self.created_map = 0
@@ -179,6 +181,26 @@ class Level:
 
     def create_gun_attack(self,gun,max_range,cost,):
         self.current_attack = GunsPlayer(self.player,cost, max_range, [self.visible_sprites,self.attack_sprites])
+
+    def create_gun_enemy_attack(self, max_range,move_status,rect):
+        direction = move_status.split('_')[0]  # Pegatt a direção em que o inimigo está se movendo
+        player_group = pygame.sprite.GroupSingle(self.player)
+        
+        # Aqui, vamos ajustar a direção da bala, dependendo da direção do inimigo
+        if direction == 'right':
+            direction_bullet = pygame.math.Vector2(1, 0)
+            spawn_pos = pygame.math.Vector2(rect.centerx + 40, rect.centery + 10)
+        elif direction == 'left':
+            direction_bullet = pygame.math.Vector2(-1, 0)
+            spawn_pos = pygame.math.Vector2(rect.centerx - 40, rect.centery + 10)
+        elif direction == 'up':
+            direction_bullet = pygame.math.Vector2(0, -1)
+            spawn_pos = pygame.math.Vector2(rect.centerx, rect.centery - 40)
+        elif direction == 'down':
+            direction_bullet = pygame.math.Vector2(0, 1)
+            spawn_pos = pygame.math.Vector2(rect.centerx, rect.centery + 40)
+
+        Bullet(self.enemy, spawn_pos, direction_bullet, max_range, [self.visible_sprites,self.attack_sprites],player_group, self.damage_player)
 
     def destroy_attack(self):
         if self.current_attack:

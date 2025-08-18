@@ -27,11 +27,11 @@ WEAPON_DATA = {
 }
 
 GUNS_DATA = {
-    0:{'name': 'espingarda', 'cost': 2, 'damage': 50, 'speed': 20, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
-    1:{'name': 'revolver', 'cost': 1, 'damage': 20, 'speed': 20, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
+    0:{'name': 'espingarda', 'cost': 2, 'damage': 50, 'speed': 10, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
+    1:{'name': 'revolver', 'cost': 1, 'damage': 20, 'speed': 10, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
 }
 
 ENEMY_DATA = {
-    0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360},
+    0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 200, 'notice_radius': 400},
     2: {'health': 100, 'damage': DEFAULT_ACTUAL_STATS_VALUE * 2, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360}
 }
