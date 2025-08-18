@@ -84,11 +84,11 @@ class Level:
 
     def special_function(self):
         if self.level_map_type == LevelType.DUNGEON:
-            if len(self.player.numb_guns) > 1:
+            if len(self.player.numb_weapons) > 1:
                 for sprite in self.interaction_sprites.sprites():
                     if sprite.sprite_type == 'enemy':
                         sprite.kill()
-            if len(self.attackable_sprites) == 8 or len(self.player.numb_guns) > 1:
+            if len(self.attackable_sprites) == 8 or len(self.player.numb_weapons) > 1:
                 for sprite in self.interaction_sprites.sprites():
                     if sprite.sprite_type == 'interactive':
                         if sprite.original_value == 6:
