@@ -13,3 +13,15 @@ GAME_HISTORY = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, \n" \
 "porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci \n" \
 "velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore \n" \
 "magnam aliquam quaerat voluptatem."
+
+NPC_1_DIALOG = "Lorem ipsum dolor sit amet, consectetur adipiscing \n" \
+"elit sed do eiusmod tempor incididunt ut labore et dolore magna \n" \
+"aliqua. Ut enim \n"
+
+NPC_2_DIALOG = "Lorem ipsum dolor sit amet, consectetur adipiscing \n" \
+"elit sed do eiusmod tempor incididunt ut labore et dolore magna \n" \
+"aliqua. Ut enim \n"
+
+NPC_3_DIALOG = "Lorem ipsum dolor sit amet, consectetur adipiscing \n" \
+"elit sed do eiusmod tempor incididunt ut labore et dolore magna \n" \
+"aliqua. Ut enim \n"

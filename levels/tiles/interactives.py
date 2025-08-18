@@ -46,6 +46,21 @@ class Interactives(Tile):
             self.buy_item(player, offset_x, offset_y, player_input, 200, 2)
         if self.original_value == 12:
             self.buy_item(player, offset_x, offset_y, player_input, 150, 1)
+        if 13 <= self.original_value <= 15:
+            self.npc_dialog(player, offset_x, offset_y, player_input)
+
+    def npc_dialog(self, player: Player, offset_x, offset_y, player_input):
+        display_surface = pygame.display.get_surface()
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(20, 20)
+
+        pos_x = self.pos['topleft'][0] - offset_x
+        pos_y = self.pos['topleft'][1] - offset_y
+
+        self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
+
+        if player.interaction_button_pressed and not player.dialog.display:
+            player.dialog.set_dialogs(dialog_from_id(self.original_value))
         
     def buy_item(self, player: Player, offset_x, offset_y, player_input, price, upgrade_id):
         display_surface = pygame.display.get_surface()

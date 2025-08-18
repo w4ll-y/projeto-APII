@@ -1,10 +1,11 @@
+import shutil
+import json
+import pygame
 from csv import reader, writer
 from os import walk, listdir, path, remove
 from settings import *
 from utils.enums import LevelType
-import shutil
-import json
-import pygame
+from utils.assets import *
 
 def import_csv_layout(path: str):
     with open(path) as level_map:
@@ -52,7 +53,6 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     return image
 
 def reset_game():
-
     for level in ['open_map', 'dungeon', 'chest_dungeon', 'store']:
         origin = f"storage/{level}/backup"
         destination = f"storage/{level}"
@@ -91,6 +91,16 @@ def change_settings_value(key, new_value):
 
     with open("data/settings.json", "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+def dialog_from_id(npc_id: int):
+    match npc_id:
+        case 13:
+            return NPC_1_DIALOG
+        case 14:
+            return NPC_2_DIALOG
+        case 15:
+            return NPC_3_DIALOG
+        
 
 def layout_file(layout):
     match layout:
