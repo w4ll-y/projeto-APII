@@ -58,17 +58,28 @@ class Hud:
 
         for index, bullet in enumerate(range(player_max_bullets)):
             holder_graphic = resize_image(self.bullet_holder_path(index, player_max_bullets), 2.2)
-            holder_rect = holder_graphic.get_rect(midleft = (last_mid_right, 70))
+            holder_rect = holder_graphic.get_rect(midleft = (last_mid_right, 75))
 
             self.display_surface.blit(holder_graphic, holder_rect)
 
             if bullet + 1 <= player_bullets:
-                bullet_graphic = resize_image('assets/graphics/hud/ammo/bullet.png', 1.8)
+                bullet_graphic = resize_image('assets/graphics/hud/ammo/bullet.png', 1.9)
                 bullet_rect = bullet_graphic.get_rect(center = holder_rect.center)
 
                 self.display_surface.blit(bullet_graphic, bullet_rect)
 
             last_mid_right = holder_rect.midright[0]
+
+    def show_reis(self, player_reis):
+        reis_graphic = resize_image('assets/graphics/hud/coin/reis.png', 0.7)
+        reis_rect = reis_graphic.get_rect(midleft = (15, 120))
+
+        font = pygame.font.Font(size=28)
+        text_surface = font.render(str(player_reis), True, (255, 255, 255))
+        text_rect = text_surface.get_rect(midleft = (reis_graphic.get_width() + 15, 120))
+
+        self.display_surface.blit(reis_graphic, reis_rect)
+        self.display_surface.blit(text_surface, text_rect)
 
     def show_frt_hand_weapons(self,player_weapon: dict, numb_weapons: int):
         bg_rect = pygame.Rect(50, self.display_surface.get_height() - 200, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
@@ -181,6 +192,7 @@ class Hud:
 
         self.show_health(player.actual_stats["health"], player.stats["health"])
         self.show_bullets(player.actual_stats["bullets"], player.stats["bullets"])
+        self.show_reis(player.actual_stats['reis'])
         self.show_frt_hand_weapons(player.weapon, len(player.numb_weapons))
         self.show_scd_hand_weapons(player.actual_stats["bullets"], player.gun, len(player.numb_guns))
         self.show_getted_item(player)

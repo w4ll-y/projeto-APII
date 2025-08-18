@@ -40,6 +40,52 @@ class Interactives(Tile):
             return self.hole_interaction(player, offset_x, offset_y, level, player_input)
         if self.original_value == 9:
             return self.dungeon_door(player, offset_x, offset_y, level, player_input)
+        if self.original_value == 10:
+            self.buy_item(player, offset_x, offset_y, player_input, 100, 0)
+        if self.original_value == 11:
+            self.buy_item(player, offset_x, offset_y, player_input, 200, 2)
+        if self.original_value == 12:
+            self.buy_item(player, offset_x, offset_y, player_input, 150, 1)
+        
+    def buy_item(self, player: Player, offset_x, offset_y, player_input, price, upgrade_id):
+        display_surface = pygame.display.get_surface()
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(0, 20)
+
+        pos_x = self.pos['topleft'][0] - offset_x
+        pos_y = self.pos['topleft'][1] - offset_y
+
+        self.interaction_button(player, self.hitbox2, (pos_x + 10, pos_y - 40), display_surface, player_input)
+
+        price_font = pygame.font.Font(size=30)
+        price_text_surface = price_font.render(str(price), True, (255, 255, 255) if player.actual_stats['reis'] >= price else (200, 0, 0))
+        price_text_rect = price_text_surface.get_rect(center = (pos_x, pos_y))
+
+        reis_graphic = resize_image('assets/graphics/hud/coin/reis.png', 0.4)
+        reis_rect = reis_graphic.get_rect(midright = (pos_x - 20, pos_y))
+
+        display_surface.blit(price_text_surface, price_text_rect)
+        display_surface.blit(reis_graphic, reis_rect)
+
+        if player.interaction_button_pressed and player.actual_stats['reis'] >= price:
+            pos_x = display_surface.get_width() // 2 - 16
+            pos_y = display_surface.get_height() // 2
+
+            image = resize_image(f'assets/graphics/interactives/{self.original_value}.png')
+            rect = image.get_rect(center = (pos_x, pos_y))
+
+            player.actual_stats['reis'] -= price
+            player.getting_item = {
+                'getted_time': pygame.time.get_ticks(),
+                'player_move_stats': player.move_status,
+                'item_id': upgrade_id,
+                'item_graphic': image,
+                'item_rect': rect,
+                'item_action': self.upgrade_item_action
+            }
+            
+            change_value_in_csv(f'./storage/open_map/map_Interactives.csv', self.original_pos, -1)
+            self.kill()
         
     def dungeon_door(self, player: Player, offset_x, offset_y, level, player_input):
         self.hitbox.height = 1
@@ -147,10 +193,10 @@ class Interactives(Tile):
                 'item_id': item,
                 'item_graphic': item_graphic,
                 'item_rect': item_rect,
-                'item_action': self.chest_item_action
+                'item_action': self.upgrade_item_action
             }
 
-    def chest_item_action(self, item_id: int, player: Player):
+    def upgrade_item_action(self, item_id: int, player: Player):
         if int(item_id) == 0:
             player.stats['health'] += DEFAULT_STATS_VALUE
             player.actual_stats['health'] = player.stats['health']
@@ -161,6 +207,10 @@ class Interactives(Tile):
             player.numb_guns.append(0)
         elif int(item_id) == 3:
             player.numb_weapons.append(1)
+        elif int(item_id) == 4:
+            player.actual_stats['reis'] += 50
+        elif int(item_id) == 5:
+            player.actual_stats['reis'] += 100
 
     def interaction_button(self, player, hitbox, pos, display_surface, player_input):
         if hitbox.colliderect(player.hitbox):

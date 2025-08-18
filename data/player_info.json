@@ -3,5 +3,6 @@
     "bullets": 4,
     "attack": 25,
     "magic":  25,
-    "speed": 5
+    "speed": 5,
+    "reis": 0
 }
