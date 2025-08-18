@@ -119,6 +119,10 @@ class Enemy(Entity):
                 self.attack_time = pygame.time.get_ticks()
                 self.create_gun_enemy_attack(150, self.move_status, self.rect)
                 self.direction = pygame.math.Vector2()
+            elif self.id == 3:
+                self.attack_time = pygame.time.get_ticks()
+                self.create_gun_enemy_attack(200, self.move_status, self.rect)
+                self.direction = pygame.math.Vector2()
                 
                 if distance <= 32 and self.can_attack:
                     self.damage_player(self.attack_damage,self.attack_type)
