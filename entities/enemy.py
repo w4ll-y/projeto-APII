@@ -76,9 +76,7 @@ class Enemy(Entity):
         player_vec = pygame.math.Vector2(player.rect.center)
         distance = (player_vec - enemy_vec).magnitude()
 
-        if distance > 0 and self.id == 2:
-            direction = (player_vec - enemy_vec).normalize()
-        elif distance > 100 and self.id == 0:
+        if distance > 0:
             direction = (player_vec - enemy_vec).normalize()
         else:
             direction = pygame.math.Vector2()
@@ -111,6 +109,7 @@ class Enemy(Entity):
             self.move_status = base_status + "_idle"
 
     def actions(self,player):
+        distance, direction = self.get_player_distance_direction(player)
         if 'attack' in self.move_status:
             if self.id == 2:
                 self.attack_time = pygame.time.get_ticks()
@@ -120,6 +119,7 @@ class Enemy(Entity):
                 self.attack_time = pygame.time.get_ticks()
                 self.create_gun_enemy_attack(150, self.move_status, self.rect)
                 self.direction = pygame.math.Vector2()
+
 
         elif 'idle' not in self.move_status:
             self.direction = self.get_player_distance_direction(player)[1]

@@ -38,4 +38,4 @@ class GunsPlayer(pygame.sprite.Sprite):
             direction_bullet = pygame.math.Vector2(0, 1)
             spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery + 40)
 
-        Bullet(player,spawn_pos, direction_bullet, max_range, groups)
+        Bullet(player,spawn_pos, direction_bullet, max_range, groups, None, None)

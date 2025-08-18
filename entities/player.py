@@ -7,6 +7,7 @@ from inputs.input_manager import InputManager
 from entities.entity import Entity
 from ui.menu.pause import Pause
 
+
 class Player(Entity):
     def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, inputs: InputManager, pause: Pause, create_gun_attack, level, stats: dict, actual_stats: dict, numb_weapons: list, numb_guns: list):
         super().__init__(groups)
@@ -20,6 +21,7 @@ class Player(Entity):
         self.pos = pos
         self.rect = self.image.get_rect(topleft = self.pos)
         self.hitbox = self.rect.inflate(-10, -5)
+        self.sprite_type = 'player'
 
         self.import_player_asset()
         self.move_status = 'down'

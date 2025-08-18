@@ -184,6 +184,7 @@ class Level:
 
     def create_gun_enemy_attack(self, max_range,move_status,rect):
         direction = move_status.split('_')[0]  # Pegatt a direção em que o inimigo está se movendo
+        player_group = pygame.sprite.GroupSingle(self.player)
         
         # Aqui, vamos ajustar a direção da bala, dependendo da direção do inimigo
         if direction == 'right':
@@ -199,7 +200,7 @@ class Level:
             direction_bullet = pygame.math.Vector2(0, 1)
             spawn_pos = pygame.math.Vector2(rect.centerx, rect.centery + 40)
 
-        Bullet(self.enemy, spawn_pos, direction_bullet, max_range, [self.visible_sprites,self.attack_sprites])
+        Bullet(self.enemy, spawn_pos, direction_bullet, max_range, [self.visible_sprites,self.attack_sprites],player_group, self.damage_player)
 
     def destroy_attack(self):
         if self.current_attack:
