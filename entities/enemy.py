@@ -119,7 +119,10 @@ class Enemy(Entity):
                 self.attack_time = pygame.time.get_ticks()
                 self.create_gun_enemy_attack(150, self.move_status, self.rect)
                 self.direction = pygame.math.Vector2()
-
+                
+                if distance <= 32 and self.can_attack:
+                    self.damage_player(self.attack_damage,self.attack_type)
+                    self.direction = pygame.math.Vector2()
 
         elif 'idle' not in self.move_status:
             self.direction = self.get_player_distance_direction(player)[1]
