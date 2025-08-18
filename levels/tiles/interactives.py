@@ -42,6 +42,10 @@ class Interactives(Tile):
             return self.dungeon_door(player, offset_x, offset_y, level, player_input)
         if self.original_value == 10:
             self.buy_item(player, offset_x, offset_y, player_input, 100, 0)
+        if self.original_value == 11:
+            self.buy_item(player, offset_x, offset_y, player_input, 200, 2)
+        if self.original_value == 12:
+            self.buy_item(player, offset_x, offset_y, player_input, 150, 1)
         
     def buy_item(self, player: Player, offset_x, offset_y, player_input, price, upgrade_id):
         display_surface = pygame.display.get_surface()
