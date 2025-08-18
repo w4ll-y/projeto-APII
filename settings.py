@@ -32,6 +32,6 @@ GUNS_DATA = {
 }
 
 ENEMY_DATA = {
-    0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 400, 'notice_radius': 600},
+    0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 200, 'notice_radius': 400},
     2: {'health': 100, 'damage': DEFAULT_ACTUAL_STATS_VALUE * 2, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360}
 }
