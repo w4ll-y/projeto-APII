@@ -80,6 +80,7 @@ class Interactives(Tile):
                 'item_action': self.upgrade_item_action
             }
             
+            change_value_in_csv(f'./storage/open_map/map_Interactives.csv', self.original_pos, -1)
             self.kill()
         
     def dungeon_door(self, player: Player, offset_x, offset_y, level, player_input):
