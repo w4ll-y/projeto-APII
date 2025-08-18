@@ -25,6 +25,10 @@ class Drop(pygame.sprite.Sprite):
                 return resize_image(base_path + '00.png', 0.6)
             case DropType.BULLET:
                 return resize_image(base_path + '01.png', 1.4)
+            case DropType.REIS20:
+                return resize_image(base_path + '02.png', 0.7)
+            case DropType.REIS50:
+                return resize_image(base_path + '03.png', 0.7)
     
     def interaction(self, player: Player):
         if player.hitbox.colliderect(self.hitbox):
@@ -35,5 +39,9 @@ class Drop(pygame.sprite.Sprite):
                 case DropType.BULLET:
                     if player.stats['bullets'] > player.actual_stats['bullets']:
                         player.actual_stats['bullets'] += 1
+                case DropType.REIS20:
+                    player.actual_stats['reis'] += 20
+                case DropType.REIS50:
+                    player.actual_stats['reis'] += 50
                     
             self.kill()

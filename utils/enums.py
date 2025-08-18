@@ -24,4 +24,5 @@ class InputType(Enum):
 class DropType(Enum):
     HEALTH = 0
     BULLET = 1
-    COIN = 2
+    REIS20 = 2
+    REIS50 = 3
