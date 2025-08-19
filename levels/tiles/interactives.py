@@ -24,10 +24,14 @@ class Interactives(Tile):
         n = randint(1, 100)
         pos = {'center': (self.pos['topleft'][0] + 20, self.pos['topleft'][1] + 20)}
 
-        if n <= 20:
+        if n <= 40:
             Drop(groups, DropType.HEALTH, pos)
-        if 20 < n <= 40:
+        if 40 < n <= 70:
             Drop(groups, DropType.BULLET, pos)
+        if 70 < n <= 90:
+            Drop(groups, DropType.REIS20, pos)
+        if 90 < n <= 100:
+            Drop(groups, DropType.REIS50, pos)
 
     def special_function(self, player: Player, offset_x, offset_y, player_input: InputManager, interactive_graphics, layout, level):
         if self.original_value in [0, 16, 17]:
