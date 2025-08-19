@@ -22,6 +22,8 @@ class MainMenu():
 
         self.best_times = self.get_best_endgame_times()
 
+        self.sfx = pygame.mixer.Sound(f'assets/SEffects/menu/menu_button.mp3')
+
     def get_best_endgame_times(self):
         times = read_json('data/endgame_times.json')
 
@@ -109,6 +111,7 @@ class MainMenu():
             self.selected_option += 1
             self.button_clicked_time = now + 300
         elif inputs.is_selecting() and now > self.button_clicked_time:
+            self.sfx.play()
             match self.selected_option:
                 case 0:
                     reset_game()

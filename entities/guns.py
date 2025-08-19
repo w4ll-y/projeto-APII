@@ -12,6 +12,8 @@ class GunsPlayer(pygame.sprite.Sprite):
         full_path = f'assets/sprites/guns/{player.gun["name"]}/{direction}.png'
         self.image = pygame.image.load(full_path).convert_alpha()
 
+        self.sfx = pygame.mixer.Sound(f'assets/SEffects/attack/gun-shot.mp3')
+
     #se quiser alinhar o sprite da arma é só mudar o valor do vector2
         if direction == 'right':
             self.rect = self.image.get_rect(midleft = player.rect.midright + pygame.math.Vector2(-15,15)) 
@@ -38,4 +40,5 @@ class GunsPlayer(pygame.sprite.Sprite):
             direction_bullet = pygame.math.Vector2(0, 1)
             spawn_pos = pygame.math.Vector2(player.rect.centerx, player.rect.centery + 40)
 
+        self.sfx.play()
         Bullet(player,spawn_pos, direction_bullet, max_range, groups, None, None)

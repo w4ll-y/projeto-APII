@@ -68,6 +68,9 @@ class Player(Entity):
 
         self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/attack/sword.wav')
         self.weapon_attack_sound.set_volume(0.5)
+        
+        self.upgrade_sfx = pygame.mixer.Sound('assets/SEffects/upgrade/upgrade.mp3')
+        self.upgrade_sfx_played = False
 
         self.paused_game = False
         self.pause = pause
@@ -288,6 +291,10 @@ class Player(Entity):
             return True
 
         if self.getting_item is not None:
+            if not self.upgrade_sfx_played:
+                self.upgrade_sfx.play()
+                self.upgrade_sfx_played = True
+
             self.interaction_button_pressed = False
             self.move_status = 'down'
             self.get_status()
@@ -297,6 +304,7 @@ class Player(Entity):
                 self.move_status = self.getting_item['player_move_stats']
                 self.getting_item['item_action'](self.getting_item['item_id'], self)
                 self.getting_item = None
+                self.upgrade_sfx_played = False
 
             
             self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500

@@ -15,8 +15,14 @@ class Interactives(Tile):
         self.hitbox2 = None
         self.is_colliding = False
 
+        try:
+            self.sfx = pygame.mixer.Sound(f'assets/SEffects/interactions/{str(self.original_value).rjust(2, '0')}.wav')
+        except FileNotFoundError:
+            self.sfx = None
+
     def destroyed_action(self, groups):
         if self.destructive:
+            if self.sfx is not None: self.sfx.play()
             self.drop(groups)
             self.kill()
 
@@ -165,6 +171,7 @@ class Interactives(Tile):
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed and pygame.time.get_ticks() > player.interaction_button_pressed_time:
+            print('Abrir porta')
             level.reset(pre_level, level.settings, level.finish_game_time, player_pos, player.stats, player.actual_stats, player.numb_weapons, player.numb_guns)
         
         
@@ -229,6 +236,8 @@ class Interactives(Tile):
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
         if player.interaction_button_pressed:
+            self.sfx.play()
+
             self.image = interactive_graphics[self.next_value]
             self.activated = True
 
