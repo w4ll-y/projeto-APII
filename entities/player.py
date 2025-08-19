@@ -1,4 +1,5 @@
 import pygame
+import time
 from utils.enums import LevelType
 from settings import *
 from utils.suport import resize_image
@@ -266,7 +267,7 @@ class Player(Entity):
             self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500
             return True
 
-        if self.actual_stats['health'] == 0:
+        if self.actual_stats['health'] == 0 or self.level.finish_game_time[0] <= time.time() + 0.02:
             self.paused_game = True
             
             if self.deading_cooldown == None:
