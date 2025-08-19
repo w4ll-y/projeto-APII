@@ -27,8 +27,6 @@ class Player(Entity):
         self.import_player_asset()
         self.move_status = 'down'
         
-        self.attacking = False
-        self.scd_attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
 

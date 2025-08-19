@@ -11,9 +11,10 @@ class Entity(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
 
         self.attacking = False
+        self.scd_attacking = False
         
     def move(self, speed):
-        if self.attacking:
+        if self.attacking or self.scd_attacking:
             return None
         
         if self.direction.magnitude() != 0:
