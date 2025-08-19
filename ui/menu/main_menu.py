@@ -1,7 +1,7 @@
 import pygame
 import time
 from inputs.input_manager import InputManager
-from utils.suport import reset_game, resize_image
+from utils.suport import reset_game, resize_image, read_json
 from utils.enums import LevelType, InputType
 from ui.menu.config import ConfigScreen
 
@@ -20,6 +20,16 @@ class MainMenu():
         self.config = ConfigScreen(self.inputs, self.level, [time.time() + 600], self)
         self.is_config_screen = False
 
+        self.best_times = self.get_best_endgame_times()
+
+    def get_best_endgame_times(self):
+        times = read_json('data/endgame_times.json')
+
+        sort_times = dict(sorted(times.items(), key=lambda item: int(item[1]["time"].replace(":", "")), reverse=True))
+
+        return sort_times
+        
+
     def display_menu(self):
         if self.is_config_screen:
             self.config.display_menu()
@@ -30,6 +40,31 @@ class MainMenu():
         overlay.set_alpha(256)
 
         self.display_surface.blit(overlay, (0, 0))
+
+        #display best time
+        if len(self.best_times) > 0:
+            title_font = pygame.font.Font(size=24)
+            title_text_surface = title_font.render("Melhor Tempo", True, (255, 0, 0))
+            title_text_rect = title_text_surface.get_rect(center = (150, 60))
+
+            date_title_font = pygame.font.Font(size=24)
+            date_title_text_surface = date_title_font.render("Data", True, (255, 0, 0))
+            date_title_text_rect = date_title_text_surface.get_rect(center = (200 + title_text_surface.get_width(), 60))
+
+            self.display_surface.blit(title_text_surface, title_text_rect)
+            self.display_surface.blit(date_title_text_surface, date_title_text_rect)
+
+            for i, (key, value) in enumerate(self.best_times.items()):
+                best_time_font = pygame.font.Font(size=24)
+                best_time_text_surface = best_time_font.render(f"{value["time"]}", True, (255, 255, 255))
+                best_time_text_rect = best_time_text_surface.get_rect(center = (150, 75 + 30 * int(i) + 10))
+
+                best_date_font = pygame.font.Font(size=24)
+                best_date_text_surface = best_date_font.render(f"{value["date"]}", True, (255, 255, 255))
+                best_date_text_rect = best_date_text_surface.get_rect(center = (200 + title_text_surface.get_width(), 75 + 30 * int(i) + 10))
+
+                self.display_surface.blit(best_time_text_surface, best_time_text_rect)
+                self.display_surface.blit(best_date_text_surface, best_date_text_rect)
 
         #display buttons
         pos_x = self.display_surface.get_width() // 2
