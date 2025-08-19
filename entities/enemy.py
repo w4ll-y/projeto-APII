@@ -72,7 +72,7 @@ class Enemy(Entity):
                     for i in range(3):
                         Enemy(choice([0, 2]), (pos_x, pos_y), self.recived_groups, self.obstacle_sprites, self.damage_player, self.drop_groups, self.settings, self.create_gun_enemy_attack)
 
-            if self.health <= self.enemy_info['health'] // 2 - 150:
+            if self.health <= self.enemy_info['health'] // 2 - 250:
                 self.gun_max_range = 300
                 self.speed = 1
                 
