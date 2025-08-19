@@ -183,7 +183,7 @@ class Hud:
             self.paused_game = True
             self.paused_start = time.time()
             self.paused_time = self.finish_game_time[0] - self.paused_start
-        elif not player.paused_game or not player.end_game:
+        elif not player.paused_game and not player.end_game:
             self.paused_game = False
 
             if self.paused_start != 0:
