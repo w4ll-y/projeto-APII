@@ -81,6 +81,8 @@ class Player(Entity):
 
         self.menu_btn_interaction_cooldown = pygame.time.get_ticks()
 
+        self.end_game = True if level.level_map_type == LevelType.ENDGAME else False
+
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[self.numb_weapons[weapon_index]]
         return WEAPON_DATA[weapon_name]
@@ -109,7 +111,7 @@ class Player(Entity):
         return surface_list
     
     def input(self):
-        if not self.attacking and not self.scd_attacking:
+        if not self.attacking and not self.scd_attacking and not self.end_game:
             inputs = self.inputs.get_input()
 
             if inputs.is_walk_up():
@@ -257,7 +259,7 @@ class Player(Entity):
                 self.interaction_button_pressed_time = None
                 self.interaction_button_pressed = False
 
-    def check_pause_funcs(self):
+    def check_pause_funcs(self):        
         if self.dialog.display:
             self.dialog.display_dialog()
             

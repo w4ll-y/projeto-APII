@@ -192,8 +192,7 @@ class Interactives(Tile):
             next_level = LevelType.CHESTDUNGEON
             player_pos = (14, 6)
         if level.level_map_type == LevelType.BOSSDUNGEON:
-            next_level = LevelType.ENDGAMEDUNGEON
-            player_pos = (14, 6)
+            next_level = LevelType.ENDGAME
 
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
