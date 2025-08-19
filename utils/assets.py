@@ -16,10 +16,10 @@ GAME_HISTORY = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, \n" \
 
 NPC_1_DIALOG = "Os cangaceiros são muito perigosos, ouvi falar \n" \
 "que eles têm bases escondidas para guardar tesouros e armas! *paragraph*\n" \
-"Já ouvi muitos boatos de onde poderiam ser essas bases: na\n" \
-"cachoeira, nos coqueiros e, até, escondido na Chapada do Araripe."
+"Já ouvi muitos boatos sobre onde poderiam ser essas bases: na\n" \
+"cachoeira, nos coqueiros e até escondidas na Chapada do Araripe."
 
-NPC_2_DIALOG = "Esses maníacos surgijam do nada e tomaram tudo \n" \
+NPC_2_DIALOG = "Esses maníacos surgiram do nada e tomaram tudo \n" \
 "que é nosso. Não vejo mais ninguém na região além de nós, todos\n" \
 "fugiram com medo, e eu não tiro a razão deles... *paragraph*" \
 "E o pior... *paragraph*" \
@@ -30,7 +30,7 @@ NPC_2_DIALOG = "Esses maníacos surgijam do nada e tomaram tudo \n" \
 NPC_3_DIALOG = "Eu... *paragraph*" \
 "Eu estou com muito medo. São centenas e mais centenas de corpos \n" \
 "sendo enterrados todos os dias por esses tiranos. Eu observo eles \n" \
-"levando os Cadáveres. *paragraph*" \
-"As vezes parece que eles vão para o cemitério só para \n" \
+"levando os cadáveres. *paragraph*" \
+"As vezes parece que eles vão ao cemitério só para \n" \
 "ver as covas que fizeram... *paragraph*" \
 "MONSTROS!!!"
