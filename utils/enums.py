@@ -4,6 +4,7 @@ class LevelType(Enum):
     MAINMENU = 'main_menu'
     OPENMAP = 'open_map'
     DUNGEON = 'dungeon'
+    BOSSDUNGEON = 'boss_dungeon'
     CHESTDUNGEON = 'chest_dungeon'
     HISTORY = 'history'
     CONFIGSCREEN = 'configscreen'

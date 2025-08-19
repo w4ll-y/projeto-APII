@@ -51,22 +51,25 @@ class Dialog:
             self.actual_text_size += 1
             self.dialogs_delay = pygame.time.get_ticks() + 15
             self.check_inputs(True)
-        elif self.actual_text_size == len(self.dialogs[self.selected_option]) - 1:
-            #display buttons
-            pos_x = self.display_surface.get_width() // 2
-            pos_y = self.display_surface.get_height() - 64
 
-            select_btn_font = pygame.font.Font(size=24)
-            select_btn_text_surface = select_btn_font.render("Continuar" if self.selected_option < len(self.dialogs) - 1 else "Terminar", True, (255, 255, 255))
-            select_btn_text_rect = select_btn_text_surface.get_rect(center = (pos_x, pos_y))
+        pos_x = self.display_surface.get_width() // 2
+        pos_y = self.display_surface.get_height() - 64
 
-            select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/frst_attack_button/default.png', 1)
-            select_btn_rect = select_btn_graphic.get_rect(center= (pos_x - select_btn_text_surface.get_width(), pos_y))
+        select_btn_font = pygame.font.Font(size=24)
+        select_btn_text_surface = select_btn_font.render(
+            "Avançar" if self.actual_text_size != len(self.dialogs[self.selected_option]) - 1 
+                else "Continuar" if self.selected_option < len(self.dialogs) - 1 
+                else "Terminar", 
+            True, 
+            (255, 255, 255)
+        )
+        select_btn_text_rect = select_btn_text_surface.get_rect(center = (pos_x, pos_y))
 
-            self.display_surface.blit(select_btn_graphic, select_btn_rect)
-            self.display_surface.blit(select_btn_text_surface, select_btn_text_rect)
+        select_btn_graphic = resize_image(f'assets/graphics/hud/inputs/{'keyboard' if self.inputs.get_input().type == InputType.KEYBOARD else 'joystick'}/{'scd_attack_button' if self.selected_option == len(self.dialogs) - 1 and len(self.dialogs[self.selected_option]) - 1 == self.actual_text_size else 'frst_attack_button'}/default.png', 1)
+        select_btn_rect = select_btn_graphic.get_rect(center= (pos_x - select_btn_text_surface.get_width(), pos_y))
 
-            self.check_inputs()
+        self.display_surface.blit(select_btn_graphic, select_btn_rect)
+        self.display_surface.blit(select_btn_text_surface, select_btn_text_rect)
 
         self.check_inputs()
 
@@ -85,11 +88,11 @@ class Dialog:
                 self.actual_text_size = 0
                 self.button_clicked_time = pygame.time.get_ticks() + 500
                 self.display_text()
-            else:
-                self.set_dialogs('')
-                self.player.interaction_button_pressed = False
-                self.dialogs_delay = pygame.time.get_ticks()
-                self.selected_option = 0
-                self.actual_text_size = 0
+        if inputs.is_unpausing() and self.selected_option == len(self.dialogs) - 1 and now > self.button_clicked_time:
+            self.set_dialogs('')
+            self.player.interaction_button_pressed = False
+            self.dialogs_delay = pygame.time.get_ticks()
+            self.selected_option = 0
+            self.actual_text_size = 0
 
             self.button_clicked_time = now + 300

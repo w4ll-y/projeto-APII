@@ -79,6 +79,8 @@ class Player(Entity):
 
         self.dialog = Dialog(self, '', self.inputs)
 
+        self.menu_btn_interaction_cooldown = pygame.time.get_ticks()
+
     def get_weapon(self, weapon_index: int):
         weapon_name = list(WEAPON_DATA.keys())[self.numb_weapons[weapon_index]]
         return WEAPON_DATA[weapon_name]
@@ -127,6 +129,8 @@ class Player(Entity):
                 self.move_status = 'right'
             else:
                 self.direction.x = 0
+
+            if self.menu_btn_interaction_cooldown > pygame.time.get_ticks(): return
 
             if inputs.is_frst_attacking() and not self.attack_button_pressed:
                 self.attacking = True
@@ -256,6 +260,8 @@ class Player(Entity):
     def check_pause_funcs(self):
         if self.dialog.display:
             self.dialog.display_dialog()
+            
+            self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500
             return True
 
         if self.actual_stats['health'] == 0:
@@ -271,10 +277,13 @@ class Player(Entity):
             if self.deading_cooldown <= pygame.time.get_ticks():
                 self.level.is_gameover_menu = True
 
+            self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500
             return True
 
         if self.paused_game:
             self.pause.display_menu()
+            
+            self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500
             return True
 
         if self.getting_item is not None:
@@ -288,6 +297,8 @@ class Player(Entity):
                 self.getting_item['item_action'](self.getting_item['item_id'], self)
                 self.getting_item = None
 
+            
+            self.menu_btn_interaction_cooldown = pygame.time.get_ticks() + 500
             return True
         
         return False

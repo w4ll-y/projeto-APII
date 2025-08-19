@@ -35,9 +35,9 @@ class Interactives(Tile):
         if self.original_value == 1:
             return self.chest_interaction(player, offset_x, offset_y, player_input, interactive_graphics, layout["interactives_chest_items"], level)
         if self.original_value == 6:
-            return self.pre_hole_interaction(player, interactive_graphics, level)
+            return self.pre_wall_hole_interaction(player, interactive_graphics, level)
         if self.original_value == 7:
-            return self.hole_interaction(player, offset_x, offset_y, level, player_input)
+            return self.wall_hole_interaction(player, offset_x, offset_y, level, player_input)
         if self.original_value == 9:
             return self.dungeon_door(player, offset_x, offset_y, level, player_input)
         if self.original_value == 10:
@@ -48,6 +48,37 @@ class Interactives(Tile):
             self.buy_item(player, offset_x, offset_y, player_input, 150, 1)
         if 13 <= self.original_value <= 15:
             self.npc_dialog(player, offset_x, offset_y, player_input)
+        if self.original_value == 18:
+            self.grave_interaction(player, interactive_graphics, level)
+        if self.original_value == 19:
+            self.hole_interaction(player, offset_x, offset_y, level, player_input)
+
+    def hole_interaction(self, player: Player, offset_x, offset_y, level, player_input):
+        display_surface = pygame.display.get_surface()
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(10, 10)
+
+        pos_x = self.pos['topleft'][0] - offset_x
+        pos_y = self.pos['topleft'][1] - offset_y
+
+        next_level = LevelType.BOSSDUNGEON
+        player_pos = (11, 6)
+
+        self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
+
+        if player.interaction_button_pressed:
+            level.reset(next_level, level.settings, level.finish_game_time, player_pos, player.stats, player.actual_stats, player.numb_weapons, player.numb_guns)
+
+    def grave_interaction(self, player: Player, interactive_graphics, level):
+        self.rect2 = self.image.get_rect(**self.pos)
+        self.hitbox2 = self.rect2.inflate(10, 10)
+
+        if player.attacking and player.hitbox.colliderect(self.hitbox2) and player.weapon['name'] == 'facao':
+            change_value_in_csv(f'./storage/{level.level_map_type.value}/map_Interactives.csv', self.original_pos, self.next_value)
+            self.image = interactive_graphics[self.next_value]
+            self.original_value = self.next_value
+        elif player.attacking and player.hitbox.colliderect(self.hitbox2) and player.weapon['name'] == 'faca' and pygame.time.get_ticks() >= player.menu_btn_interaction_cooldown:
+            player.dialog.set_dialogs('Esta faca não é forte o bastante para destruir isso!')
 
     def npc_dialog(self, player: Player, offset_x, offset_y, player_input):
         display_surface = pygame.display.get_surface()
@@ -131,7 +162,7 @@ class Interactives(Tile):
             level.reset(pre_level, level.settings, level.finish_game_time, player_pos, player.stats, player.actual_stats, player.numb_weapons, player.numb_guns)
         
         
-    def pre_hole_interaction(self, player: Player, interactive_graphics, level):
+    def pre_wall_hole_interaction(self, player: Player, interactive_graphics, level):
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(0, 10)
 
@@ -140,7 +171,7 @@ class Interactives(Tile):
             self.image = interactive_graphics[self.next_value]
             self.original_value = self.next_value
 
-    def hole_interaction(self, player: Player, offset_x, offset_y, level, player_input):
+    def wall_hole_interaction(self, player: Player, offset_x, offset_y, level, player_input):
         display_surface = pygame.display.get_surface()
         self.rect2 = self.image.get_rect(**self.pos)
         self.hitbox2 = self.rect2.inflate(0, 10)
