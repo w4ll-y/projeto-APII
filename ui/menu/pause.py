@@ -24,6 +24,8 @@ class Pause():
         self.config_screen = ConfigScreen(self.inputs, self.level, self.finish_game_time, self)
         self.is_config_screen = False
 
+        self.created_cooldown = pygame.time.get_ticks() + 500
+
     def set_player(self, player):
         self.player = player
 
@@ -79,7 +81,7 @@ class Pause():
         inputs = self.inputs.get_input()
         now = pygame.time.get_ticks()
 
-        if inputs.is_unpausing() and now > self.button_clicked_time:
+        if inputs.is_unpausing() and now > self.button_clicked_time and now > self.created_cooldown:
             self.player.paused_game = False
             self.button_clicked_time = now + 300
         elif inputs.is_walk_up() and self.selected_option > 0 and now > self.button_clicked_time:

@@ -8,16 +8,16 @@ class Joystick(InputInterface):
         self.joystick = joystick
 
     def is_walk_up(self) -> bool:
-        return round(self.joystick.get_axis(1)) < 0 or self.joystick.get_button(11) or self.joystick.get_hat(0)[1] > 0
+        return round(self.joystick.get_axis(1)) < 0 or self.joystick.get_hat(0)[1] > 0
 
     def is_walk_down(self) -> bool:
-        return round(self.joystick.get_axis(1)) > 0 or self.joystick.get_button(12) or self.joystick.get_hat(0)[1] < 0
+        return round(self.joystick.get_axis(1)) > 0 or self.joystick.get_hat(0)[1] < 0
     
     def is_walk_left(self) -> bool:
-        return round(self.joystick.get_axis(0)) < 0 or self.joystick.get_button(13) or self.joystick.get_hat(0)[0] < 0
+        return round(self.joystick.get_axis(0)) < 0 or self.joystick.get_hat(0)[0] < 0
     
     def is_walk_right(self) -> bool:
-        return round(self.joystick.get_axis(0)) > 0 or self.joystick.get_button(14) or self.joystick.get_hat(0)[0] > 0
+        return round(self.joystick.get_axis(0)) > 0 or self.joystick.get_hat(0)[0] > 0
 
     def is_frst_attacking(self) -> bool:
         return self.joystick.get_button(0)
@@ -32,7 +32,7 @@ class Joystick(InputInterface):
         return self.joystick.get_button(5)
     
     def is_interacting(self):
-        return self.joystick.get_button(4)
+        return self.joystick.get_button(3)
     
     def is_pausing(self):
         return self.joystick.get_button(7)

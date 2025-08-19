@@ -319,6 +319,8 @@ class Level:
                         self.is_endgame_menu = True
 
     def run(self, events):
+        self.set_input_type(events)
+        
         if self.is_history:
             self.history.display_text()
             return
@@ -333,7 +335,6 @@ class Level:
             return
         
         self.special_function()
-        self.set_input_type(events)
         self.visible_sprites.custom_draw(self.player)
         self.interaction_collision(self.player)
         self.player_attack_collision()
