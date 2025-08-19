@@ -4,11 +4,13 @@ class LevelType(Enum):
     MAINMENU = 'main_menu'
     OPENMAP = 'open_map'
     DUNGEON = 'dungeon'
+    BOSSDUNGEON = 'boss_dungeon'
     CHESTDUNGEON = 'chest_dungeon'
     HISTORY = 'history'
     CONFIGSCREEN = 'configscreen'
     GAMEOVER = 'game_over'
     STORE = 'store'
+    ENDGAME = 'end_game'
 
 class OpenMapTileType(Enum):
     ROCK = 1

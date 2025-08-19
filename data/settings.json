@@ -5,7 +5,7 @@
         720
     ],
     "fullscreen_mode": false,
-    "music_volume": 0,
-    "play_music": false,
+    "music_volume": 0.1,
+    "play_music": true,
     "difficult": 1
 }

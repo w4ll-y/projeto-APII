@@ -1,5 +1,5 @@
 import pygame
-from random import randint 
+from random import randint, choice
 from settings import *
 from entities.player import Player
 from entities.entity import Entity
@@ -8,11 +8,11 @@ from utils.enums import DropType
 from levels.tiles.drop import Drop
 from core.config import Config
 
-
 class Enemy(Entity):
     def __init__(self, id, pos, groups, obstacle_sprites,damage_player, drop_groups, settings: Config, create_gun_enemy_attack):
         self.settings = settings
         self.difficult = settings.difficult
+        self.recived_groups = groups
 
         #geral
         super().__init__(groups)
@@ -50,6 +50,39 @@ class Enemy(Entity):
         self.invencibilyty_duration = 300
 
         self.drop_groups = drop_groups
+        
+        self.boss_special_cooldow = None
+
+        self.gun_max_range = 150
+
+        self.gun_cooldown = 500
+        self.gun_active_time = pygame.time.get_ticks()
+
+    def special_attacks(self, player):
+        if self.id == 3:
+            if self.health <= self.enemy_info['health'] - 150 and self.gun_max_range <= 150:
+                self.gun_max_range = 200
+
+            if self.health <= self.enemy_info['health'] // 2:
+                if self.boss_special_cooldow is None: self.boss_special_cooldow = pygame.time.get_ticks() + 2000
+
+                if self.boss_special_cooldow <= pygame.time.get_ticks():
+                    self.boss_special_cooldow = pygame.time.get_ticks() + 8000
+
+                    pos_x = self.hitbox.x + randint(-120, 120)
+                    pos_y = self.hitbox.y + randint(-120, 120)
+
+                    for i in range(3):
+                        Enemy(choice([0, 2]), (pos_x, pos_y), self.recived_groups, self.obstacle_sprites, self.damage_player, self.drop_groups, self.settings, self.create_gun_enemy_attack)
+
+            if self.health <= self.enemy_info['health'] * 0.15:
+                self.gun_max_range = 300
+                self.speed = 1
+                self.gun_cooldown = 250
+                
+                _, direction = self.get_player_distance_direction(player)
+
+                self.direction = pygame.math.Vector2(direction.x - 50, direction.y)
 
     def ajust_difficult(self):
         if self.settings.difficult != self.difficult:
@@ -71,7 +104,7 @@ class Enemy(Entity):
             self.animations[animaton] = import_folder_resize_image(main_path + animaton)
 
 
-    def get_player_distance_direction(self,player):
+    def get_player_distance_direction(self, player):
         enemy_vec = pygame.math.Vector2(self.rect.center)
         player_vec = pygame.math.Vector2(player.rect.center)
         distance = (player_vec - enemy_vec).magnitude()
@@ -117,12 +150,19 @@ class Enemy(Entity):
                 self.direction = pygame.math.Vector2()
             elif self.id == 0:
                 self.attack_time = pygame.time.get_ticks()
-                self.create_gun_enemy_attack(150, self.move_status, self.rect)
+
+                if pygame.time.get_ticks() >= self.gun_active_time:
+                    self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
+                    self.gun_active_time = pygame.time.get_ticks() + self.gun_cooldown
+
                 self.direction = pygame.math.Vector2()
             elif self.id == 3:
                 self.attack_time = pygame.time.get_ticks()
-                self.create_gun_enemy_attack(200, self.move_status, self.rect)
-                self.direction = pygame.math.Vector2()
+                self.direction = (pygame.math.Vector2())
+
+                if pygame.time.get_ticks() >= self.gun_active_time:
+                    self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
+                    self.gun_active_time = pygame.time.get_ticks() + self.gun_cooldown
                 
                 if distance <= 32 and self.can_attack:
                     self.damage_player(self.attack_damage,self.attack_type)
@@ -185,13 +225,13 @@ class Enemy(Entity):
         
         pos = {'center': (self.rect.center[0] + 20, self.rect.center[1] + 20)}
         
-        if n <= 20:
+        if n <= 30:
             Drop(self.drop_groups, DropType.HEALTH, pos)
-        if 20 < n <= 40:
+        if 30 < n <= 60:
             Drop(self.drop_groups, DropType.BULLET, pos)
-        if 40 < n <= 60:
+        if 60 < n <= 80:
             Drop(self.drop_groups, DropType.REIS20, pos)
-        if 60 < n <= 70:
+        if 80 < n <= 90:
             Drop(self.drop_groups, DropType.REIS50, pos)
 
     def hit_reaction(self):
@@ -210,3 +250,4 @@ class Enemy(Entity):
         self.check_death()
         self.get_status(player)
         self.actions(player)
+        self.special_attacks(player)
