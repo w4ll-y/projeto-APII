@@ -41,6 +41,11 @@ class MainMenu():
 
         self.display_surface.blit(overlay, (0, 0))
 
+        game_title_graphic = resize_image(f'assets/graphics/hud/game_title/title.png', 2.5)
+        game_title_rect = game_title_graphic.get_rect(midtop= (self.display_surface.get_width() // 2, 60))
+
+        self.display_surface.blit(game_title_graphic, game_title_rect)
+
         #display best time
         if len(self.best_times) > 0:
             title_font = pygame.font.Font(size=24)
