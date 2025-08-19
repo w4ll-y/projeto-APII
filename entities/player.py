@@ -67,7 +67,7 @@ class Player(Entity):
         self.stats = stats
         self.actual_stats = actual_stats
 
-        self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/brkn_wand_horizontal_sword.wav')
+        self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/attack/sword.wav')
         self.weapon_attack_sound.set_volume(0.5)
 
         self.paused_game = False
