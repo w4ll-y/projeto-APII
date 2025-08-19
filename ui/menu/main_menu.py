@@ -38,7 +38,7 @@ class MainMenu():
             return
         
         overlay = pygame.Surface(self.display_surface.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0))
+        overlay.fill((33, 33, 33))
         overlay.set_alpha(256)
 
         self.display_surface.blit(overlay, (0, 0))

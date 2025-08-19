@@ -13,6 +13,7 @@ class GunsPlayer(pygame.sprite.Sprite):
         self.image = pygame.image.load(full_path).convert_alpha()
 
         self.sfx = pygame.mixer.Sound(f'assets/SEffects/attack/gun-shot.mp3')
+        self.sfx.set_volume(0.6)
 
     #se quiser alinhar o sprite da arma é só mudar o valor do vector2
         if direction == 'right':
