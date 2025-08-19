@@ -87,7 +87,7 @@ class Dialog:
                 self.selected_option += 1
                 self.actual_text_size = 0
                 self.button_clicked_time = pygame.time.get_ticks() + 500
-                self.display_text()
+                self.display_dialog()
         if inputs.is_unpausing() and self.selected_option == len(self.dialogs) - 1 and now > self.button_clicked_time:
             self.set_dialogs('')
             self.player.interaction_button_pressed = False
