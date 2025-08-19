@@ -179,11 +179,11 @@ class Hud:
         self.display_surface.blit(text_surface, text_rect)
 
     def display(self, player: Player):
-        if player.paused_game and not self.paused_game:
+        if (player.paused_game or player.end_game) and not self.paused_game:
             self.paused_game = True
             self.paused_start = time.time()
             self.paused_time = self.finish_game_time[0] - self.paused_start
-        elif not player.paused_game:
+        elif not player.paused_game or not player.end_game:
             self.paused_game = False
 
             if self.paused_start != 0:

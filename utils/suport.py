@@ -1,10 +1,12 @@
+import shutil
+import json
+import pygame
+from datetime import datetime
 from csv import reader, writer
 from os import walk, listdir, path, remove
 from settings import *
 from utils.enums import LevelType
-import shutil
-import json
-import pygame
+from utils.assets import *
 
 def import_csv_layout(path: str):
     with open(path) as level_map:
@@ -52,8 +54,7 @@ def resize_image(image_path: str, zoom_modificator: float = 1):
     return image
 
 def reset_game():
-
-    for level in ['open_map', 'dungeon', 'chest_dungeon']:
+    for level in ['open_map', 'dungeon', 'chest_dungeon', 'boss_dungeon', 'store', 'end_game']:
         origin = f"storage/{level}/backup"
         destination = f"storage/{level}"
 
@@ -76,13 +77,13 @@ def reset_game():
                 
                 shutil.copy2(origin_way, destination_way)
 
-def read_json(path):
+def read_json(path) -> dict:
     with open(path, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     return data
 
-def read_settings():
+def read_settings() -> dict:
     return read_json("data/settings.json")
 
 def change_settings_value(key, new_value):
@@ -91,6 +92,28 @@ def change_settings_value(key, new_value):
 
     with open("data/settings.json", "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
+def new_endgame_time(time):
+    data = read_json('data/endgame_times.json')
+    index = len(data.keys())
+
+    data[index] = {
+        "date": datetime.now().strftime("%d/%m/%Y às %H:%M:%S"),
+        "time": time
+    }
+
+    with open("data/endgame_times.json", "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+
+def dialog_from_id(npc_id: int):
+    match npc_id:
+        case 13:
+            return NPC_1_DIALOG
+        case 14:
+            return NPC_2_DIALOG
+        case 15:
+            return NPC_3_DIALOG
+        
 
 def layout_file(layout):
     match layout:
@@ -134,13 +157,13 @@ def obj_hitbox_ajust(object_id: int):
     return (0, 0, 0, 0)
 
 def is_icv_destructive(icv_id: int):
-    if icv_id in [0, 3, 4]:
+    if icv_id in [0, 3, 4, 16, 17]:
         return True
     
     return False
 
 def icv_next_value(icv_id: int):
-    if icv_id in [1, 6]:
+    if icv_id in [1, 6, 18]:
         return icv_id + 1
     
     return icv_id

@@ -7,6 +7,7 @@ from utils.suport import *
 from levels.tile import Tile
 from levels.tiles.interactives import Interactives
 from entities.player import Player
+from entities.special_entity import SpecialEntity
 from entities.weapons import Weapon
 from ui.hud import Hud
 from inputs.input_manager import InputManager
@@ -14,6 +15,7 @@ from entities.enemy import Enemy
 from ui.menu.pause import Pause
 from ui.menu.main_menu import MainMenu
 from ui.menu.game_over import GameOver
+from ui.menu.end_game_menu import EndGameMenu
 from ui.history import History
 from core.config import Config
 from entities.guns import GunsPlayer
@@ -72,8 +74,14 @@ class Level:
         self.gameover_menu = GameOver(self.inputs, self)
         self.is_gameover_menu = False
 
+        self.endgame_menu = EndGameMenu(self.inputs, self)
+        self.is_endgame_menu = False
+
         self.created_map = time.time()
         self.level_map(level_map)
+
+        self.end_game_time = pygame.time.get_ticks()
+        self.player_colision_with_pc = None
 
     def reset(self, level_map, settings, finish_game_time, player_position: tuple | None = None, player_stats: dict | None = None, player_actual_stats: dict | None = None, player_numb_weapons: list | None = None, player_numb_guns: list | None = None):
         if player_position is None: player_position = (53, 83)
@@ -87,7 +95,7 @@ class Level:
     def special_function(self):
         if self.level_map_type == LevelType.DUNGEON:
             if len(self.player.numb_weapons) > 1:
-                for sprite in self.interaction_sprites.sprites():
+                for sprite in self.attackable_sprites.sprites():
                     if sprite.sprite_type == 'enemy':
                         sprite.kill()
             if len(self.attackable_sprites) == 8 or len(self.player.numb_weapons) > 1:
@@ -99,6 +107,23 @@ class Level:
                             sprite.original_value = sprite.next_value
                         if sprite.original_value == 8:
                             sprite.kill()
+        if self.level_map_type == LevelType.BOSSDUNGEON:
+            boss = False
+            for sprite in self.attackable_sprites.sprites():
+                    if sprite.sprite_type == 'enemy' and sprite.id == 3:
+                        boss = True
+            if not boss:
+                for sprite in self.interaction_sprites.sprites():
+                    if sprite.sprite_type == 'interactive':
+                        if sprite.original_value == 6:
+                            change_value_in_csv('./storage/open_map/map_Interactives.csv', sprite.original_pos, sprite.next_value)
+                            sprite.image = self.graphics['interactives'][sprite.next_value]
+                            sprite.original_value = sprite.next_value
+        if self.level_map_type == LevelType.ENDGAME:
+            if self.end_game_time is not None and pygame.time.get_ticks() >= self.end_game_time:
+                self.player.direction.y -= 0.1
+                self.player.move_status = 'up'
+                self.end_game_time = pygame.time.get_ticks() + 100
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -153,6 +178,8 @@ class Level:
                         if style == 'entities':
                             if col == '1':
                                 self.player = Player((x, y), [self.visible_sprites, self.player_sprite], self.obstacles_sprites, self.create_attack, self.destroy_attack, self.inputs, self.pause, self.create_gun_attack, self, self.player_stats, self.player_actual_stats, self.player_numb_weapons, self.player_numb_guns)
+                            elif col == '4':
+                                SpecialEntity((x, y), [self.visible_sprites, self.interaction_sprites])
                             else:
                                 self.enemy = Enemy(int(col), (x,y), [self.visible_sprites, self.attackable_sprites], self.obstacles_sprites, self.damage_player, [self.visible_sprites, self.interaction_sprites], self.settings, self.create_gun_enemy_attack)
 
@@ -233,6 +260,11 @@ class Level:
                 self.music_folder = 'assets/musics/background'
 
                 self.create_map(layouts)
+            case LevelType.BOSSDUNGEON:
+                layouts = ['boundary', 'interactives', 'interactives_activated', 'interactives_chest_items', 'entities']
+                self.music_folder = 'assets/musics/boss'
+
+                self.create_map(layouts)
             case LevelType.MAINMENU:
                 self.music_folder = 'assets/musics/menu'
 
@@ -242,6 +274,18 @@ class Level:
                 self.music_folder = ''
 
                 self.is_history = True
+            case LevelType.STORE:
+                layouts = ['boundary', 'interactives', 'interactives_activated', 'entities']
+                self.music_folder = 'assets/musics/store'
+
+                self.create_map(layouts)
+            case LevelType.ENDGAME:
+                layouts = ['entities']
+                self.music_folder = 'assets/musics'
+
+                self.endgame_menu.set_finish_game_time(self.finish_game_time[0])
+
+                self.create_map(layouts)
 
     def player_attack_collision(self):
         if self.attack_sprites:
@@ -264,6 +308,15 @@ class Level:
                     target_sprite.special_function(player, self.visible_sprites.offset.x, self.visible_sprites.offset.y, self.inputs, self.graphics['interactives'], self.layouts, self)
                 elif target_sprite.sprite_type == 'drop':
                     target_sprite.interaction(self.player)
+                elif target_sprite.sprite_type == 'special':
+                    self.end_game_time = None
+                    if self.player_colision_with_pc is None: self.player_colision_with_pc = pygame.time.get_ticks() + 800
+
+                    self.player.direction.y = 0
+                    self.player.move_status = "down"
+
+                    if self.player_colision_with_pc < pygame.time.get_ticks():
+                        self.is_endgame_menu = True
 
     def run(self, events):
         if self.is_history:
@@ -290,6 +343,9 @@ class Level:
 
         if self.is_gameover_menu:
             self.gameover_menu.display_menu()
+
+        if self.is_endgame_menu:
+            self.endgame_menu.display_menu()
 
 class YSortCameraGroup(pygame.sprite.Group):
     def __init__(self, map_path):

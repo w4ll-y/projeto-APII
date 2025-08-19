@@ -22,16 +22,17 @@ ENERGY_BORDER_COLOR = '#4b726e'
 ENERGY_COLOR = '#8caba1'
 
 WEAPON_DATA = {
-    0: {'name': 'faca', 'cooldown': 100 , 'damage': 10, 'graphic': 'assets/sprites/weapons/faca/right.png'},
-    1: {'name': 'facao', 'cooldown': 100 , 'damage': 15, 'graphic': 'assets/sprites/weapons/facao/right.png'}
+    0: {'name': 'faca', 'cooldown': 100 , 'damage': 20, 'graphic': 'assets/sprites/weapons/faca/right.png'},
+    1: {'name': 'facao', 'cooldown': 100 , 'damage': 60, 'graphic': 'assets/sprites/weapons/facao/right.png'}
 }
 
 GUNS_DATA = {
-    0:{'name': 'espingarda', 'cost': 2, 'damage': 50, 'speed': 10, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
-    1:{'name': 'revolver', 'cost': 1, 'damage': 20, 'speed': 10, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
+    0:{'name': 'espingarda', 'cost': 2, 'damage': 80, 'speed': 10, 'max_range': 200, 'cooldown': 150 , 'graphic': 'assets/sprites/guns/espingarda/right.png' },
+    1:{'name': 'revolver', 'cost': 1, 'damage': 40, 'speed': 10, 'max_range': 500, 'cooldown': 100 , 'graphic': 'assets/sprites/guns/revolver/right.png' }
 }
 
 ENEMY_DATA = {
-    0: {'health': 40, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 200, 'notice_radius': 400},
-    2: {'health': 100, 'damage': DEFAULT_ACTUAL_STATS_VALUE * 2, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360}
+    0: {'health': 60, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 1, 'resistance': 3, 'attack_radius': 200, 'notice_radius': 400},
+    2: {'health': 80, 'damage': DEFAULT_ACTUAL_STATS_VALUE, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2, 'resistance': 3, 'attack_radius': 60, 'notice_radius': 360},
+    3: {'health': 1000, 'damage': DEFAULT_ACTUAL_STATS_VALUE * 2, 'attack_type': 'slash', 'attack_sound': None, 'speed': 2.5, 'resistance': 3, 'attack_radius': 300, 'notice_radius': 1000}
 }

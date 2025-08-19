@@ -21,7 +21,7 @@ O jogo apresentará: personagens da história da região, elementos do cotidiano
 | ------------- | ------------- |
 | Modularização  | Separation of Concerns (SoC)  |
 | Paradigma  | Object-Oriented Programming (OOP)  |
-| Dados  | SQLite  |
+| Dados  | Json + arquivos .csv  |
 | Abordagem  | Criação de um jogo  |
 | Objetivo  | Importância do uso das diversas mídias para resgatar a cultura regional  |
 
