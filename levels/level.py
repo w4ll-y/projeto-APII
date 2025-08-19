@@ -27,6 +27,10 @@ class Level:
         pygame.mixer.quit()
         pygame.mixer.init()
 
+        #SFX
+        self.damage_player_sound = pygame.mixer.Sound('assets/SEffects/damage/damage.mp3')
+        self.damage_player_sound.set_volume(0.5)
+
         self.level_map_type = level_map
         self.map_path = ''
 
@@ -236,6 +240,7 @@ class Level:
 
     def damage_player(self,amount, attack_type):
             if self.player.vulnerable:
+                self.damage_player_sound.play()
                 if self.player.actual_stats['health'] - amount >= 0:
                     self.player.actual_stats['health'] -= amount
                 else:

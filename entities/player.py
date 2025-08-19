@@ -47,6 +47,7 @@ class Player(Entity):
         self.interaction_button_pressed = False
         self.change_weapon_button_pressed = False
         self.change_gun_button_pressed = False
+        self.empty_gun_button = False
 
         self.interaction_button_pressed_time = None
 
@@ -67,8 +68,17 @@ class Player(Entity):
         self.stats = stats
         self.actual_stats = actual_stats
 
+        #Sword - SFX
         self.weapon_attack_sound = pygame.mixer.Sound('assets/SEffects/attack/sword.wav')
         self.weapon_attack_sound.set_volume(0.5)
+
+        #Gun -SFX
+        self.gun_shot_sound = pygame.mixer.Sound('assets/SEffects/attack/gun-shot.mp3')
+        self.gun_shot_sound.set_volume(0.5)
+
+        self.empy_gun_sound = pygame.mixer.Sound('assets/SEffects/attack/empty-gun.mp3')
+        self.empy_gun_sound.set_volume(0.5)
+
 
         self.paused_game = False
         self.pause = pause
@@ -154,8 +164,15 @@ class Player(Entity):
                 max_range = self.get_gun(self.gun_index)['max_range']
                 self.create_gun_attack(gun, max_range, cost)
 
+                self.gun_shot_sound.play()
+
                 self.actual_stats["bullets"] -= cost
-            
+
+            elif inputs.is_scd_attacking() and not self.scd_attacking and self.get_gun(self.gun_index)["cost"] > self.actual_stats["bullets"] and self.empty_gun_button==False:
+                self.empty_gun_button = True
+                self.empy_gun_sound.play()
+
+                
             if len(self.numb_weapons) > 1 and inputs.is_changing_weapon() and self.can_switch_weapon and not self.change_weapon_button_pressed:
                 self.can_switch_weapon = False
                 self.change_weapon_button_pressed = True
