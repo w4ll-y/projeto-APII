@@ -189,6 +189,9 @@ class Interactives(Tile):
         player_pos = (11, 6)
 
         if level.level_map_type == LevelType.DUNGEON:
+            next_level = LevelType.CHESTDUNGEON
+            player_pos = (14, 6)
+        if level.level_map_type == LevelType.BOSSDUNGEON:
             next_level = LevelType.ENDGAMEDUNGEON
             player_pos = (14, 6)
 

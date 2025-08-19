@@ -55,6 +55,9 @@ class Enemy(Entity):
 
         self.gun_max_range = 150
 
+        self.gun_cooldown = 500
+        self.gun_active_time = pygame.time.get_ticks()
+
     def special_attacks(self, player):
         if self.id == 3:
             if self.health <= self.enemy_info['health'] - 150 and self.gun_max_range <= 150:
@@ -72,13 +75,14 @@ class Enemy(Entity):
                     for i in range(3):
                         Enemy(choice([0, 2]), (pos_x, pos_y), self.recived_groups, self.obstacle_sprites, self.damage_player, self.drop_groups, self.settings, self.create_gun_enemy_attack)
 
-            if self.health <= self.enemy_info['health'] // 2 - 250:
+            if self.health <= self.enemy_info['health'] * 0.15:
                 self.gun_max_range = 300
                 self.speed = 1
+                self.gun_cooldown = 250
                 
                 _, direction = self.get_player_distance_direction(player)
 
-                self.direction = pygame.math.Vector2(direction.x + randint(-50, 50), direction.y)
+                self.direction = pygame.math.Vector2(direction.x - 50, direction.y)
 
     def ajust_difficult(self):
         if self.settings.difficult != self.difficult:
@@ -146,12 +150,19 @@ class Enemy(Entity):
                 self.direction = pygame.math.Vector2()
             elif self.id == 0:
                 self.attack_time = pygame.time.get_ticks()
-                self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
+
+                if pygame.time.get_ticks() >= self.gun_active_time:
+                    self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
+                    self.gun_active_time = pygame.time.get_ticks() + self.gun_cooldown
+
                 self.direction = pygame.math.Vector2()
             elif self.id == 3:
                 self.attack_time = pygame.time.get_ticks()
-                self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
                 self.direction = (pygame.math.Vector2())
+
+                if pygame.time.get_ticks() >= self.gun_active_time:
+                    self.create_gun_enemy_attack(self.gun_max_range, self.move_status, self.rect)
+                    self.gun_active_time = pygame.time.get_ticks() + self.gun_cooldown
                 
                 if distance <= 32 and self.can_attack:
                     self.damage_player(self.attack_damage,self.attack_type)
