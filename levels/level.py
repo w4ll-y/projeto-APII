@@ -87,7 +87,7 @@ class Level:
     def special_function(self):
         if self.level_map_type == LevelType.DUNGEON:
             if len(self.player.numb_weapons) > 1:
-                for sprite in self.interaction_sprites.sprites():
+                for sprite in self.attackable_sprites.sprites():
                     if sprite.sprite_type == 'enemy':
                         sprite.kill()
             if len(self.attackable_sprites) == 8 or len(self.player.numb_weapons) > 1:
@@ -99,6 +99,18 @@ class Level:
                             sprite.original_value = sprite.next_value
                         if sprite.original_value == 8:
                             sprite.kill()
+        if self.level_map_type == LevelType.BOSSDUNGEON:
+            boss = False
+            for sprite in self.attackable_sprites.sprites():
+                    if sprite.sprite_type == 'enemy' and sprite.id == 3:
+                        boss = True
+            if not boss:
+                for sprite in self.interaction_sprites.sprites():
+                    if sprite.sprite_type == 'interactive':
+                        if sprite.original_value == 6:
+                            change_value_in_csv('./storage/open_map/map_Interactives.csv', sprite.original_pos, sprite.next_value)
+                            sprite.image = self.graphics['interactives'][sprite.next_value]
+                            sprite.original_value = sprite.next_value
 
     def set_musics(self):
         musics = import_folder_files(self.music_folder)
@@ -233,6 +245,11 @@ class Level:
                 self.music_folder = 'assets/musics/background'
 
                 self.create_map(layouts)
+            case LevelType.BOSSDUNGEON:
+                layouts = ['boundary', 'interactives', 'interactives_activated', 'interactives_chest_items', 'entities']
+                self.music_folder = 'assets/musics/boss'
+
+                self.create_map(layouts)
             case LevelType.MAINMENU:
                 self.music_folder = 'assets/musics/menu'
 
@@ -244,7 +261,7 @@ class Level:
                 self.is_history = True
             case LevelType.STORE:
                 layouts = ['boundary', 'interactives', 'interactives_activated', 'entities']
-                self.music_folder = 'assets/musics/background'
+                self.music_folder = 'assets/musics/store'
 
                 self.create_map(layouts)
 

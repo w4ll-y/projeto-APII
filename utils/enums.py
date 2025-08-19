@@ -6,6 +6,7 @@ class LevelType(Enum):
     DUNGEON = 'dungeon'
     BOSSDUNGEON = 'boss_dungeon'
     CHESTDUNGEON = 'chest_dungeon'
+    ENDGAMEDUNGEON = 'end_game_dungeon'
     HISTORY = 'history'
     CONFIGSCREEN = 'configscreen'
     GAMEOVER = 'game_over'

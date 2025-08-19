@@ -62,7 +62,7 @@ class Interactives(Tile):
         pos_y = self.pos['topleft'][1] - offset_y
 
         next_level = LevelType.BOSSDUNGEON
-        player_pos = (11, 6)
+        player_pos = (19, 11)
 
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
@@ -155,6 +155,8 @@ class Interactives(Tile):
             player_pos = (9, 6)
         elif level.level_map_type == LevelType.STORE:
             player_pos = (53, 83)
+        elif level.level_map_type == LevelType.BOSSDUNGEON:
+            player_pos = (101, 91)
 
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
 
@@ -183,7 +185,7 @@ class Interactives(Tile):
         player_pos = (11, 6)
 
         if level.level_map_type == LevelType.DUNGEON:
-            next_level = LevelType.CHESTDUNGEON
+            next_level = LevelType.ENDGAMEDUNGEON
             player_pos = (14, 6)
 
         self.interaction_button(player, self.hitbox2, (pos_x, pos_y), display_surface, player_input)
