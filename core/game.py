@@ -12,6 +12,9 @@ class Game:
         pygame.joystick.init()
         
         self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
+        pygame.display.set_caption("Candeeiro e Lampião")
+        pygame.display.set_icon(pygame.image.load('assets/graphics/hud/icon/icon.png'))
+
         self.clock = pygame.time.Clock()
         self.event = Event(self)
         self.settings = Config() 
